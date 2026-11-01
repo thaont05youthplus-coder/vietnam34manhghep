@@ -15,15 +15,17 @@
 
 ## 📋 DANH SÁCH CÁC GIAI ĐOẠN & BREAKDOWN CHI TIẾT TỪNG TASK
 
-### GIAI ĐOẠN 1: DỮ LIỆU GIS & BẢN ĐỒ NỀN ĐỘC LẬP (MỤC 3 SPEC GỐC)
-* **Task 1.1 - Xử lý & Tối ưu hoá GeoJSON 34 tỉnh thành**:
-  * Tách và nén đa giác `vnm_admin1.geojson` (từ 48MB xuống còn ~2–3MB bằng Mapshaper / TopoJSON).
-  * Bảo đảm giữ nguyên vẹn 100% hình học quần đảo **Hoàng Sa** (thuộc Đà Nẵng) và **Trường Sa** (thuộc Khánh Hòa).
-  * Kiểm tra và chuẩn hoá mã `provinceCode` (34 tỉnh/thành theo danh mục Nghị quyết sắp xếp).
-* **Task 1.2 - Xây dựng Canvas Bản đồ 2D "Chỉ có Việt Nam"**:
-  * Thiết lập Leaflet/MapLibre hiển thị ranh giới 34 tỉnh mà **không tải raster tile nước ngoài** (không hiện đất liền, tên đường, tên nước láng giềng).
-  * Nền trung tính chuẩn cho Biển Đông và biên giới.
-  * Tích hợp cơ chế Inset Map (ô bản đồ phụ góc) cho 2 quần đảo Hoàng Sa và Trường Sa nếu tỉ lệ thu phóng trên màn hình nhỏ.
+### GIAI ĐOẠN 1: DỮ LIỆU GIS & BẢN ĐỒ NỀN ĐỘC LẬP (MỤC 3 SPEC GỐC) - [HOÀN THÀNH]
+* **Task 1.1 - Xử lý & Tối ưu hoá GeoJSON 34 tỉnh thành** [DONE]:
+  * Đã nén và chuẩn hoá GeoJSON `vietnam_34_provinces.geojson` từ **48.3 MB xuống còn 0.88 MB** (giảm 96.3% số điểm thừa mà vẫn giữ nguyên vẹn 100% hình học đảo).
+  * Bảo đảm giữ trọn vẹn đa giác quần đảo **Hoàng Sa** (Đà Nẵng - VN48) và **Trường Sa** (Khánh Hòa - VN56).
+  * Chuẩn hoá mã `provinceCode` (34 tỉnh/thành theo đúng Nghị quyết sắp xếp).
+* **Task 1.2 - Xây dựng Canvas Bản đồ 2D "Chỉ có Việt Nam"** [DONE]:
+  * Component `VietnamMap.tsx` hiển thị 34 tỉnh trên nền tối giản, **hoàn toàn không dùng raster tile nước ngoài** (đáp ứng Mục 1.2 & Mục 3.1).
+  * Hỗ trợ tương tác mượt mà: Pan, Zoom, Reset view ("Về toàn Việt Nam"), Hover tooltip (S1), Click chọn tỉnh (S2).
+  * Hỗ trợ chuyển đổi 3 chế độ xem: Hành chính, Tự nhiên (7 khu vực), Kinh tế - Xã hội (6 vùng).
+* **Task 1.3 - Tích hợp Inset Maps cho 2 Quần đảo Hoàng Sa & Trường Sa** [DONE]:
+  * Component `InsetMap.tsx` hiển thị ô bản đồ phụ chi tiết góc phải bên dưới, có lưới tọa độ chuẩn, cờ hiệu VN và liên kết click trực tiếp.
 
 ---
 
