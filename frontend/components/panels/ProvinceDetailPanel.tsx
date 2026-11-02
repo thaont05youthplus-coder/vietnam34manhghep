@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   X,
   Sparkles,
@@ -18,7 +18,7 @@ import {
   Building2,
   FileText,
 } from "lucide-react";
-import { ProvinceFeature } from "@/types/geo";
+import { ProvinceFeature, WardFeature, WardFeatureCollection } from "@/types/geo";
 import { CompleteProvinceDetail } from "@/types/province-details";
 import { getCompleteProvinceDetail } from "@/data/provinces-detail-data";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS } from "@/lib/regions";
@@ -39,6 +39,22 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
   onOpenNotes,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [allWards, setAllWards] = useState<WardFeature[]>([]);
+
+  useEffect(() => {
+    fetch("/data/vietnam_central_wards.geojson")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: WardFeatureCollection | null) => {
+        if (data && data.features) {
+          setAllWards(data.features);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const provinceWards = useMemo(() => {
+    return allWards.filter((w) => w.properties.provinceCode === province.properties.provinceCode);
+  }, [allWards, province.properties.provinceCode]);
 
   const { properties } = province;
   const eco = ECONOMIC_REGIONS.find((r) => r.provinceCodes.includes(properties.provinceCode));
@@ -212,6 +228,54 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
                 <div>• Phía Tây: {detail.overview.borders.west}</div>
               </div>
             </div>
+
+            {/* Phường / Xã trung tâm trọng điểm (LOD Wards) */}
+            {provinceWards.length > 0 && (
+              <div className="p-3 bg-slate-950/70 border border-sky-800/50 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <h5 className="font-bold text-sky-300 flex items-center gap-1.5 text-xs">
+                    <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                    Phường / Xã trung tâm trọng điểm ({provinceWards.length})
+                  </h5>
+                  <span className="text-[10px] text-sky-400/80 font-medium">LOD Pin Marker</span>
+                </div>
+                <div className="space-y-1.5 max-h-56 overflow-y-auto custom-scroll pr-1">
+                  {provinceWards.map((w) => (
+                    <div
+                      key={w.properties.id}
+                      className="p-2 rounded-lg bg-[#081a36]/90 border border-sky-800/40 hover:border-amber-400/60 transition-all group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-amber-300 text-xs flex items-center gap-1">
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              w.properties.isIsland
+                                ? "bg-sky-400"
+                                : w.properties.isBorderOrExtreme
+                                ? "bg-emerald-400"
+                                : "bg-amber-400"
+                            }`}
+                          />
+                          {w.properties.name}
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-700/40">
+                          {w.properties.district}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+                        {w.properties.role}
+                      </p>
+                      <div className="text-[10px] text-sky-400/80 font-mono mt-1 flex items-center justify-between">
+                        <span>{w.properties.type}</span>
+                        <span>
+                          📍 {w.geometry.coordinates[1].toFixed(4)}°B, {w.geometry.coordinates[0].toFixed(4)}°Đ
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
