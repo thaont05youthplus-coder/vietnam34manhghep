@@ -1,4 +1,4 @@
-# Netlify Configuration for Vietnam 34 Manh Ghep
+# Netlify Configuration for Vietnam 34 Manh Ghep (Monorepo)
 [build]
   base = "frontend"
   publish = ".next"

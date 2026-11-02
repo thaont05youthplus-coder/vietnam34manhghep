@@ -1,4 +1,4 @@
-# Netlify Configuration for frontend directory
+# Netlify Configuration inside frontend folder
 [build]
   publish = ".next"
   command = "npm run build"
