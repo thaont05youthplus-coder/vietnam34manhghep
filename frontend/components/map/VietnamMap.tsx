@@ -207,30 +207,32 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         ? activeRegionCodes.has(feature.properties.provinceCode)
         : null;
 
-      let fillOpacity = 0.55;
-      let strokeColor = "#94a3b8";
-      let strokeWidth = 1;
+      let fillOpacity = 0.72;
+      let strokeColor = "#0f2b48"; // Đường ranh giới màu xanh nước biển tông đậm sắc nét chuẩn Atlas GIS
+      let strokeWidth = 1.6;
 
       if (isInActiveRegion !== null) {
         if (isInActiveRegion) {
-          fillOpacity = 0.85;
-          strokeColor = "#0f766e";
-          strokeWidth = 2;
+          fillOpacity = 0.88;
+          strokeColor = "#091e36";
+          strokeWidth = 2.2;
         } else {
-          fillOpacity = 0.2;
+          fillOpacity = 0.25;
+          strokeColor = "#64748b";
+          strokeWidth = 1.0;
         }
       }
 
       if (isHovered) {
-        fillOpacity = 0.9;
-        strokeColor = "#0d9488";
-        strokeWidth = 2;
+        fillOpacity = 0.95;
+        strokeColor = "#0284c7";
+        strokeWidth = 2.5;
       }
 
       if (isSelected) {
-        fillOpacity = 0.95;
+        fillOpacity = 0.98;
         strokeColor = "#047857";
-        strokeWidth = 2.5;
+        strokeWidth = 3.0;
       }
 
       return {
@@ -539,6 +541,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               stroke={layers.boundaries ? item.strokeColor : "none"}
               strokeWidth={item.strokeWidth}
               strokeLinejoin="round"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
               filter={item.isSelected ? "url(#glow)" : undefined}
               className="transition-all duration-150 cursor-pointer"
               onMouseEnter={(e) => {
@@ -723,7 +727,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
                 const pinRadius = isSelectedWard ? 5.5 : isHovered ? 5.2 : isSelectedProv ? 4.5 : 3.6;
                 const showLabel =
-                  isHovered || isSelectedWard || isIsland || isSelectedProv || zoom >= 2.0;
+                  isHovered || isSelectedWard || (zoom >= 2.4);
 
                 return (
                   <g
@@ -775,7 +779,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                       r={pinRadius}
                       fill={pinColor}
                       stroke="#ffffff"
-                      strokeWidth={isSelectedWard || isHovered ? "1.6" : "1.1"}
+                      strokeWidth={isSelectedWard || isHovered ? "1.8" : "1.2"}
                       className="transition-all duration-150"
                     />
 
@@ -786,28 +790,28 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                       className="pointer-events-none"
                     />
 
-                    {/* Ward Name Label */}
+                    {/* Ward Name Label (Nổi hẳn lên trên pin, không bị đè che khuất) */}
                     {showLabel && (
                       <g
-                        transform={`translate(0, -${pinRadius + 4})`}
+                        transform={`translate(0, -${pinRadius + 8})`}
                         className="pointer-events-none select-none transition-all duration-150"
                       >
                         <rect
-                          x={-(ward.properties.name.length * 3.1 + 8)}
-                          y="-13"
-                          width={ward.properties.name.length * 6.2 + 16}
-                          height="15"
-                          rx="4"
+                          x={-(ward.properties.name.length * 3.2 + 10)}
+                          y="-16"
+                          width={ward.properties.name.length * 6.4 + 20}
+                          height="18"
+                          rx="5"
                           fill="#ffffff"
-                          fillOpacity="0.95"
-                          stroke={isHovered || isSelectedWard ? "#d97706" : pinColor}
-                          strokeWidth={isHovered || isSelectedWard ? "1.2" : "0.8"}
+                          stroke={isHovered || isSelectedWard ? "#d97706" : "#0f2b48"}
+                          strokeWidth="1.2"
+                          filter="url(#card-shadow)"
                         />
                         <text
                           textAnchor="middle"
-                          y="-2.5"
+                          y="-3.5"
                           fill="#0f172a"
-                          fontSize="9"
+                          fontSize="9.5"
                           fontWeight={isHovered || isSelectedWard || isIsland ? "700" : "600"}
                           fontFamily="sans-serif"
                         >
