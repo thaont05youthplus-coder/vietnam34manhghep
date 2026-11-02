@@ -125,12 +125,56 @@ export const NATURAL_REGIONS: RegionDefinition[] = [
   },
 ];
 
-// 34 Màu phân biệt sắc thái cho chế độ Hành chính
+// Bảng màu phân biệt sắc thái chuẩn Bản đồ Hành chính Việt Nam (SGK Địa lí & Atlas Quốc gia - Phụ lục C)
+// Sử dụng các tông màu pastel thanh nhã, dịu mắt chuẩn quy ước kỹ thuật quốc gia:
+// Tím nhạt, Vàng chanh, Xanh lá non, Hồng phấn, Xanh ngọc biển, Cam đào, Lam nhạt
+export const ADMIN_PROVINCE_COLORS: Record<string, string> = {
+  // Miền Bắc (Chuẩn SGK Địa lí theo bản chụp mẫu Phụ lục C)
+  VN08: "#f3e8ff", // Tuyên Quang - Tím pastel
+  VN04: "#fbcfe8", // Cao Bằng - Hồng phấn pastel
+  VN12: "#bbf7d0", // Lai Châu - Xanh lá non pastel
+  VN15: "#fef08a", // Lào Cai - Vàng chanh pastel
+  VN19: "#bbf7d0", // Thái Nguyên - Xanh lá pastel
+  VN11: "#bbf7d0", // Điện Biên - Xanh lá non pastel
+  VN20: "#dbeafe", // Lạng Sơn - Lam phấn pastel
+  VN14: "#f3e8ff", // Sơn La - Tím pastel
+  VN25: "#cffafe", // Phú Thọ - Xanh ngọc pastel
+  VN24: "#bbf7d0", // Bắc Ninh - Xanh lá non pastel
+  VN22: "#fef08a", // Quảng Ninh - Vàng chanh pastel
+  VN01: "#fbcfe8", // TP. Hà Nội - Hồng phấn pastel
+  VN31: "#fed7aa", // TP. Hải Phòng - Cam đào pastel
+  VN33: "#fbcfe8", // Hưng Yên - Hồng phấn pastel
+  VN37: "#fef08a", // Ninh Bình - Vàng chanh pastel
+  VN38: "#f3e8ff", // Thanh Hóa - Tím pastel
+
+  // Miền Trung & Tây Nguyên
+  VN40: "#bbf7d0", // Nghệ An - Xanh lá non pastel
+  VN42: "#fef08a", // Hà Tĩnh - Vàng chanh pastel
+  VN44: "#fbcfe8", // Quảng Trị - Hồng phấn pastel
+  VN46: "#f3e8ff", // Huế - Tím pastel
+  VN48: "#cffafe", // Đà Nẵng - Xanh ngọc pastel
+  VN51: "#fef08a", // Quảng Ngãi - Vàng chanh pastel
+  VN52: "#bbf7d0", // Gia Lai - Xanh lá pastel
+  VN56: "#dbeafe", // Khánh Hòa - Lam phấn pastel
+  VN66: "#fed7aa", // Đắk Lắk - Cam đào pastel
+  VN68: "#f3e8ff", // Lâm Đồng - Tím pastel
+
+  // Miền Nam (Đông Nam Bộ & ĐBSCL)
+  VN75: "#fef08a", // Đồng Nai - Vàng chanh pastel
+  VN79: "#fbcfe8", // TP. Hồ Chí Minh - Hồng phấn pastel
+  VN80: "#bbf7d0", // Tây Ninh - Xanh lá pastel
+  VN82: "#f3e8ff", // Đồng Tháp - Tím pastel
+  VN86: "#cffafe", // Vĩnh Long - Xanh ngọc pastel
+  VN91: "#fef08a", // An Giang - Vàng chanh pastel
+  VN92: "#fed7aa", // Cần Thơ - Cam đào pastel
+  VN96: "#bbf7d0", // Cà Mau - Xanh lá pastel
+};
+
+// Bảng màu dự phòng phân tầng hài hòa chuẩn Atlas giáo khoa
 export const PROVINCE_PALETTE = [
-  "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4",
-  "#84cc16", "#f97316", "#6366f1", "#14b8a6", "#eab308", "#a855f7",
-  "#0284c7", "#059669", "#d97706", "#7c3aed", "#db2777", "#0891b2",
-  "#65a30d", "#ea580c", "#4f46e5", "#0d9488", "#ca8a04", "#9333ea",
-  "#2563eb", "#16a34a", "#b45309", "#6d28d9", "#be185d", "#0e7490",
-  "#4d7c0f", "#c2410c", "#4338ca", "#047857"
+  "#f3e8ff", "#fef08a", "#bbf7d0", "#fbcfe8", "#cffafe", "#fed7aa", "#dbeafe",
+  "#e9d5ff", "#fef9c3", "#dcfce7", "#fce7f3", "#bae6fd", "#ffedd5", "#e0e7ff",
+  "#ede9fe", "#fef08a", "#bbf7d0", "#fbcfe8", "#cffafe", "#fed7aa", "#dbeafe",
+  "#f5d0fe", "#fef9c3", "#dcfce7", "#fce7f3", "#bae6fd", "#ffedd5", "#e0e7ff",
+  "#ede9fe", "#fef08a", "#bbf7d0", "#fbcfe8", "#cffafe", "#fed7aa"
 ];

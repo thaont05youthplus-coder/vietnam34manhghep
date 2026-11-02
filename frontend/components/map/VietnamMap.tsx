@@ -8,7 +8,7 @@ import {
   WardFeatureCollection,
   WardFeature,
 } from "@/types/geo";
-import { ECONOMIC_REGIONS, NATURAL_REGIONS, PROVINCE_PALETTE } from "@/lib/regions";
+import { ECONOMIC_REGIONS, NATURAL_REGIONS, PROVINCE_PALETTE, ADMIN_PROVINCE_COLORS } from "@/lib/regions";
 import { LayerSettings } from "@/components/layout/SubHeader";
 import {
   ShieldCheck,
@@ -167,9 +167,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         return ecoRegion ? ecoRegion.color : "#0284c7";
       }
 
-      // Default: Administrative mode - Light harmonious GIS colors
-      const idx = Math.abs(code.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)) % PROVINCE_PALETTE.length;
-      return PROVINCE_PALETTE[idx];
+      // Chế độ Hành chính: Bảng màu pastel chuẩn SGK & Atlas Quốc gia (Phụ lục C)
+      return ADMIN_PROVINCE_COLORS[code] || PROVINCE_PALETTE[0];
     };
   }, [mode]);
 
@@ -207,32 +206,33 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         ? activeRegionCodes.has(feature.properties.provinceCode)
         : null;
 
-      let fillOpacity = 0.90;
-      let strokeColor = "#000000"; // Viền đen mảnh sắc nét chuẩn bản đồ GIS ban đầu (#000000)
-      let strokeWidth = 1.0;
+      // Quy chuẩn Phụ lục C: Đường địa giới hành chính màu đen K:100 (#000000), nét siêu mỏng 0.5px
+      let fillOpacity = 0.95;
+      let strokeColor = "#000000";
+      let strokeWidth = 0.5;
 
       if (isInActiveRegion !== null) {
         if (isInActiveRegion) {
-          fillOpacity = 0.96;
+          fillOpacity = 1.0;
           strokeColor = "#000000";
-          strokeWidth = 1.2;
+          strokeWidth = 0.6;
         } else {
           fillOpacity = 0.35;
-          strokeColor = "#334155";
-          strokeWidth = 0.8;
+          strokeColor = "#94a3b8";
+          strokeWidth = 0.4;
         }
       }
 
       if (isHovered) {
         fillOpacity = 1.0;
-        strokeColor = "#ffffff";
-        strokeWidth = 2.0;
+        strokeColor = "#0284c7"; // Viền xanh lam sáng C:100 (Phụ lục C mục 4)
+        strokeWidth = 1.1;
       }
 
       if (isSelected) {
         fillOpacity = 1.0;
-        strokeColor = "#f59e0b";
-        strokeWidth = 2.6;
+        strokeColor = "#d97706";
+        strokeWidth = 1.3;
       }
 
       return {
@@ -287,11 +287,52 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     const factor = e.deltaY < 0 ? 1.15 : 0.85;
-    setZoom((prev) => Math.min(Math.max(prev * factor, 0.6), 8));
+    const newZoom = Math.min(Math.max(zoom * factor, 0.6), 8);
+    if (newZoom === zoom) return;
+
+    // Zoom hướng tâm chính xác theo vị trí con trỏ chuột (Focal Point Zoom chuẩn GIS)
+    // Giữ điểm bản đồ nằm dưới con trỏ chuột không bị chạy lệch ("bị lố sang phần khác")
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect && rect.width > 0 && rect.height > 0) {
+      const mouseX = (e.clientX - rect.left) * (svgWidth / rect.width);
+      const mouseY = (e.clientY - rect.top) * (svgHeight / rect.height);
+      const ratio = newZoom / zoom;
+      const newPanX = mouseX - (mouseX - pan.x) * ratio;
+      const newPanY = mouseY - (mouseY - pan.y) * ratio;
+
+      setZoom(newZoom);
+      setPan({ x: newPanX, y: newPanY });
+    } else {
+      setZoom(newZoom);
+    }
   };
 
-  const handleZoomIn = () => setZoom((prev) => Math.min(prev * 1.25, 8));
-  const handleZoomOut = () => setZoom((prev) => Math.max(prev * 0.8, 0.6));
+  // Zoom in/out giữ nguyên tâm giữa màn hình (Center Focal Zoom)
+  const handleZoomIn = () => {
+    const newZoom = Math.min(zoom * 1.25, 8);
+    if (newZoom === zoom) return;
+    const ratio = newZoom / zoom;
+    const cx = svgWidth / 2;
+    const cy = svgHeight / 2;
+    setPan((prev) => ({
+      x: cx - (cx - prev.x) * ratio,
+      y: cy - (cy - prev.y) * ratio,
+    }));
+    setZoom(newZoom);
+  };
+
+  const handleZoomOut = () => {
+    const newZoom = Math.max(zoom * 0.8, 0.6);
+    if (newZoom === zoom) return;
+    const ratio = newZoom / zoom;
+    const cx = svgWidth / 2;
+    const cy = svgHeight / 2;
+    setPan((prev) => ({
+      x: cx - (cx - prev.x) * ratio,
+      y: cy - (cy - prev.y) * ratio,
+    }));
+    setZoom(newZoom);
+  };
 
   // Reset về góc nhìn toàn cảnh toàn vẹn Việt Nam
   const handleReset = () => {
@@ -302,46 +343,46 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   };
 
   // =========================================================================
-  // DI CHUYỂN BẢN ĐỒ ĐẾN GÓC ĐÔNG / TÂY / NAM / BẮC (KHÔNG XOAY, LƯỚT MƯỢT MÀ)
+  // DI CHUYỂN BẢN ĐỒ ĐẾN GÓC ĐÔNG / TÂY / NAM / BẮC (ĐÚNG TÂM ĐỊA LÝ, LƯỚT MƯỢT MÀ)
   // =========================================================================
   const handleFlyToCorner = (direction: "bac" | "dong" | "nam" | "tay") => {
     setActiveDirection(direction);
 
     if (direction === "bac") {
-      // Di chuyển lên phía Bắc (Hà Nội, Lũng Cú, Đồng bằng sông Hồng & Miền núi phía Bắc)
-      setZoom(1.7);
-      setPan({ x: 55, y: 220 });
+      // Phía Bắc: Căn chuẩn trung tâm Hà Nội, ĐBSH & Việt Bắc (tx: 250, ty: 200)
+      setZoom(1.6);
+      setPan({ x: 80, y: 205 });
     } else if (direction === "nam") {
-      // Di chuyển xuống phía Nam (TP. Hồ Chí Minh, Đồng bằng sông Cửu Long, Cực Nam Đất Mũi)
-      setZoom(1.7);
-      setPan({ x: 55, y: -870 });
+      // Phía Nam: Căn chuẩn trung tâm TP. HCM, ĐBSCL & Cà Mau (tx: 260, ty: 790)
+      setZoom(1.6);
+      setPan({ x: 64, y: -739 });
     } else if (direction === "dong") {
-      // Di chuyển sang phía Đông (Vùng Biển Đông, Quần đảo Hoàng Sa & Trường Sa)
-      setZoom(1.4);
-      setPan({ x: -360, y: -350 });
+      // Phía Đông: Căn chuẩn vùng Biển Đông, Quần đảo Hoàng Sa & Trường Sa (tx: 625, ty: 620)
+      setZoom(1.3);
+      setPan({ x: -332, y: -281 });
     } else if (direction === "tay") {
-      // Di chuyển sang phía Tây (Tây Bắc Bộ, Điện Biên, Lai Châu, Dãy Hoàng Liên Sơn)
-      setZoom(1.7);
-      setPan({ x: 260, y: -20 });
+      // Phía Tây: Căn chuẩn Điện Biên, Lai Châu & Dãy Hoàng Liên Sơn (tx: 130, ty: 200)
+      setZoom(1.6);
+      setPan({ x: 272, y: 205 });
     }
   };
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full bg-[#f8fafc] overflow-hidden select-none"
+      className="relative w-full h-full bg-[#edf6fd] overflow-hidden select-none"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
     >
-      {/* Khung lưới tọa độ GIS VN-2000 chấm tròn / grid dots */}
+      {/* Khung lưới tọa độ GIS VN-2000 chấm tròn / grid dots xanh lam sáng (Phụ lục C mục 4) */}
       {layers.grid && (
         <div
-          className="absolute inset-0 pointer-events-none opacity-40"
+          className="absolute inset-0 pointer-events-none opacity-30"
           style={{
-            backgroundImage: "radial-gradient(#94a3b8 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(#0284c7 1px, transparent 1px)",
             backgroundSize: "32px 32px",
           }}
         />
