@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bản đồ Số 34 Tỉnh Thành Việt Nam - VN34MG</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Be Vietnam Pro', 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #020617;
+      color: #f8fafc;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+  <!-- Load GeoJSON from local data.js without CORS restrictions -->
+  <script src="data.js" charset="UTF-8"></script>
+</head>
+<body class="flex flex-col h-screen w-screen bg-slate-950 text-slate-100 select-none">
+
+  <!-- Header UI-01 -->
+  <header class="h-16 bg-slate-900/95 border-b border-slate-800 px-5 flex items-center justify-between z-20 backdrop-blur shadow-md shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-black text-white text-base shadow">
+        34
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold tracking-tight text-white text-base">VN34MG</span>
+          <span class="text-[11px] font-semibold bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700/50">
+            DEMO GIAI ĐOẠN 1
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 hidden sm:block">Bản đồ số tương tác 34 Tỉnh thành Việt Nam (Chỉ có Việt Nam)</p>
+      </div>
+    </div>
+
+    <!-- Ô tìm kiếm nhanh -->
+    <div class="flex-1 max-w-md mx-6">
+      <div class="relative">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Tìm kiếm tỉnh/thành (Huế, Đà Nẵng, Khánh Hòa, Cà Mau)..."
+          class="w-full h-9 pl-9 pr-3 text-xs bg-slate-800/90 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        />
+        <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
+      </div>
+    </div>
+
+    <!-- Badge chủ quyền biển đảo -->
+    <div class="flex items-center gap-2 text-xs">
+      <div class="px-3 py-1 bg-emerald-950/80 border border-emerald-700 text-emerald-300 rounded-md text-xs font-medium flex items-center gap-1.5 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Hoàng Sa &amp; Trường Sa: Đầy đủ
+      </div>
+    </div>
+  </header>
+
+  <!-- Vùng làm việc Bản đồ (Map Workspace) -->
+  <div class="relative flex-1 w-full h-[calc(100vh-64px)] overflow-hidden bg-slate-950" id="mapContainer">
+    <!-- Nền chấm lưới tọa độ tinh tế -->
+    <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none"></div>
+
+    <!-- Thanh chuyển 3 chế độ (UI-04) -->
+    <div class="absolute top-4 left-4 z-20 flex bg-slate-900/95 border border-slate-700/80 rounded-lg p-1 shadow-xl backdrop-blur">
+      <button id="btnHanhChinh" class="mode-btn px-3 py-1.5 text-xs font-semibold rounded-md bg-blue-600 text-white shadow">
+        Hành chính (34 tỉnh)
+      </button>
+      <button id="btnTuNhien" class="mode-btn px-3 py-1.5 text-xs font-semibold rounded-md text-slate-300 hover:text-white hover:bg-slate-800">
+        Tự nhiên (7 khu vực)
+      </button>
+      <button id="btnKinhTe" class="mode-btn px-3 py-1.5 text-xs font-semibold rounded-md text-slate-300 hover:text-white hover:bg-slate-800">
+        Kinh tế – XH (6 vùng)
+      </button>
+    </div>
+
+    <!-- Cụm nút Phóng to / Thu nhỏ / Căn giữa -->
+    <div class="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-slate-900/95 border border-slate-700/80 rounded-lg p-1.5 shadow-xl backdrop-blur">
+      <button id="btnZoomIn" class="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-lg font-bold" title="Phóng to (+)">+</button>
+      <button id="btnZoomOut" class="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-lg font-bold" title="Thu nhỏ (−)">−</button>
+      <div class="w-full h-px bg-slate-700 my-0.5"></div>
+      <button id="btnResetView" class="w-8 h-8 flex items-center justify-center text-amber-300 hover:bg-slate-800 rounded text-xs font-extrabold" title="Về toàn Việt Nam">VN</button>
+    </div>
+
+    <!-- Canvas SVG vector bản đồ Việt Nam -->
+    <svg id="svgMap" class="w-full h-full cursor-grab" viewBox="0 0 1000 1100">
+      <defs>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3.5" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      <g id="mapGroup"></g>
+      
+      <!-- Chữ Biển Đông trên nền bản đồ chính -->
+      <text x="660" y="460" fill="#334155" font-size="20" font-weight="bold" letter-spacing="6" class="pointer-events-none select-none uppercase opacity-60">BIỂN ĐÔNG</text>
+      <text x="645" y="490" fill="#475569" font-size="12" class="pointer-events-none select-none opacity-50">(VIỆT NAM)</text>
+
+      <!-- Địa danh Hoàng Sa & Trường Sa trên bản đồ chính -->
+      <g class="pointer-events-none select-none">
+        <text x="690" y="420" fill="#fbbf24" font-size="13" font-weight="bold">★ QĐ. HOÀNG SA</text>
+        <text x="690" y="442" fill="#94a3b8" font-size="11">(TP. Đà Nẵng)</text>
+
+        <text x="710" y="820" fill="#fbbf24" font-size="13" font-weight="bold">★ QĐ. TRƯỜNG SA</text>
+        <text x="710" y="842" fill="#94a3b8" font-size="11">(Tỉnh Khánh Hòa)</text>
+      </g>
+    </svg>
+
+    <!-- Tooltip nổi S1 khi rê chuột -->
+    <div id="tooltip" class="absolute z-40 pointer-events-none bg-slate-900/95 border border-slate-700 text-white rounded-lg px-3.5 py-2.5 shadow-2xl backdrop-blur hidden max-w-xs text-xs">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+        <h5 id="ttName" class="font-bold text-amber-300 text-sm"></h5>
+        <span id="ttCode" class="text-xs text-slate-400 font-mono"></span>
+      </div>
+      <div class="text-xs text-slate-300 mt-1.5 flex flex-col gap-1">
+        <span id="ttType"></span>
+        <span id="ttArea"></span>
+        <span id="ttRegion" class="text-amber-200 font-medium"></span>
+      </div>
+    </div>
+
+    <!-- 2 Ô Bản đồ phụ (Inset Map) góc dưới bên phải -->
+    <div class="absolute bottom-4 right-4 z-20 flex flex-col sm:flex-row gap-3">
+      <!-- Ô Hoàng Sa -->
+      <div id="boxHoangSa" class="bg-slate-900/95 border border-slate-700 hover:border-amber-400 rounded-xl p-2.5 shadow-2xl backdrop-blur cursor-pointer transition-all w-48" title="Nhấn để chọn TP. Đà Nẵng">
+        <div class="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-1.5">
+          <div>
+            <div class="text-xs font-bold text-amber-300">QĐ. HOÀNG SA</div>
+            <div class="text-[10px] text-slate-400">(TP. Đà Nẵng)</div>
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-900 text-yellow-300 font-bold border border-red-700">VN</span>
+        </div>
+        <svg id="svgHoangSa" width="170" height="105" class="rounded-lg bg-slate-950/80 overflow-hidden mx-auto"></svg>
+        <div class="flex justify-between items-center mt-1.5 text-[10px] text-slate-400 font-mono">
+          <span>16°30'B - 112°00'Đ</span>
+          <span class="text-amber-400 font-semibold hover:underline">Chi tiết →</span>
+        </div>
+      </div>
+
+      <!-- Ô Trường Sa -->
+      <div id="boxTruongSa" class="bg-slate-900/95 border border-slate-700 hover:border-amber-400 rounded-xl p-2.5 shadow-2xl backdrop-blur cursor-pointer transition-all w-48" title="Nhấn để chọn Tỉnh Khánh Hòa">
+        <div class="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-1.5">
+          <div>
+            <div class="text-xs font-bold text-amber-300">QĐ. TRƯỜNG SA</div>
+            <div class="text-[10px] text-slate-400">(Tỉnh Khánh Hòa)</div>
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-900 text-yellow-300 font-bold border border-red-700">VN</span>
+        </div>
+        <svg id="svgTruongSa" width="170" height="105" class="rounded-lg bg-slate-950/80 overflow-hidden mx-auto"></svg>
+        <div class="flex justify-between items-center mt-1.5 text-[10px] text-slate-400 font-mono">
+          <span>10°00'B - 114°30'Đ</span>
+          <span class="text-amber-400 font-semibold hover:underline">Chi tiết →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bảng thông tin chi tiết tỉnh S2 (Trượt ra khi click) -->
+    <aside id="detailPanel" class="absolute top-4 right-4 z-30 w-84 bg-slate-900/95 border border-slate-700 rounded-xl p-5 shadow-2xl backdrop-blur hidden max-w-sm">
+      <div class="flex justify-between items-start pb-3 border-b border-slate-800">
+        <div>
+          <span id="panelCode" class="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider"></span>
+          <h3 id="panelName" class="text-xl font-black text-white"></h3>
+          <p id="panelNameEn" class="text-xs text-slate-400 italic"></p>
+        </div>
+        <button id="btnClosePanel" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 text-base leading-none">✕</button>
+      </div>
+
+      <div class="mt-4 space-y-2.5 text-xs text-slate-300">
+        <div class="flex justify-between py-1 border-b border-slate-800/60">
+          <span class="text-slate-400">Phân loại:</span>
+          <span id="panelType" class="font-semibold text-slate-100"></span>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-800/60">
+          <span class="text-slate-400">Diện tích:</span>
+          <span id="panelArea" class="font-semibold text-amber-300"></span>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-800/60">
+          <span class="text-slate-400">Vùng KT-XH:</span>
+          <span id="panelEconomicRegion" class="font-semibold text-blue-300"></span>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-800/60">
+          <span class="text-slate-400">Khu vực tự nhiên:</span>
+          <span id="panelNaturalRegion" class="font-semibold text-emerald-300"></span>
+        </div>
+        <div id="panelIslandNote" class="p-3 bg-amber-950/40 border border-amber-800/60 rounded-lg text-xs text-amber-200 mt-2.5 hidden leading-relaxed"></div>
+      </div>
+
+      <div class="mt-5 pt-3 border-t border-slate-800 flex gap-2">
+        <button onclick="alert('Đã chọn tỉnh thành thành công! Bảng chi tiết 5 tab nội dung (Tổng quan, Tự nhiên, Kinh tế, Hình ảnh, Nguồn) sẽ liên kết đầy đủ ở Giai đoạn 3.')" class="flex-1 py-2 px-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold shadow-lg transition-colors">
+          Khám phá chi tiết địa phương
+        </button>
+      </div>
+    </aside>
+
+    <!-- Chú giải phân vùng ở góc dưới bên trái -->
+    <div id="legendBox" class="absolute bottom-4 left-4 z-20 bg-slate-900/95 border border-slate-800 rounded-xl p-3 shadow-xl backdrop-blur text-xs text-slate-300 max-w-xs hidden md:block">
+      <h6 id="legendTitle" class="font-bold text-slate-200 mb-2 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+        34 Đơn vị hành chính cấp Tỉnh
+      </h6>
+      <div id="legendItems" class="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+        <div class="col-span-2 text-slate-400 text-[11px] leading-relaxed">
+          Bao gồm đầy đủ 34 tỉnh/thành, Hoàng Sa (Đà Nẵng), Trường Sa (Khánh Hòa) theo phương án sắp xếp hành chính.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Định nghĩa 6 Vùng Kinh tế - Xã hội
+    const ECONOMIC_REGIONS = [
+      { id: "kt_trung_du_mien_nui_phia_bac", name: "TD & MN Phía Bắc", color: "#059669", provinceCodes: ["VN04", "VN08", "VN11", "VN12", "VN14", "VN15", "VN19", "VN20", "VN22", "VN25"] },
+      { id: "kt_dong_bang_song_hong", name: "Đồng bằng sông Hồng", color: "#2563eb", provinceCodes: ["VN01", "VN24", "VN31", "VN33", "VN37"] },
+      { id: "kt_bac_trung_bo_duyen_hai_mien_trung", name: "Bắc Trung Bộ & DHMT", color: "#d97706", provinceCodes: ["VN38", "VN40", "VN42", "VN44", "VN46", "VN48", "VN51", "VN56"] },
+      { id: "kt_tay_nguyen", name: "Tây Nguyên", color: "#7c3aed", provinceCodes: ["VN52", "VN66", "VN68"] },
+      { id: "kt_dong_nam_bo", name: "Đông Nam Bộ", color: "#dc2626", provinceCodes: ["VN75", "VN79", "VN80"] },
+      { id: "kt_dong_bang_song_cuu_long", name: "Đồng bằng sông Cửu Long", color: "#0d9488", provinceCodes: ["VN82", "VN86", "VN91", "VN92", "VN96"] }
+    ];
+
+    // Định nghĩa 7 Khu vực Tự nhiên
+    const NATURAL_REGIONS = [
+      { id: "tn_dong_bac_bo", name: "Đông Bắc Bộ", color: "#15803d", provinceCodes: ["VN04", "VN08", "VN19", "VN20", "VN22", "VN25"] },
+      { id: "tn_tay_bac_bo", name: "Tây Bắc Bộ", color: "#4d7c0f", provinceCodes: ["VN11", "VN12", "VN14", "VN15"] },
+      { id: "tn_dong_bang_song_hong", name: "Đồng bằng sông Hồng", color: "#1d4ed8", provinceCodes: ["VN01", "VN24", "VN31", "VN33", "VN37"] },
+      { id: "tn_bac_trung_bo", name: "Bắc Trung Bộ", color: "#ea580c", provinceCodes: ["VN38", "VN40", "VN42", "VN44", "VN46"] },
+      { id: "tn_duyen_hai_nam_trung_bo", name: "Duyên hải Nam Trung Bộ", color: "#f59e0b", provinceCodes: ["VN48", "VN51", "VN56"] },
+      { id: "tn_tay_nguyen", name: "Tây Nguyên", color: "#6b21a8", provinceCodes: ["VN52", "VN66", "VN68"] },
+      { id: "tn_nam_bo", name: "Nam Bộ", color: "#0f766e", provinceCodes: ["VN75", "VN79", "VN80", "VN82", "VN86", "VN91", "VN92", "VN96"] }
+    ];
+
+    // Bảng màu 34 tỉnh chế độ Hành chính
+    const PALETTE = [
+      "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4",
+      "#84cc16", "#f97316", "#6366f1", "#14b8a6", "#eab308", "#a855f7",
+      "#0284c7", "#059669", "#d97706", "#7c3aed", "#db2777", "#0891b2",
+      "#65a30d", "#ea580c", "#4f46e5", "#0d9488", "#ca8a04", "#9333ea",
+      "#2563eb", "#16a34a", "#b45309", "#6d28d9", "#be185d", "#0e7490",
+      "#4d7c0f", "#c2410c", "#4338ca", "#047857"
+    ];
+
+    let currentMode = "hanh_chinh";
+    let selectedCode = null;
+    let zoomLevel = 1;
+    let panX = 0, panY = 0;
+    let isDragging = false;
+    let startX = 0, startY = 0;
+
+    const mapGroup = document.getElementById("mapGroup");
+    const tooltip = document.getElementById("tooltip");
+    const detailPanel = document.getElementById("detailPanel");
+
+    // Khung tọa độ Việt Nam bao gồm cả 2 quần đảo
+    const minLon = 101.8, maxLon = 118.2, minLat = 6.8, maxLat = 23.8;
+    const svgW = 1000, svgH = 1100, pad = 40;
+
+    function project(lon, lat) {
+      const x = pad + ((lon - minLon) / (maxLon - minLon)) * (svgW - 2 * pad);
+      const y = svgH - pad - ((lat - minLat) / (maxLat - minLat)) * (svgH - 2 * pad);
+      return [x, y];
+    }
+
+    function updateTransform() {
+      mapGroup.setAttribute("transform", `translate(${panX}, ${panY}) scale(${zoomLevel})`);
+    }
+
+    function getFillColor(feat, index) {
+      const code = feat.properties.provinceCode;
+      if (currentMode === "kinh_te") {
+        const r = ECONOMIC_REGIONS.find(reg => reg.provinceCodes.includes(code));
+        return r ? r.color : "#64748b";
+      }
+      if (currentMode === "tu_nhien") {
+        const r = NATURAL_REGIONS.find(reg => reg.provinceCodes.includes(code));
+        return r ? r.color : "#64748b";
+      }
+      return PALETTE[index % PALETTE.length];
+    }
+
+    function renderMap() {
+      if (!window.GEO_DATA || !window.GEO_DATA.features) return;
+      mapGroup.innerHTML = "";
+
+      window.GEO_DATA.features.forEach((feat, index) => {
+        const code = feat.properties.provinceCode;
+        let d = "";
+
+        feat.geometry.coordinates.forEach(poly => {
+          poly.forEach(ring => {
+            if (!ring || ring.length < 3) return;
+            ring.forEach((pt, pIdx) => {
+              const [px, py] = project(pt[0], pt[1]);
+              d += `${pIdx === 0 ? "M" : "L"} ${px.toFixed(1)} ${py.toFixed(1)} `;
+            });
+            d += "Z ";
+          });
+        });
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        path.setAttribute("id", "prov-" + code);
+        path.setAttribute("fill", getFillColor(feat, index));
+        path.setAttribute("fill-opacity", selectedCode === code ? "0.95" : "0.68");
+        path.setAttribute("stroke", selectedCode === code ? "#f59e0b" : "#0f172a");
+        path.setAttribute("stroke-width", selectedCode === code ? "2.5" : "0.8");
+        path.setAttribute("stroke-linejoin", "round");
+        if (selectedCode === code) path.setAttribute("filter", "url(#glow)");
+        path.style.transition = "all 0.15s ease";
+        path.style.cursor = "pointer";
+
+        path.addEventListener("mouseenter", (e) => {
+          if (selectedCode !== code) {
+            path.setAttribute("stroke", "#ffffff");
+            path.setAttribute("stroke-width", "1.8");
+            path.setAttribute("fill-opacity", "0.88");
+          }
+          showTooltip(e, feat);
+        });
+
+        path.addEventListener("mouseleave", () => {
+          if (selectedCode !== code) {
+            path.setAttribute("stroke", "#0f172a");
+            path.setAttribute("stroke-width", "0.8");
+            path.setAttribute("fill-opacity", "0.68");
+          }
+          tooltip.classList.add("hidden");
+        });
+
+        path.addEventListener("click", (e) => {
+          e.stopPropagation();
+          selectProvince(code);
+        });
+
+        mapGroup.appendChild(path);
+      });
+
+      renderInsets();
+      renderLegend();
+    }
+
+    function showTooltip(e, feat) {
+      const containerRect = document.getElementById("mapContainer").getBoundingClientRect();
+      const x = e.clientX - containerRect.left + 15;
+      const y = e.clientY - containerRect.top + 15;
+
+      document.getElementById("ttName").textContent = feat.properties.name;
+      document.getElementById("ttCode").textContent = "(" + feat.properties.provinceCode + ")";
+      document.getElementById("ttType").textContent = "Loại: " + feat.properties.type;
+      document.getElementById("ttArea").textContent = "Diện tích: " + feat.properties.areaSqKm.toLocaleString("vi-VN") + " km²";
+      
+      const eco = ECONOMIC_REGIONS.find(r => r.provinceCodes.includes(feat.properties.provinceCode));
+      document.getElementById("ttRegion").textContent = eco ? ("Vùng: " + eco.name) : "";
+
+      tooltip.style.left = x + "px";
+      tooltip.style.top = y + "px";
+      tooltip.classList.remove("hidden");
+    }
+
+    function selectProvince(code) {
+      if (selectedCode === code) {
+        selectedCode = null;
+        detailPanel.classList.add("hidden");
+      } else {
+        selectedCode = code;
+        const feat = window.GEO_DATA.features.find(f => f.properties.provinceCode === code);
+        if (feat) {
+          document.getElementById("panelCode").textContent = feat.properties.provinceCode;
+          document.getElementById("panelName").textContent = feat.properties.name;
+          document.getElementById("panelNameEn").textContent = feat.properties.nameEn;
+          document.getElementById("panelType").textContent = feat.properties.type;
+          document.getElementById("panelArea").textContent = feat.properties.areaSqKm.toLocaleString("vi-VN") + " km²";
+
+          const eco = ECONOMIC_REGIONS.find(r => r.provinceCodes.includes(code));
+          const nat = NATURAL_REGIONS.find(r => r.provinceCodes.includes(code));
+          document.getElementById("panelEconomicRegion").textContent = eco ? eco.name : "N/A";
+          document.getElementById("panelNaturalRegion").textContent = nat ? nat.name : "N/A";
+
+          const islandNote = document.getElementById("panelIslandNote");
+          if (code === "VN48") {
+            islandNote.innerHTML = "🏝️ Bao gồm <strong>Huyện đảo Hoàng Sa</strong> với hơn 18.000 điểm đa giác hải đảo.";
+            islandNote.classList.remove("hidden");
+          } else if (code === "VN56") {
+            islandNote.innerHTML = "🏝️ Bao gồm <strong>Huyện đảo Trường Sa</strong> trải rộng trên Biển Đông với hơn 54.000 điểm đa giác hải đảo.";
+            islandNote.classList.remove("hidden");
+          } else {
+            islandNote.classList.add("hidden");
+          }
+
+          detailPanel.classList.remove("hidden");
+        }
+      }
+      renderMap();
+    }
+
+    function renderInsets() {
+      if (!window.GEO_DATA || !window.GEO_DATA.features) return;
+
+      // Inset Hoàng Sa
+      const daNang = window.GEO_DATA.features.find(f => f.properties.provinceCode === "VN48");
+      const svgHS = document.getElementById("svgHoangSa");
+      svgHS.innerHTML = "";
+      if (daNang) {
+        let hsD = "";
+        daNang.geometry.coordinates.forEach(poly => {
+          poly.forEach(ring => {
+            if (ring.length >= 3 && ring[0][0] >= 111.0 && ring[0][0] <= 113.5) {
+              ring.forEach((pt, pIdx) => {
+                const px = 10 + ((pt[0] - 111.0) / (113.2 - 111.0)) * 150;
+                const py = 95 - ((pt[1] - 15.5) / (17.3 - 15.5)) * 85;
+                hsD += `${pIdx === 0 ? "M" : "L"} ${px.toFixed(1)} ${py.toFixed(1)} `;
+              });
+              hsD += "Z ";
+            }
+          });
+        });
+        const pHS = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pHS.setAttribute("d", hsD);
+        pHS.setAttribute("fill", "#fbbf24");
+        pHS.setAttribute("stroke", "#d97706");
+        pHS.setAttribute("stroke-width", "1.5");
+        svgHS.appendChild(pHS);
+      }
+
+      // Inset Trường Sa
+      const khanhHoa = window.GEO_DATA.features.find(f => f.properties.provinceCode === "VN56");
+      const svgTS = document.getElementById("svgTruongSa");
+      svgTS.innerHTML = "";
+      if (khanhHoa) {
+        let tsD = "";
+        khanhHoa.geometry.coordinates.forEach(poly => {
+          poly.forEach(ring => {
+            if (ring.length >= 3 && ring[0][0] >= 111.5 && ring[0][1] <= 12.5) {
+              ring.forEach((pt, pIdx) => {
+                const px = 10 + ((pt[0] - 111.5) / (117.5 - 111.5)) * 150;
+                const py = 95 - ((pt[1] - 6.5) / (12.5 - 6.5)) * 85;
+                tsD += `${pIdx === 0 ? "M" : "L"} ${px.toFixed(1)} ${py.toFixed(1)} `;
+              });
+              tsD += "Z ";
+            }
+          });
+        });
+        const pTS = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pTS.setAttribute("d", tsD);
+        pTS.setAttribute("fill", "#fbbf24");
+        pTS.setAttribute("stroke", "#d97706");
+        pTS.setAttribute("stroke-width", "1.5");
+        svgTS.appendChild(pTS);
+      }
+    }
+
+    function renderLegend() {
+      const title = document.getElementById("legendTitle");
+      const items = document.getElementById("legendItems");
+
+      if (currentMode === "kinh_te") {
+        title.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span> 6 Vùng Kinh tế – Xã hội';
+        items.innerHTML = ECONOMIC_REGIONS.map(r => `
+          <div class="flex items-center gap-2 truncate">
+            <span class="w-2.5 h-2.5 rounded-sm shrink-0" style="background:${r.color}"></span>
+            <span class="truncate">${r.name}</span>
+          </div>
+        `).join("");
+      } else if (currentMode === "tu_nhien") {
+        title.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> 7 Khu vực Tự nhiên';
+        items.innerHTML = NATURAL_REGIONS.map(r => `
+          <div class="flex items-center gap-2 truncate">
+            <span class="w-2.5 h-2.5 rounded-sm shrink-0" style="background:${r.color}"></span>
+            <span class="truncate">${r.name}</span>
+          </div>
+        `).join("");
+      } else {
+        title.innerHTML = '<span class="w-2 h-2 rounded-full bg-blue-400"></span> 34 Đơn vị hành chính cấp Tỉnh';
+        items.innerHTML = '<div class="col-span-2 text-slate-400 text-[11px] leading-relaxed">Bao gồm đầy đủ 34 tỉnh/thành, Hoàng Sa (Đà Nẵng), Trường Sa (Khánh Hòa) theo phương án sắp xếp hành chính.</div>';
+      }
+    }
+
+    // Sự kiện kéo chuột (Pan) & Cuộn chuột (Zoom)
+    const svgMap = document.getElementById("svgMap");
+    svgMap.addEventListener("mousedown", (e) => {
+      if (e.button === 0) {
+        isDragging = true;
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+        svgMap.classList.replace("cursor-grab", "cursor-grabbing");
+      }
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        updateTransform();
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDragging = false;
+      svgMap.classList.replace("cursor-grabbing", "cursor-grab");
+    });
+
+    svgMap.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.15 : 0.85;
+      zoomLevel = Math.min(Math.max(zoomLevel * factor, 0.7), 8);
+      updateTransform();
+    });
+
+    document.getElementById("btnZoomIn").addEventListener("click", () => {
+      zoomLevel = Math.min(zoomLevel * 1.25, 8);
+      updateTransform();
+    });
+
+    document.getElementById("btnZoomOut").addEventListener("click", () => {
+      zoomLevel = Math.max(zoomLevel * 0.8, 0.7);
+      updateTransform();
+    });
+
+    document.getElementById("btnResetView").addEventListener("click", () => {
+      zoomLevel = 1;
+      panX = 0;
+      panY = 0;
+      updateTransform();
+    });
+
+    // Inset click handlers
+    document.getElementById("boxHoangSa").addEventListener("click", () => selectProvince("VN48"));
+    document.getElementById("boxTruongSa").addEventListener("click", () => selectProvince("VN56"));
+    document.getElementById("btnClosePanel").addEventListener("click", () => {
+      selectedCode = null;
+      detailPanel.classList.add("hidden");
+      renderMap();
+    });
+
+    // Chuyển chế độ
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll(".mode-btn").forEach(b => {
+        b.className = "mode-btn px-3 py-1.5 text-xs font-semibold rounded-md text-slate-300 hover:text-white hover:bg-slate-800";
+      });
+      if (mode === "hanh_chinh") {
+        document.getElementById("btnHanhChinh").className = "mode-btn px-3 py-1.5 text-xs font-semibold rounded-md bg-blue-600 text-white shadow";
+      } else if (mode === "tu_nhien") {
+        document.getElementById("btnTuNhien").className = "mode-btn px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-600 text-white shadow";
+      } else if (mode === "kinh_te") {
+        document.getElementById("btnKinhTe").className = "mode-btn px-3 py-1.5 text-xs font-semibold rounded-md bg-amber-600 text-white shadow";
+      }
+      renderMap();
+    }
+
+    document.getElementById("btnHanhChinh").addEventListener("click", () => setMode("hanh_chinh"));
+    document.getElementById("btnTuNhien").addEventListener("click", () => setMode("tu_nhien"));
+    document.getElementById("btnKinhTe").addEventListener("click", () => setMode("kinh_te"));
+
+    // Tìm kiếm nhanh có dấu / không dấu
+    function removeVietnameseTones(str) {
+      str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+      str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+      str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+      str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+      str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+      str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+      str = str.replace(/đ/g, "d");
+      return str;
+    }
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      if (!q) {
+        selectedCode = null;
+        detailPanel.classList.add("hidden");
+        renderMap();
+        return;
+      }
+      const qNormalized = removeVietnameseTones(q);
+      const match = window.GEO_DATA.features.find(f => {
+        const name = f.properties.name.toLowerCase();
+        const nameEn = f.properties.nameEn.toLowerCase();
+        const code = f.properties.provinceCode.toLowerCase();
+        const nameNormalized = removeVietnameseTones(name);
+        return name.includes(q) || nameEn.includes(q) || code.includes(q) || nameNormalized.includes(qNormalized);
+      });
+      if (match) {
+        selectProvince(match.properties.provinceCode);
+      }
+    });
+
+    // Khởi tạo render
+    renderMap();
+    updateTransform();
+  </script>
+</body>
+</html>
