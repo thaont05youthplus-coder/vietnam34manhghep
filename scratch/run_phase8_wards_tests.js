@@ -101,9 +101,9 @@ const mapFile = path.join(__dirname, "../frontend/components/map/VietnamMap.tsx"
 const mapContent = fs.readFileSync(mapFile, "utf8");
 
 assertTest("T8.12: VietnamMap.tsx tải dữ liệu vietnam_central_wards.geojson", mapContent.includes("vietnam_central_wards.geojson"));
-assertTest("T8.13: Quản lý biến trạng thái showWards và forceShowWards", mapContent.includes("showWards") && mapContent.includes("forceShowWards"));
-assertTest("T8.14: Logic LOD zoom >= 1.6 hoặc khi chọn tỉnh", mapContent.includes("zoom >= 1.6") || mapContent.includes("selectedProvince !== null"));
-assertTest("T8.15: Nút toggle bật/tắt lớp phường/xã trung tâm trên giao diện", mapContent.includes("Phường/Xã trung tâm"));
+assertTest("T8.13: Phường/Xã được tích hợp trực tiếp vào 3 chế độ bản đồ (isWardsVisible)", mapContent.includes("isWardsVisible"));
+assertTest("T8.14: Logic LOD zoom >= 1.5 hoặc khi chọn tỉnh", mapContent.includes("zoom >= 1.5") || mapContent.includes("selectedProvince !== null"));
+assertTest("T8.15: Thanh công cụ gom gọn vào 3 chế độ cốt lõi, không có nút rời rạc", mapContent.includes("hanh_chinh") && mapContent.includes("tu_nhien") && mapContent.includes("kinh_te") && !mapContent.includes("Phường/Xã trung tâm"));
 assertTest("T8.16: Hiển thị tooltip chi tiết khi rê chuột vào điểm phường/xã", mapContent.includes("hoveredWard") && mapContent.includes("wardTooltipPos"));
 assertTest("T8.17: Hiệu ứng vòng tròn lan tỏa pulse ring cho xã đảo và điểm được chọn", mapContent.includes("animate-ping"));
 assertTest("T8.18: Nhãn tên phường/xã có nền tương phản cao", mapContent.includes("ward.properties.name"));

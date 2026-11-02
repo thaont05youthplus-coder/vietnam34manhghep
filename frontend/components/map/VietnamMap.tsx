@@ -42,9 +42,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // Ward visibility LOD controls
-  const [showWards, setShowWards] = useState<boolean>(true);
-  const [forceShowWards, setForceShowWards] = useState<boolean>(false);
+  // Ward active state (integrated directly into the 3 modes)
   const [activeWardId, setActiveWardId] = useState<string | null>(selectedWardId || null);
 
   // Hover states
@@ -204,23 +202,21 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince, activeRegionCodes]);
 
-  // LOD: Wards visibility calculation
-  // Visible if user enabled showWards AND (forceShowWards OR zoom >= 1.6 OR a province is selected)
-  const isWardsVisible = Boolean(
-    showWards && (forceShowWards || zoom >= 1.6 || selectedProvince !== null)
-  );
+  // LOD: Wards are natively integrated into all 3 modes (Hành chính, Tự nhiên, Kinh tế - Xã hội)
+  // Automatically visible on zoom in (zoom >= 1.5) or when any province is selected
+  const isWardsVisible = Boolean(zoom >= 1.5 || selectedProvince !== null);
 
   // Filter wards to render based on zoom & selection
   const displayedWards = useMemo(() => {
     if (!wardsData || !isWardsVisible) return [];
-    if (selectedProvince && !forceShowWards && zoom < 1.6) {
-      // Focus on the selected province's wards
+    if (selectedProvince && zoom < 1.5) {
+      // Focus on the selected province's central wards
       return wardsData.features.filter(
         (w) => w.properties.provinceCode === selectedProvince.properties.provinceCode
       );
     }
     return wardsData.features;
-  }, [wardsData, isWardsVisible, selectedProvince, forceShowWards, zoom]);
+  }, [wardsData, isWardsVisible, selectedProvince, zoom]);
 
   // Pan event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -272,75 +268,41 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       {/* Background subtle ocean waves & grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:28px_28px] opacity-30 pointer-events-none" />
 
-      {/* Top Left: Mode Switcher & Wards Layer Toggle */}
-      <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2">
-        {/* Mode Switcher (UI-04) */}
-        <div className="flex bg-[#081a36]/90 border border-sky-700/50 rounded-xl p-1 shadow-xl shadow-sky-950/40 backdrop-blur">
-          <button
-            onClick={() => onModeChange?.("hanh_chinh")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              mode === "hanh_chinh"
-                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md shadow-sky-500/30"
-                : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
-            }`}
-          >
-            Hành chính (34 tỉnh)
-          </button>
-          <button
-            onClick={() => onModeChange?.("tu_nhien")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              mode === "tu_nhien"
-                ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30"
-                : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
-            }`}
-          >
-            Tự nhiên (7 khu vực)
-          </button>
-          <button
-            onClick={() => onModeChange?.("kinh_te")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              mode === "kinh_te"
-                ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white shadow-md shadow-amber-500/30"
-                : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
-            }`}
-          >
-            Kinh tế - Xã hội (6 vùng)
-          </button>
-        </div>
-
-        {/* Wards / Communes LOD Layer Toggle */}
+      {/* Mode Switcher (UI-04) - Chuẩn màu nhận diện: Xanh Trời, Ngọc Non Nước, Cam Vàng Đỏ */}
+      <div className="absolute top-4 left-4 z-20 flex bg-[#081a36]/90 border border-sky-700/50 rounded-xl p-1 shadow-xl shadow-sky-950/40 backdrop-blur">
         <button
-          onClick={() => {
-            if (!showWards) {
-              setShowWards(true);
-              setForceShowWards(true);
-            } else if (!forceShowWards && zoom < 1.6) {
-              setForceShowWards(true);
-            } else {
-              setShowWards(false);
-              setForceShowWards(false);
-            }
-          }}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-xl border backdrop-blur transition-all flex items-center gap-2 shadow-xl shadow-sky-950/40 ${
-            isWardsVisible
-              ? "bg-gradient-to-r from-sky-600 to-indigo-600 text-white border-sky-400 shadow-sky-500/30"
-              : "bg-[#081a36]/90 border-sky-700/50 text-sky-200/80 hover:text-white hover:bg-sky-900/40"
+          onClick={() => onModeChange?.("hanh_chinh")}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            mode === "hanh_chinh"
+              ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md shadow-sky-500/30"
+              : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
           }`}
-          title="Bật/Tắt hiển thị vị trí các phường, xã, thị trấn trung tâm và xã đảo toàn quốc (Tự động hiển thị khi phóng to hoặc chọn tỉnh)"
         >
-          <span
-            className={`w-2 h-2 rounded-full ${
-              isWardsVisible ? "bg-amber-300 animate-pulse shadow-sm shadow-amber-300" : "bg-slate-500"
-            }`}
-          />
-          <span>Phường/Xã trung tâm</span>
-          <span className="text-[10px] px-1.5 py-0.2 rounded bg-black/30 font-mono text-sky-200">
-            {displayedWards.length}
-          </span>
+          Hành chính (34 tỉnh)
+        </button>
+        <button
+          onClick={() => onModeChange?.("tu_nhien")}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            mode === "tu_nhien"
+              ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30"
+              : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
+          }`}
+        >
+          Tự nhiên (7 khu vực)
+        </button>
+        <button
+          onClick={() => onModeChange?.("kinh_te")}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            mode === "kinh_te"
+              ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white shadow-md shadow-amber-500/30"
+              : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
+          }`}
+        >
+          Kinh tế - Xã hội (6 vùng)
         </button>
       </div>
 
-      {/* Navigation Controls: Zoom In / Zoom Out / Wards Quick Toggle / Reset VN */}
+      {/* Navigation Controls: Zoom In / Zoom Out / Reset VN */}
       <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-[#081a36]/90 border border-sky-700/50 rounded-xl p-1.5 shadow-xl shadow-sky-950/40 backdrop-blur">
         <button
           onClick={handleZoomIn}
@@ -358,26 +320,6 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </button>
 
         <div className="w-full h-px bg-slate-700 my-0.5" />
-
-        {/* Quick Wards Marker Pin Toggle */}
-        <button
-          onClick={() => {
-            setShowWards(true);
-            setForceShowWards((prev) => !prev);
-          }}
-          className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-colors ${
-            isWardsVisible
-              ? "bg-sky-500 text-white shadow-sm shadow-sky-500/40"
-              : "text-sky-200 hover:text-white hover:bg-sky-900/50"
-          }`}
-          title={
-            isWardsVisible
-              ? "Đang hiện phường/xã trung tâm (Bấm để ẩn)"
-              : "Hiện toàn bộ phường/xã trung tâm trên bản đồ"
-          }
-        >
-          📍
-        </button>
 
         <button
           onClick={handleReset}
@@ -504,11 +446,21 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                 const isIsland = Boolean(ward.properties.isIsland);
                 const isBorder = Boolean(ward.properties.isBorderOrExtreme);
 
-                // Styling color according to geopolitical role
-                let pinColor = "#f43f5e"; // Rose red for standard urban centers
-                if (isIsland) pinColor = "#38bdf8"; // Sky blue for islands (Hoàng Sa, Trường Sa, Cát Bà, Lý Sơn)
-                else if (isBorder) pinColor = "#10b981"; // Emerald green for border extremes (Đất Mũi, A Pa Chải, Bản Giốc, Sa Vĩ)
-                else if (isSelectedProv || isSelectedWard) pinColor = "#f59e0b"; // Amber gold for selected
+                // Pin color adapted to active mode & feature type
+                let pinColor = "#0284c7";
+                if (isIsland) {
+                  pinColor = "#38bdf8"; // Sky blue for islands (Hoàng Sa, Trường Sa, Cát Bà, Lý Sơn)
+                } else if (isBorder) {
+                  pinColor = "#10b981"; // Emerald green for border extremes
+                } else if (isSelectedProv || isSelectedWard) {
+                  pinColor = "#f59e0b"; // Amber gold for selected
+                } else if (mode === "tu_nhien") {
+                  pinColor = "#059669"; // Emerald for natural regions
+                } else if (mode === "kinh_te") {
+                  pinColor = "#ea580c"; // Warm orange for economic regions
+                } else {
+                  pinColor = "#0284c7"; // Sky blue for administrative mode
+                }
 
                 const pinRadius = isSelectedWard ? 5.5 : isHovered ? 5.2 : isSelectedProv ? 4.5 : 3.6;
                 const showLabel =
@@ -647,8 +599,40 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               </span>
             </div>
 
+            {mode === "kinh_te" && (
+              <div className="flex items-center gap-1.5 text-amber-200 font-medium">
+                <span className="text-slate-400">Vùng kinh tế:</span>
+                <span>
+                  {
+                    ECONOMIC_REGIONS.find((r) =>
+                      r.provinceCodes.includes(hoveredWard.properties.provinceCode)
+                    )?.name
+                  }
+                </span>
+              </div>
+            )}
+
+            {mode === "tu_nhien" && (
+              <div className="flex items-center gap-1.5 text-emerald-200 font-medium">
+                <span className="text-slate-400">Khu vực tự nhiên:</span>
+                <span>
+                  {
+                    NATURAL_REGIONS.find((r) =>
+                      r.provinceCodes.includes(hoveredWard.properties.provinceCode)
+                    )?.name
+                  }
+                </span>
+              </div>
+            )}
+
             <div className="text-slate-200 bg-slate-800/70 p-2 rounded-lg border border-slate-700/60 leading-relaxed text-[11px]">
-              <span className="text-amber-300 font-medium">Vai trò chiến lược:</span>{" "}
+              <span className="text-amber-300 font-medium">
+                {mode === "kinh_te"
+                  ? "Vai trò kinh tế:"
+                  : mode === "tu_nhien"
+                  ? "Vị thế tự nhiên:"
+                  : "Vai trò hành chính:"}
+              </span>{" "}
               {hoveredWard.properties.role}
             </div>
 
