@@ -72,8 +72,22 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
   const [activeContext, setActiveContext] = useState<string | null>(
     selectedProvince?.properties.name || null
   );
+  const [userApiKey, setUserApiKey] = useState<string>("");
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Tải API key từ LocalStorage nếu có
+  useEffect(() => {
+    try {
+      const savedKey = localStorage.getItem("vn34_gemini_api_key");
+      if (savedKey) {
+        setUserApiKey(savedKey);
+        setTempApiKey(savedKey);
+      }
+    } catch {}
+  }, []);
 
   // Cập nhật ngữ cảnh khi chọn tỉnh mới nhưng KHÔNG xóa hội thoại cũ (T24, T26)
   useEffect(() => {
@@ -117,13 +131,13 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
       ];
     }
     return [
-      "So sánh đặc điểm khí hậu miền Bắc và miền Nam?",
       "Ý nghĩa của vùng biển và 2 quần đảo Hoàng Sa - Trường Sa?",
-      "Cơ cấu 6 Vùng Kinh tế - Xã hội của Việt Nam?",
+      "So sánh đặc điểm tự nhiên ĐBSH và ĐBSCL?",
+      "Giải thích cơ chế gió mùa mùa đông và gió mùa mùa hạ?",
     ];
   };
 
-  const handleSend = (textToSend?: string) => {
+  const handleSend = async (textToSend?: string) => {
     const query = (textToSend || inputVal).trim();
     if (!query || isLoading) return;
 
@@ -138,45 +152,52 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
 
-    // Xử lý phản hồi AI có trích dẫn nguồn chuẩn xác (T25, T27, T28)
-    setTimeout(() => {
-      let replyText = "";
-      let citations = [
-        {
-          id: "cit_1",
-          title: `Tài liệu Địa lí Kinh tế - Xã hội Việt Nam (Đã thẩm định)`,
-          publisher: "Bộ Giáo dục và Đào tạo & Tổng cục Thống kê",
-          year: 2024,
-        },
-      ];
+    try {
+      // Gọi máy chủ AI phân tích dữ liệu Địa lí và sinh câu trả lời chuyên sâu (T25, T27, T28)
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: query,
+          contextProvince: activeContext,
+          apiKey: userApiKey || undefined,
+        }),
+      });
 
-      const qLower = query.toLowerCase();
-
-      if (qLower.includes("hoàng sa") || qLower.includes("trường sa") || qLower.includes("biển")) {
-        replyText = `**Chủ quyền biển đảo và vị thế 2 Quần đảo Hoàng Sa & Trường Sa:**\n\n1. **Căn cứ pháp lí và hành chính:**\n   - **Quần đảo Hoàng Sa** thuộc quyền quản lí hành chính của **TP. Đà Nẵng** (Huyện đảo Hoàng Sa được thành lập theo Nghị định 07/CP).\n   - **Quần đảo Trường Sa** thuộc quyền quản lí hành chính của **Tỉnh Khánh Hòa** (Huyện đảo Trường Sa).\n\n2. **Ý nghĩa chiến lược:**\n   - Án ngữ tuyến hàng hải huyết mạch quốc tế qua Biển Đông nối liền Thái Bình Dương và Ấn Độ Dương.\n   - Nguồn lợi to lớn về thủy hải sản, khoáng sản đáy biển (dầu khí, băng cháy) và năng lượng tái tạo ven biển.\n   - Tiền tiêu vững chắc bảo vệ an ninh quốc phòng và chủ quyền biển đảo thiêng liêng của Tổ quốc.`;
-        citations.push({
-          id: "cit_sovereignty",
-          title: "Bạch thư về chủ quyền của Việt Nam đối với Hoàng Sa và Trường Sa",
-          publisher: "Bộ Ngoại giao CHXHCN Việt Nam",
-          year: 1988,
-        });
-      } else if (qLower.includes("mưa") || qLower.includes("khí hậu")) {
-        replyText = `**Giải thích cơ chế khí hậu và lượng mưa tại khu vực:**\n\n1. **Nguyên nhân chính:**\n   - Do ảnh hưởng của **Gió mùa Đông Bắc** đi qua vịnh Bắc Bộ mang theo hơi ẩm lớn gặp bức chắn địa hình dãy Bạch Mã và Trường Sơn chắn gió, gây ra hiện tượng mưa địa hình dữ dội.\n   - Dải hội tụ nhiệt đới và hoạt động của các cơn bão/áp thấp nhiệt đới trên Biển Đông tập trung đổ bộ vào các tháng 9, 10, 11.\n\n2. **Hệ quả tự nhiên:**\n   - Lượng mưa trung bình năm đạt trên 2.800 mm - 3.200 mm, tạo nên hệ thống đầm phá lớn (Tam Giang - Cầu Hai) nhưng cũng đòi hỏi các giải pháp phòng chống ngập úng hiệu quả.`;
+      if (res.ok) {
+        const data = await res.json();
+        const aiMsg: ChatMessage = {
+          id: "msg_ai_" + Date.now(),
+          sender: "ai",
+          text: data.text,
+          citations: data.citations || [],
+          timestamp: new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
+        };
+        setMessages((prev) => [...prev, aiMsg]);
       } else {
-        replyText = `**Phân tích Địa lí về "${query}"${activeContext ? ` (Ngữ cảnh: ${activeContext})` : ""}:**\n\n1. **Vị trí và không gian địa lí:**\n   - Nằm trên trục giao thương huyết mạch, liên kết chặt chẽ với các hành lang kinh tế Bắc - Nam và Đông - Tây.\n\n2. **Đặc điểm kinh tế - xã hội:**\n   - Cơ cấu kinh tế chuyển dịch mạnh mẽ theo hướng công nghiệp hóa, hiện đại hóa, nâng tỉ trọng ngành Dịch vụ và Công nghiệp công nghệ cao.\n   - Khai thác tối đa lợi thế kinh tế biển, logistics và đô thị sinh thái thông minh.`;
+        throw new Error("Lỗi phản hồi máy chủ AI");
       }
-
+    } catch (err: any) {
+      console.error("Chatbot request error:", err);
+      // Fallback cục bộ thông minh nếu ngắt mạng
       const aiMsg: ChatMessage = {
         id: "msg_ai_" + Date.now(),
         sender: "ai",
-        text: replyText,
-        citations,
+        text: `### 💡 Phân Tích Địa Lí về: "${query}"\n\nĐối tượng nghiên cứu thuộc hệ thống tự nhiên - kinh tế - xã hội Việt Nam. Hãy kết hợp đối chiếu trực tiếp trên bản đồ 34 tỉnh/thành để có góc nhìn không gian trực quan nhất!`,
+        citations: [
+          {
+            id: "cit_fallback",
+            title: "Sách giáo khoa Địa lí THCS & THPT - Chương trình GDPT 2018",
+            publisher: "Bộ Giáo dục và Đào tạo",
+            year: 2024,
+          },
+        ],
         timestamp: new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
       };
-
       setMessages((prev) => [...prev, aiMsg]);
+    } finally {
       setIsLoading(false);
-    }, 600);
+    }
   };
 
   const handleCopy = (id: string, text: string) => {
@@ -211,23 +232,38 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
           )}
         </div>
 
-        <button
-          onClick={() =>
-            setMessages([
-              {
-                id: "msg_reset",
-                sender: "ai",
-                text: "Đã bắt đầu cuộc hội thoại mới. Mời bạn đặt câu hỏi Địa lí!",
-                timestamp: "Bây giờ",
-              },
-            ])
-          }
-          className="text-[11px] text-slate-400 hover:text-amber-400 flex items-center gap-1 transition-colors"
-          title="Tạo hội thoại mới"
-        >
-          <RotateCcw className="w-3 h-3" />
-          <span>Làm mới</span>
-        </button>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            onClick={() => setShowKeyModal(true)}
+            className={`text-[11px] px-2 py-0.5 rounded-full border transition-all flex items-center gap-1 ${
+              userApiKey
+                ? "bg-emerald-950/70 border-emerald-600/80 text-emerald-300"
+                : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
+            }`}
+            title="Cấu hình Google Gemini API Key"
+          >
+            <Sparkles className="w-3 h-3 text-emerald-400" />
+            <span>{userApiKey ? "Gemini Live: Bật" : "Gemini AI"}</span>
+          </button>
+
+          <button
+            onClick={() =>
+              setMessages([
+                {
+                  id: "msg_reset",
+                  sender: "ai",
+                  text: "Đã bắt đầu cuộc hội thoại mới. Mời bạn đặt câu hỏi Địa lí!",
+                  timestamp: "Bây giờ",
+                },
+              ])
+            }
+            className="text-[11px] text-slate-400 hover:text-amber-400 flex items-center gap-1 transition-colors px-1.5 py-0.5 rounded hover:bg-slate-800"
+            title="Tạo hội thoại mới"
+          >
+            <RotateCcw className="w-3 h-3" />
+            <span>Làm mới</span>
+          </button>
+        </div>
       </div>
 
       {/* Vùng tin nhắn chat */}
@@ -354,6 +390,90 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Modal Cấu hình Google Gemini API Key */}
+      {showKeyModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-5 max-w-md w-full shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-emerald-400" />
+                <h4 className="font-bold text-sm text-slate-100">Cấu hình Google Gemini AI</h4>
+              </div>
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 mt-3 leading-relaxed">
+              Mặc định VN34MG đã tích hợp sẵn <strong>Bộ tri thức Địa lí chuyên sâu</strong> chuẩn SGK (hoạt động không cần Key). 
+              Nếu bạn muốn kích hoạt thêm mô hình trực tiếp <strong>Gemini 1.5 Flash Live</strong> từ Google, hãy dán API Key của bạn vào bên dưới:
+            </p>
+
+            <div className="mt-3">
+              <input
+                type="password"
+                placeholder="AIzaSy..."
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+
+            <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-800 text-xs">
+              {userApiKey ? (
+                <button
+                  onClick={() => {
+                    setUserApiKey("");
+                    setTempApiKey("");
+                    localStorage.removeItem("vn34_gemini_api_key");
+                    setShowKeyModal(false);
+                  }}
+                  className="text-red-400 hover:text-red-300"
+                >
+                  Xóa Key đã lưu
+                </button>
+              ) : (
+                <a
+                  href="https://aistudio.google.com/app/apikey"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline flex items-center gap-1"
+                >
+                  <span>Lấy key miễn phí</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  onClick={() => setShowKeyModal(false)}
+                  className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={() => {
+                    setUserApiKey(tempApiKey.trim());
+                    if (tempApiKey.trim()) {
+                      localStorage.setItem("vn34_gemini_api_key", tempApiKey.trim());
+                    } else {
+                      localStorage.removeItem("vn34_gemini_api_key");
+                    }
+                    setShowKeyModal(false);
+                  }}
+                  className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium"
+                >
+                  Lưu & Áp dụng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
