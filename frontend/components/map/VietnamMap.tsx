@@ -10,7 +10,19 @@ import {
 } from "@/types/geo";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS, PROVINCE_PALETTE } from "@/lib/regions";
 import { LayerSettings } from "@/components/layout/SubHeader";
-import { ShieldCheck, Globe, Home, RotateCcw, RotateCw } from "lucide-react";
+import {
+  ShieldCheck,
+  Globe,
+  Home,
+  RotateCcw,
+  RotateCw,
+  Compass,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  Maximize2,
+} from "lucide-react";
 
 interface VietnamMapProps {
   mode: MapMode;
@@ -61,9 +73,14 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   // Zoom, Pan & Rotation transforms (Độ xoay la bàn linh hoạt 4 hướng)
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [rotation, setRotation] = useState<number>(0); // 0°: Chính Bắc, 90°: Đông, 180°: Nam, 270°: Tây
+  const [rotation, setRotation] = useState<number>(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Trạng thái đang định vị theo 4 phương hướng (Đông - Tây - Nam - Bắc)
+  const [activeDirectionFocus, setActiveDirectionFocus] = useState<
+    "bac" | "dong" | "nam" | "tay" | null
+  >(null);
 
   // Ward active state
   const [activeWardId, setActiveWardId] = useState<string | null>(selectedWardId || null);
@@ -283,11 +300,72 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev * 1.25, 8));
   const handleZoomOut = () => setZoom((prev) => Math.max(prev * 0.8, 0.6));
+
+  // Reset về toàn cảnh chuẩn Việt Nam
   const handleReset = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
     setRotation(0);
     setActiveWardId(null);
+    setActiveDirectionFocus(null);
+  };
+
+  // =========================================================================
+  // ĐIỀU HƯỚNG BẢN ĐỒ TỚI 4 PHƯƠNG HƯỚNG ĐÔNG - TÂY - NAM - BẮC CỦA VIỆT NAM
+  // =========================================================================
+  const handleNavigateDirection = (
+    direction: "bac" | "dong" | "nam" | "tay",
+    e?: React.MouseEvent
+  ) => {
+    e?.stopPropagation();
+    setActiveDirectionFocus(direction);
+
+    if (direction === "bac") {
+      // Phía BẮC: Cực Bắc Lũng Cú (Hà Giang), Thủ đô Hà Nội, Trung du & Miền núi phía Bắc
+      const [tx, ty] = project(105.3, 22.4);
+      const targetZoom = 2.0;
+      setZoom(targetZoom);
+      setPan({
+        x: Math.round(svgWidth / 2 - tx * targetZoom),
+        y: Math.round(svgHeight / 2 - ty * targetZoom),
+      });
+    } else if (direction === "nam") {
+      // Phía NAM: Cực Nam Đất Mũi (Cà Mau), Đồng bằng sông Cửu Long, TP. Hồ Chí Minh
+      const [tx, ty] = project(105.1, 9.3);
+      const targetZoom = 2.0;
+      setZoom(targetZoom);
+      setPan({
+        x: Math.round(svgWidth / 2 - tx * targetZoom),
+        y: Math.round(svgHeight / 2 - ty * targetZoom),
+      });
+    } else if (direction === "dong") {
+      // Phía ĐÔNG: Vùng Biển Đông, Quần đảo Hoàng Sa, Quần đảo Trường Sa & Duyên hải
+      const [tx, ty] = project(112.5, 13.5);
+      const targetZoom = 1.6;
+      setZoom(targetZoom);
+      setPan({
+        x: Math.round(svgWidth / 2 - tx * targetZoom),
+        y: Math.round(svgHeight / 2 - ty * targetZoom),
+      });
+    } else if (direction === "tay") {
+      // Phía TÂY: Cực Tây A Pa Chải (Điện Biên), Dãy Hoàng Liên Sơn, Tây Bắc & Tây Nguyên
+      const [tx, ty] = project(103.0, 21.6);
+      const targetZoom = 2.0;
+      setZoom(targetZoom);
+      setPan({
+        x: Math.round(svgWidth / 2 - tx * targetZoom),
+        y: Math.round(svgHeight / 2 - ty * targetZoom),
+      });
+    }
+  };
+
+  // Dời bản đồ theo từng bước (Pan Stepping bằng phím mũi tên)
+  const handlePanStep = (dx: number, dy: number, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setPan((prev) => ({
+      x: prev.x + dx,
+      y: prev.y + dy,
+    }));
   };
 
   // Compass rotation handlers
@@ -299,11 +377,6 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const handleRotateCCW = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setRotation((prev) => (prev - 15 + 360) % 360);
-  };
-
-  const handleSetDirection = (deg: number, e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setRotation(deg % 360);
   };
 
   const handleResetRotation = (e?: React.MouseEvent) => {
@@ -376,8 +449,31 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
       </div>
 
+      {/* Floating Badge: Top-Center (Thẻ thông tin khi bấm di chuyển đến Đông - Tây - Nam - Bắc) */}
+      {activeDirectionFocus && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 px-4 py-2 bg-white/95 border border-teal-500 rounded-full shadow-lg backdrop-blur text-xs animate-in fade-in slide-in-from-top-3 duration-200">
+          <span className="w-2.5 h-2.5 rounded-full bg-teal-600 animate-ping" />
+          <span className="text-slate-700 font-medium">
+            Đang xem:{" "}
+            <strong className="text-teal-900 font-bold">
+              {activeDirectionFocus === "bac" && "Phía Bắc — Cực Bắc Lũng Cú & Miền núi Bắc Bộ"}
+              {activeDirectionFocus === "dong" && "Phía Đông — Biển Đông & Hải đảo Hoàng Sa, Trường Sa"}
+              {activeDirectionFocus === "nam" && "Phía Nam — Cực Nam Đất Mũi & Đồng bằng sông Cửu Long"}
+              {activeDirectionFocus === "tay" && "Phía Tây — Cực Tây A Pa Chải & Dãy Hoàng Liên Sơn"}
+            </strong>
+          </span>
+          <button
+            onClick={handleReset}
+            className="text-[11px] font-bold text-teal-700 hover:text-white hover:bg-teal-700 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 transition-colors ml-1"
+            title="Quay lại góc nhìn toàn cảnh toàn bộ Việt Nam"
+          >
+            Toàn cảnh ✕
+          </button>
+        </div>
+      )}
+
       {/* Floating Card: Center Watermark Callout (Không gian hiển thị GIS toàn cảnh) */}
-      {zoom <= 1.2 && !selectedProvince && (
+      {zoom <= 1.2 && !selectedProvince && !activeDirectionFocus && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center text-center p-6 bg-white/80 border border-slate-200/80 rounded-2xl shadow-sm backdrop-blur-md max-w-md pointer-events-none animate-in fade-in zoom-in-95 duration-200">
           <div className="w-12 h-12 rounded-full bg-teal-800 text-white flex items-center justify-center mb-3 shadow-xs">
             <Globe className="w-6 h-6" />
@@ -399,47 +495,53 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
       )}
 
-      {/* Floating Controls: Top-Right (La bàn 4 hướng GIS linh hoạt & Điều khiển Zoom) */}
+      {/* Floating Controls: Top-Right (La bàn 4 hướng GIS linh hoạt & Điều hướng Di chuyển) */}
       <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2.5">
         {/* Hộp La bàn địa lí 4 hướng linh hoạt (Đông - Tây - Nam - Bắc) */}
-        <div className="bg-white/95 border border-slate-200 rounded-2xl p-2 shadow-xs backdrop-blur flex flex-col items-center w-[98px]">
-          {/* Vòng mặt la bàn tương tác (Click hoặc Kéo chuột để xoay) */}
+        <div className="bg-white/95 border border-slate-200 rounded-2xl p-2.5 shadow-sm backdrop-blur flex flex-col items-center w-[116px]">
+          {/* Nhãn hướng dẫn ngắn */}
+          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-tight mb-1 flex items-center gap-1">
+            <Compass className="w-3 h-3 text-teal-600" />
+            <span>Định vị 4 hướng</span>
+          </div>
+
+          {/* Vòng mặt la bàn tương tác (Click B-Đ-N-T để di chuyển tới vùng đó) */}
           <div
             ref={compassRef}
             onMouseDown={handleCompassMouseDown}
-            className="relative w-[78px] h-[78px] flex items-center justify-center cursor-grab active:cursor-grabbing group"
-            title="La bàn 4 hướng: Bấm B-Đ-N-T hoặc kéo chuột để xoay bản đồ linh hoạt"
+            className="relative w-[92px] h-[92px] flex items-center justify-center select-none"
+            title="Bấm B, Đ, N, T để di chuyển bản đồ đến phía đó! Kéo chuột để xoay góc."
           >
-            <svg viewBox="0 0 80 80" className="w-full h-full drop-shadow-xs">
+            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xs overflow-visible">
               {/* Vòng tròn ngoài la bàn */}
               <circle
-                cx="40"
-                cy="40"
-                r="37"
+                cx="50"
+                cy="50"
+                r="46"
                 fill="#f8fafc"
                 stroke="#cbd5e1"
                 strokeWidth="1.2"
               />
               <circle
-                cx="40"
-                cy="40"
-                r="33"
-                fill="none"
+                cx="50"
+                cy="50"
+                r="38"
+                fill="#ffffff"
                 stroke="#e2e8f0"
                 strokeWidth="0.8"
-                strokeDasharray="1.5 2.5"
+                strokeDasharray="2 3"
               />
 
               {/* Các vạch chia độ GIS (12 khấc - 30° mỗi khấc) */}
               {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
                 const rad = ((deg - 90) * Math.PI) / 180;
                 const isCardinal = deg % 90 === 0;
-                const r1 = 33;
-                const r2 = isCardinal ? 27 : 30;
-                const x1 = 40 + r1 * Math.cos(rad);
-                const y1 = 40 + r1 * Math.sin(rad);
-                const x2 = 40 + r2 * Math.cos(rad);
-                const y2 = 40 + r2 * Math.sin(rad);
+                const r1 = 38;
+                const r2 = isCardinal ? 31 : 34;
+                const x1 = 50 + r1 * Math.cos(rad);
+                const y1 = 50 + r1 * Math.sin(rad);
+                const x2 = 50 + r2 * Math.cos(rad);
+                const y2 = 50 + r2 * Math.sin(rad);
                 return (
                   <line
                     key={deg}
@@ -448,114 +550,189 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     x2={x2}
                     y2={y2}
                     stroke={isCardinal ? "#64748b" : "#cbd5e1"}
-                    strokeWidth={isCardinal ? 1.4 : 0.8}
+                    strokeWidth={isCardinal ? 1.6 : 0.8}
                   />
                 );
               })}
 
-              {/* 4 Nút hướng chính: B (Bắc), Đ (Đông), N (Nam), T (Tây) */}
-              {/* BẮC (0° / North) */}
+              {/* 4 Nút hướng chính B - Đ - N - T (Bấm để di chuyển bản đồ đến chỗ đó) */}
+              {/* BẮC (North - 0°) */}
               <g
-                className="cursor-pointer transition-transform hover:scale-110"
-                onClick={(e) => handleSetDirection(0, e)}
+                className="cursor-pointer transition-all hover:scale-110 group/btn"
+                onClick={(e) => handleNavigateDirection("bac", e)}
               >
-                <circle cx="40" cy="10" r="7" fill="transparent" />
+                <circle
+                  cx="50"
+                  cy="12"
+                  r="9"
+                  fill={activeDirectionFocus === "bac" ? "#dc2626" : "#fee2e2"}
+                  stroke="#dc2626"
+                  strokeWidth="1.2"
+                />
                 <text
-                  x="40"
-                  y="12.5"
+                  x="50"
+                  y="15.5"
                   textAnchor="middle"
-                  fontSize="8.5"
+                  fontSize="10"
                   fontWeight="bold"
-                  fill="#dc2626"
+                  fill={activeDirectionFocus === "bac" ? "#ffffff" : "#dc2626"}
                   className="font-sans select-none"
                 >
                   B
                 </text>
               </g>
 
-              {/* ĐÔNG (90° / East) */}
+              {/* ĐÔNG (East - 90°) */}
               <g
-                className="cursor-pointer transition-transform hover:scale-110"
-                onClick={(e) => handleSetDirection(90, e)}
+                className="cursor-pointer transition-all hover:scale-110 group/btn"
+                onClick={(e) => handleNavigateDirection("dong", e)}
               >
-                <circle cx="70" cy="40" r="7" fill="transparent" />
+                <circle
+                  cx="88"
+                  cy="50"
+                  r="9"
+                  fill={activeDirectionFocus === "dong" ? "#0f766e" : "#ccfbf1"}
+                  stroke="#0f766e"
+                  strokeWidth="1.2"
+                />
                 <text
-                  x="70"
-                  y="43"
+                  x="88"
+                  y="53.5"
                   textAnchor="middle"
-                  fontSize="8.5"
+                  fontSize="10"
                   fontWeight="bold"
-                  fill="#0f766e"
+                  fill={activeDirectionFocus === "dong" ? "#ffffff" : "#0f766e"}
                   className="font-sans select-none"
                 >
                   Đ
                 </text>
               </g>
 
-              {/* NAM (180° / South) */}
+              {/* NAM (South - 180°) */}
               <g
-                className="cursor-pointer transition-transform hover:scale-110"
-                onClick={(e) => handleSetDirection(180, e)}
+                className="cursor-pointer transition-all hover:scale-110 group/btn"
+                onClick={(e) => handleNavigateDirection("nam", e)}
               >
-                <circle cx="40" cy="70" r="7" fill="transparent" />
+                <circle
+                  cx="50"
+                  cy="88"
+                  r="9"
+                  fill={activeDirectionFocus === "nam" ? "#334155" : "#f1f5f9"}
+                  stroke="#475569"
+                  strokeWidth="1.2"
+                />
                 <text
-                  x="40"
-                  y="72.5"
+                  x="50"
+                  y="91.5"
                   textAnchor="middle"
-                  fontSize="8.5"
+                  fontSize="10"
                   fontWeight="bold"
-                  fill="#475569"
+                  fill={activeDirectionFocus === "nam" ? "#ffffff" : "#334155"}
                   className="font-sans select-none"
                 >
                   N
                 </text>
               </g>
 
-              {/* TÂY (270° / West) */}
+              {/* TÂY (West - 270°) */}
               <g
-                className="cursor-pointer transition-transform hover:scale-110"
-                onClick={(e) => handleSetDirection(270, e)}
+                className="cursor-pointer transition-all hover:scale-110 group/btn"
+                onClick={(e) => handleNavigateDirection("tay", e)}
               >
-                <circle cx="10" cy="40" r="7" fill="transparent" />
+                <circle
+                  cx="12"
+                  cy="50"
+                  r="9"
+                  fill={activeDirectionFocus === "tay" ? "#0f766e" : "#ccfbf1"}
+                  stroke="#0f766e"
+                  strokeWidth="1.2"
+                />
                 <text
-                  x="10"
-                  y="43"
+                  x="12"
+                  y="53.5"
                   textAnchor="middle"
-                  fontSize="8.5"
+                  fontSize="10"
                   fontWeight="bold"
-                  fill="#0f766e"
+                  fill={activeDirectionFocus === "tay" ? "#ffffff" : "#0f766e"}
                   className="font-sans select-none"
                 >
                   T
                 </text>
               </g>
 
-              {/* Kim la bàn xoay động theo góc bản đồ (Needle) */}
+              {/* Kim la bàn động xoay theo góc rotation (Needle) */}
               <g
-                transform={`rotate(${rotation}, 40, 40)`}
+                transform={`rotate(${rotation}, 50, 50)`}
                 className="transition-transform duration-100 ease-out pointer-events-none"
               >
                 {/* Mũi kim BẮC (Đỏ sắc nét) */}
-                <polygon points="40,16 36,40 40,37" fill="#ef4444" />
-                <polygon points="40,16 44,40 40,37" fill="#dc2626" />
+                <polygon points="50,22 45,50 50,47" fill="#ef4444" />
+                <polygon points="50,22 55,50 50,47" fill="#dc2626" />
 
                 {/* Mũi kim NAM (Xám bạc sắc nét) */}
-                <polygon points="40,64 36,40 40,43" fill="#cbd5e1" />
-                <polygon points="40,64 44,40 40,43" fill="#94a3b8" />
+                <polygon points="50,78 45,50 50,53" fill="#cbd5e1" />
+                <polygon points="50,78 55,50 50,53" fill="#94a3b8" />
 
                 {/* Mũi kim phụ trục ngang (Đông - Tây) */}
-                <polygon points="56,40 40,38 40,40" fill="#0d9488" opacity="0.6" />
-                <polygon points="24,40 40,38 40,40" fill="#0d9488" opacity="0.6" />
+                <polygon points="70,50 50,47.5 50,50" fill="#0d9488" opacity="0.6" />
+                <polygon points="30,50 50,47.5 50,50" fill="#0d9488" opacity="0.6" />
 
                 {/* Tâm trục la bàn */}
-                <circle cx="40" cy="40" r="4.5" fill="#1e293b" stroke="#ffffff" strokeWidth="1.5" />
-                <circle cx="40" cy="40" r="1.5" fill="#ef4444" />
+                <circle cx="50" cy="50" r="5" fill="#1e293b" stroke="#ffffff" strokeWidth="1.5" />
+                <circle cx="50" cy="50" r="1.8" fill="#ef4444" />
               </g>
             </svg>
           </div>
 
+          {/* D-Pad điều hướng dịch chuyển bước nhỏ (Nudge Pan) */}
+          <div className="grid grid-cols-3 gap-1 my-1.5 w-full max-w-[84px]">
+            <div />
+            <button
+              onClick={(e) => handlePanStep(0, 120, e)}
+              className="w-6 h-6 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors mx-auto shadow-2xs"
+              title="Dời bản đồ lên phía Bắc (↑)"
+            >
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
+            <div />
+
+            <button
+              onClick={(e) => handlePanStep(120, 0, e)}
+              className="w-6 h-6 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors mx-auto shadow-2xs"
+              title="Dời bản đồ sang phía Tây (←)"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+
+            <button
+              onClick={handleReset}
+              className="w-6 h-6 flex items-center justify-center rounded bg-teal-50 hover:bg-teal-100 text-teal-800 transition-colors mx-auto text-[10px] font-bold border border-teal-200"
+              title="Căn giữa toàn cảnh bản đồ"
+            >
+              VN
+            </button>
+
+            <button
+              onClick={(e) => handlePanStep(-120, 0, e)}
+              className="w-6 h-6 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors mx-auto shadow-2xs"
+              title="Dời bản đồ sang phía Đông (→)"
+            >
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+
+            <div />
+            <button
+              onClick={(e) => handlePanStep(0, -120, e)}
+              className="w-6 h-6 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors mx-auto shadow-2xs"
+              title="Dời bản đồ xuống phía Nam (↓)"
+            >
+              <ArrowDown className="w-3.5 h-3.5" />
+            </button>
+            <div />
+          </div>
+
           {/* Dòng điều khiển tinh chỉnh góc xoay & đưa về 0° Chính Bắc */}
-          <div className="flex items-center justify-between w-full mt-1.5 pt-1.5 border-t border-slate-200 text-[10px] text-slate-600">
+          <div className="flex items-center justify-between w-full pt-1.5 border-t border-slate-200 text-[10px] text-slate-600">
             <button
               onClick={handleRotateCCW}
               className="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors"
@@ -587,7 +764,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
 
         {/* Cụm nút phóng to / thu nhỏ / Home */}
-        <div className="flex flex-col bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden w-[98px]">
+        <div className="flex flex-col bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden w-[116px]">
           <button
             onClick={handleZoomIn}
             className="h-8 flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-base font-bold transition-colors"
@@ -606,11 +783,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           <div className="h-px bg-slate-200" />
           <button
             onClick={handleReset}
-            className="h-8 flex items-center justify-center gap-1 text-slate-700 hover:text-teal-700 hover:bg-slate-100 text-xs font-semibold transition-colors"
+            className="h-8 flex items-center justify-center gap-1.5 text-slate-700 hover:text-teal-700 hover:bg-slate-100 text-xs font-semibold transition-colors"
             title="Căn giữa toàn cảnh bản đồ Việt Nam và trả về 0° Bắc"
           >
             <Home className="w-3.5 h-3.5" />
-            <span>Mặc định</span>
+            <span>Toàn cảnh</span>
           </button>
         </div>
       </div>
@@ -648,12 +825,12 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           </filter>
         </defs>
 
-        {/* Khung xoay bản đồ linh hoạt kết nối trực tiếp với la bàn */}
+        {/* Khung xoay và dịch chuyển bản đồ linh hoạt kết nối trực tiếp với la bàn */}
         <g
           transform={`translate(${pan.x}, ${pan.y}) scale(${zoom}) rotate(${rotation}, ${svgWidth / 2}, ${svgHeight / 2})`}
           style={{
             transformOrigin: `${svgWidth / 2}px ${svgHeight / 2}px`,
-            transition: isDragging ? "none" : "transform 0.12s ease-out",
+            transition: isDragging ? "none" : "transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
           }}
         >
           {/* Province Vector Shapes */}
@@ -777,7 +954,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
                 const pinRadius = isSelectedWard ? 5.5 : isHovered ? 5.2 : isSelectedProv ? 4.5 : 3.6;
                 const showLabel =
-                  isHovered || isSelectedWard || isIsland || isSelectedProv || zoom >= 2.2;
+                  isHovered || isSelectedWard || isIsland || isSelectedProv || zoom >= 2.0;
 
                 return (
                   <g
