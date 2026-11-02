@@ -5,7 +5,7 @@ import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
 import { WindowFrame } from "./WindowFrame";
 import { ToolContent } from "./ToolViews";
 import { ProvinceFeature } from "@/types/geo";
-import { MessageSquare, HelpCircle, PenTool, GraduationCap } from "lucide-react";
+import { GeoQuestion } from "@/components/question-bank/QuestionBankModal";
 
 interface WindowManagerProps {
   windows: Record<ToolId, WindowState>;
@@ -13,6 +13,10 @@ interface WindowManagerProps {
   onFocusWindow: (id: ToolId) => void;
   onCloseWindow: (id: ToolId) => void;
   selectedProvince: ProvinceFeature | null;
+  onLocateProvince?: (provinceCode: string) => void;
+  onOpenNotesWithText?: (text: string) => void;
+  onAddToStudy?: (question: GeoQuestion) => void;
+  sharedNoteText?: string;
 }
 
 export const WindowManager: React.FC<WindowManagerProps> = ({
@@ -21,6 +25,10 @@ export const WindowManager: React.FC<WindowManagerProps> = ({
   onFocusWindow,
   onCloseWindow,
   selectedProvince,
+  onLocateProvince,
+  onOpenNotesWithText,
+  onAddToStudy,
+  sharedNoteText,
 }) => {
   // Danh sách các cửa sổ đang mở hoặc bị thu nhỏ
   const activeWindowList = Object.values(windows).filter((w) => w.isOpen);
@@ -64,7 +72,14 @@ export const WindowManager: React.FC<WindowManagerProps> = ({
               }));
             }}
           >
-            <ToolContent toolId={win.id} selectedProvince={selectedProvince} />
+            <ToolContent
+              toolId={win.id}
+              selectedProvince={selectedProvince}
+              onLocateProvince={onLocateProvince}
+              onOpenNotesWithText={onOpenNotesWithText}
+              onAddToStudy={onAddToStudy}
+              sharedNoteText={sharedNoteText}
+            />
           </WindowFrame>
         ))}
 

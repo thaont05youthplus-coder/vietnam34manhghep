@@ -9,6 +9,7 @@ import { RegionCardsStrip } from "@/components/map/RegionCardsStrip";
 import { ProvinceDetailPanel } from "@/components/panels/ProvinceDetailPanel";
 import { ProvinceFeature, ProvinceFeatureCollection, MapMode } from "@/types/geo";
 import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
+import { GeoQuestion } from "@/components/question-bank/QuestionBankModal";
 
 export default function HomePage() {
   const [provinces, setProvinces] = useState<ProvinceFeature[]>([]);
@@ -24,6 +25,9 @@ export default function HomePage() {
 
   // Z-index cao nhất hiện tại cho các cửa sổ
   const [maxZIndex, setMaxZIndex] = useState(40);
+
+  // Nội dung ghi chú được chuyển từ Chatbox AI hoặc câu hỏi
+  const [sharedNoteText, setSharedNoteText] = useState<string>("");
 
   // Quản lý trạng thái 4 cửa sổ công cụ (Window Manager)
   const [windows, setWindows] = useState<Record<ToolId, WindowState>>({
@@ -143,6 +147,43 @@ export default function HomePage() {
     [maxZIndex]
   );
 
+  // Mở Ghi chú và chèn nội dung trích từ Chatbox (Mục 16.6 Spec)
+  const handleOpenNotesWithText = useCallback(
+    (text: string) => {
+      setSharedNoteText(text);
+      setWindows((curr) => {
+        const nextMaxZ = maxZIndex + 1;
+        setMaxZIndex(nextMaxZ);
+        return {
+          ...curr,
+          notes: {
+            ...curr.notes,
+            isOpen: true,
+            isMinimized: false,
+            zIndex: nextMaxZ,
+          },
+        };
+      });
+    },
+    [maxZIndex]
+  );
+
+  // Định vị tỉnh từ Bộ câu hỏi hoặc Bài kiểm tra (T46)
+  const handleLocateProvince = useCallback(
+    (provinceCode: string) => {
+      const found = provinces.find((p) => p.properties.provinceCode === provinceCode);
+      if (found) {
+        setSelectedProvince(found);
+      }
+    },
+    [provinces]
+  );
+
+  // Lưu câu hỏi vào bộ Học & Kiểm tra
+  const handleAddToStudy = useCallback((q: GeoQuestion) => {
+    alert(`Đã lưu "${q.title}" vào bộ ôn tập Học & Kiểm tra!`);
+  }, []);
+
   // Đóng cửa sổ
   const handleCloseWindow = useCallback((toolId: ToolId) => {
     setWindows((curr) => ({
@@ -259,6 +300,10 @@ export default function HomePage() {
             onFocusWindow={handleFocusWindow}
             onCloseWindow={handleCloseWindow}
             selectedProvince={selectedProvince}
+            onLocateProvince={handleLocateProvince}
+            onOpenNotesWithText={handleOpenNotesWithText}
+            onAddToStudy={handleAddToStudy}
+            sharedNoteText={sharedNoteText}
           />
         </div>
       </div>
