@@ -9,7 +9,6 @@ import {
   WardFeature,
 } from "@/types/geo";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS, PROVINCE_PALETTE } from "@/lib/regions";
-import { InsetMap } from "./InsetMap";
 
 interface VietnamMapProps {
   mode: MapMode;
@@ -256,16 +255,6 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     setPan({ x: 0, y: 0 });
     setActiveWardId(null);
   };
-
-  // Find Da Nang and Khanh Hoa features for inset maps
-  const daNangFeature = useMemo(
-    () => geoData?.features.find((f) => f.properties.provinceCode === "VN48") || null,
-    [geoData]
-  );
-  const khanhHoaFeature = useMemo(
-    () => geoData?.features.find((f) => f.properties.provinceCode === "VN56") || null,
-    [geoData]
-  );
 
   return (
     <div
@@ -737,22 +726,6 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
             Chỉ có Việt Nam • Trọn vẹn chủ quyền
           </span>
         </div>
-      </div>
-
-      {/* 2 Inset Maps for Hoang Sa & Truong Sa (UI bottom-right) */}
-      <div className="absolute bottom-4 right-4 z-20 flex flex-col sm:flex-row gap-3">
-        <InsetMap
-          type="hoang_sa"
-          feature={daNangFeature}
-          onSelect={onSelectProvince}
-          isSelected={selectedProvince?.properties.provinceCode === "VN48"}
-        />
-        <InsetMap
-          type="truong_sa"
-          feature={khanhHoaFeature}
-          onSelect={onSelectProvince}
-          isSelected={selectedProvince?.properties.provinceCode === "VN56"}
-        />
       </div>
 
       {/* Loading & Error States */}

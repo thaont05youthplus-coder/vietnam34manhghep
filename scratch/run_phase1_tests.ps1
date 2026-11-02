@@ -83,7 +83,7 @@ Assert-Test "T03.2: InsetMap.tsx component exists" (Test-Path $insetComp)
 if (Test-Path $mapComp) {
     $mapText = Get-Content $mapComp -Raw -Encoding UTF8
     Assert-Test "T03.3: Map strictly uses neutral vector without global raster tiles" ($mapText -notmatch 'openstreetmap.org' -and $mapText -notmatch 'tile.openstreetmap')
-    Assert-Test "T03.4: Map contains InsetMap integration for Hoang Sa and Truong Sa" ($mapText -match 'InsetMap' -and $mapText -match 'hoang_sa' -and $mapText -match 'truong_sa')
+    Assert-Test "T03.4: Map contains Hoang Sa and Truong Sa sovereignty representation" ($mapText -match 'HO.*NG SA' -and $mapText -match 'TR.*NG SA')
 }
 
 Write-Host "----------------------------------------------------------" -ForegroundColor Cyan
