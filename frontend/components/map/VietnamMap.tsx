@@ -368,28 +368,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
       )}
 
-      {/* Floating Card: Center Watermark Callout (Chỉ hiện khi xem toàn cảnh 1.0x) */}
-      {zoom <= 1.2 && !selectedProvince && !activeDirection && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center text-center p-6 bg-white/80 border border-slate-200/80 rounded-2xl shadow-sm backdrop-blur-md max-w-md pointer-events-none animate-in fade-in zoom-in-95 duration-200">
-          <div className="w-12 h-12 rounded-full bg-teal-800 text-white flex items-center justify-center mb-3 shadow-xs">
-            <Globe className="w-6 h-6" />
-          </div>
-          <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight mb-1.5">
-            Không gian hiển thị GIS toàn cảnh
-          </h2>
-          <p className="text-xs text-slate-600 leading-relaxed max-w-sm mb-3">
-            Khung lưới tọa độ VN-2000 tiêu chuẩn địa lí học đường. Sẵn sàng đồng bộ hóa dữ liệu hành chính 34 phân vùng &amp; hải đảo thống nhất.
-          </p>
-          <div className="flex items-center gap-2 font-mono text-[11px] text-slate-600">
-            <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200">
-              102°08'Đ - 109°28'Đ
-            </span>
-            <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200">
-              8°34'B - 23°23'B
-            </span>
-          </div>
-        </div>
-      )}
+
 
       {/* Floating Controls: Top-Right (La bàn điều hướng 4 góc Đông-Tây-Nam-Bắc & Cụm Zoom) */}
       <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
