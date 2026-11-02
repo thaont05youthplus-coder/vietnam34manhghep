@@ -201,6 +201,14 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
                   {detail.overview.units.districts} Huyện/Quận, {detail.overview.units.communes} Xã/Phường
                 </span>
               </div>
+              {provinceWards.length > 0 && (
+                <div className="pt-1 text-[11px] text-slate-300">
+                  <span className="text-slate-400">Phường/xã hạt nhân: </span>
+                  <span className="text-amber-300 font-medium">
+                    {provinceWards.map((w) => w.properties.name).join(", ")}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Vùng kinh tế và Tự nhiên */}
@@ -228,54 +236,6 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
                 <div>• Phía Tây: {detail.overview.borders.west}</div>
               </div>
             </div>
-
-            {/* Phường / Xã trung tâm trọng điểm (LOD Wards) */}
-            {provinceWards.length > 0 && (
-              <div className="p-3 bg-slate-950/70 border border-sky-800/50 rounded-xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <h5 className="font-bold text-sky-300 flex items-center gap-1.5 text-xs">
-                    <MapPin className="w-3.5 h-3.5 text-amber-400" />
-                    Phường / Xã trung tâm trọng điểm ({provinceWards.length})
-                  </h5>
-                  <span className="text-[10px] text-sky-400/80 font-medium">LOD Pin Marker</span>
-                </div>
-                <div className="space-y-1.5 max-h-56 overflow-y-auto custom-scroll pr-1">
-                  {provinceWards.map((w) => (
-                    <div
-                      key={w.properties.id}
-                      className="p-2 rounded-lg bg-[#081a36]/90 border border-sky-800/40 hover:border-amber-400/60 transition-all group"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-amber-300 text-xs flex items-center gap-1">
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              w.properties.isIsland
-                                ? "bg-sky-400"
-                                : w.properties.isBorderOrExtreme
-                                ? "bg-emerald-400"
-                                : "bg-amber-400"
-                            }`}
-                          />
-                          {w.properties.name}
-                        </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-700/40">
-                          {w.properties.district}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-                        {w.properties.role}
-                      </p>
-                      <div className="text-[10px] text-sky-400/80 font-mono mt-1 flex items-center justify-between">
-                        <span>{w.properties.type}</span>
-                        <span>
-                          📍 {w.geometry.coordinates[1].toFixed(4)}°B, {w.geometry.coordinates[0].toFixed(4)}°Đ
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         )}
 
@@ -318,6 +278,25 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
                 ))}
               </div>
             </div>
+
+            {/* Địa bàn tự nhiên, hải đảo & mốc tiền tiêu được gộp trực tiếp vào Tab Tự nhiên */}
+            {provinceWards.some((w) => w.properties.isIsland || w.properties.isBorderOrExtreme) && (
+              <div className="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1.5">
+                <h5 className="font-bold text-sky-400">Địa bàn tự nhiên, hải đảo & mốc tiền tiêu:</h5>
+                <div className="space-y-1 text-xs text-slate-300">
+                  {provinceWards
+                    .filter((w) => w.properties.isIsland || w.properties.isBorderOrExtreme)
+                    .map((w) => (
+                      <div key={w.properties.id} className="flex items-start gap-1.5">
+                        <span className="text-sky-400 mt-0.5">•</span>
+                        <span>
+                          <strong className="text-amber-300">{w.properties.name}</strong> ({w.properties.district}): {w.properties.role}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -413,6 +392,25 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Đô thị hạt nhân phát triển kinh tế được gộp trực tiếp vào Tab Kinh tế */}
+            {provinceWards.some((w) => w.properties.isUrbanCenter) && (
+              <div className="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1.5">
+                <h5 className="font-bold text-amber-400">Đô thị hạt nhân phát triển kinh tế:</h5>
+                <div className="space-y-1 text-xs text-slate-300">
+                  {provinceWards
+                    .filter((w) => w.properties.isUrbanCenter)
+                    .map((w) => (
+                      <div key={w.properties.id} className="flex items-start gap-1.5">
+                        <span className="text-amber-400 mt-0.5">•</span>
+                        <span>
+                          <strong className="text-white">{w.properties.name}</strong> ({w.properties.district}): {w.properties.role}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

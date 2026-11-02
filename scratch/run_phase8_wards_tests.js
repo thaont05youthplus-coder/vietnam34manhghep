@@ -108,13 +108,13 @@ assertTest("T8.16: Hiển thị tooltip chi tiết khi rê chuột vào điểm 
 assertTest("T8.17: Hiệu ứng vòng tròn lan tỏa pulse ring cho xã đảo và điểm được chọn", mapContent.includes("animate-ping"));
 assertTest("T8.18: Nhãn tên phường/xã có nền tương phản cao", mapContent.includes("ward.properties.name"));
 
-// 3. Kiểm tra ProvinceDetailPanel.tsx hiển thị danh sách phường/xã
+// 3. Kiểm tra ProvinceDetailPanel.tsx gộp phường/xã vào 3 chức năng, không để mục riêng
 const panelFile = path.join(__dirname, "../frontend/components/panels/ProvinceDetailPanel.tsx");
 const panelContent = fs.readFileSync(panelFile, "utf8");
 
 assertTest("T8.19: ProvinceDetailPanel tải danh sách phường/xã theo tỉnh", panelContent.includes("vietnam_central_wards.geojson"));
-assertTest("T8.20: Mục 'Phường / Xã trung tâm trọng điểm' trong Tab Tổng quan", panelContent.includes("Phường / Xã trung tâm trọng điểm"));
-assertTest("T8.21: Hiển thị tên, quận/huyện, vai trò và tọa độ địa lý của từng phường/xã", panelContent.includes("w.properties.district") && panelContent.includes("w.properties.role"));
+assertTest("T8.20: Đã bỏ mục riêng 'Phường / Xã trung tâm trọng điểm' khỏi panel", !panelContent.includes("Phường / Xã trung tâm trọng điểm"));
+assertTest("T8.21: Phường/xã được gộp liền mạch vào 3 tab (Tổng quan, Tự nhiên, Kinh tế)", panelContent.includes("Phường/xã hạt nhân") && panelContent.includes("Địa bàn tự nhiên, hải đảo") && panelContent.includes("Đô thị hạt nhân phát triển kinh tế"));
 
 // 4. Kiểm tra Type định nghĩa geo.ts
 const geoTypeFile = path.join(__dirname, "../frontend/types/geo.ts");
