@@ -266,12 +266,27 @@ export const DualNotesModal: React.FC<DualNotesModalProps> = ({
     alert(`Đã chèn ảnh bản đồ minh họa của ${provName} vào ghi chú!`);
   };
 
+  // Xuất file ghi chú dạng Markdown (.md)
+  const handleExportNote = () => {
+    const filename = `${noteTitle.replace(/[^a-zA-Z0-9\u00C0-\u024F\u1EA0-\u1EF9]/g, "_")}.md`;
+    const fullContent = `# ${noteTitle}\n\n*Ngày xuất: ${new Date().toLocaleString("vi-VN")}*\n\n${textContent}`;
+    const blob = new Blob([fullContent], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-950 text-slate-100 select-text">
       {/* Header thanh công cụ Ghi chú */}
       <div className="p-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
-          {/* Chuyển đổi Văn bản / Vẽ tay iPad */}
+          {/* Chuyển đổi Văn bản / Vẽ tay */}
           <div className="flex bg-slate-800 p-0.5 rounded-xl border border-slate-700">
             <button
               onClick={() => setActiveMode("text")}
@@ -293,7 +308,7 @@ export const DualNotesModal: React.FC<DualNotesModalProps> = ({
               }`}
             >
               <PenTool className="w-3.5 h-3.5" />
-              <span>Vẽ tay iPad</span>
+              <span>Vẽ tay</span>
             </button>
           </div>
 
@@ -304,7 +319,7 @@ export const DualNotesModal: React.FC<DualNotesModalProps> = ({
           )}
         </div>
 
-        {/* Trạng thái tự lưu & Chèn ảnh map (T38) */}
+        {/* Trạng thái tự lưu, Chèn ảnh map & Xuất file (T38) */}
         <div className="flex items-center gap-2 text-xs">
           <div className="flex items-center gap-1 text-[10px] text-slate-400 font-mono">
             {saveStatus === "saving" ? (
@@ -323,6 +338,15 @@ export const DualNotesModal: React.FC<DualNotesModalProps> = ({
             title="Chèn ảnh bản đồ đang xem vào ghi chú"
           >
             <Camera className="w-3.5 h-3.5 text-amber-400" />
+          </button>
+
+          <button
+            onClick={handleExportNote}
+            className="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition-colors border border-slate-700 flex items-center gap-1 text-[11px]"
+            title="Tải ghi chú về máy dạng Markdown (.md)"
+          >
+            <Download className="w-3.5 h-3.5 text-blue-400" />
+            <span className="hidden sm:inline">Xuất file</span>
           </button>
         </div>
       </div>

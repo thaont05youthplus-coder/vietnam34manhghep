@@ -7,6 +7,7 @@ import { WindowManager } from "@/components/workspace/WindowManager";
 import { VietnamMap } from "@/components/map/VietnamMap";
 import { RegionCardsStrip } from "@/components/map/RegionCardsStrip";
 import { ProvinceDetailPanel } from "@/components/panels/ProvinceDetailPanel";
+import { KeyboardShortcutsModal } from "@/components/workspace/KeyboardShortcutsModal";
 import { ProvinceFeature, ProvinceFeatureCollection, MapMode } from "@/types/geo";
 import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
 import { GeoQuestion } from "@/components/question-bank/QuestionBankModal";
@@ -28,6 +29,9 @@ export default function HomePage() {
 
   // Nội dung ghi chú được chuyển từ Chatbox AI hoặc câu hỏi
   const [sharedNoteText, setSharedNoteText] = useState<string>("");
+
+  // Trạng thái mở modal hướng dẫn phím tắt (Mục 14 Spec)
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
   // Quản lý trạng thái 4 cửa sổ công cụ (Window Manager)
   const [windows, setWindows] = useState<Record<ToolId, WindowState>>({
@@ -65,7 +69,7 @@ export default function HomePage() {
     },
     notes: {
       id: "notes",
-      title: "Ghi chú kép iPad (Text + Canvas)",
+      title: "Ghi chú",
       iconName: "PenTool",
       isOpen: false,
       isMinimized: false,
@@ -179,6 +183,121 @@ export default function HomePage() {
     [provinces]
   );
 
+  // Đồng bộ trạng thái URL khi tải trang ban đầu (Mục 13 Spec)
+  useEffect(() => {
+    if (typeof window === "undefined" || provinces.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const modeParam = params.get("mode") as MapMode | null;
+    const provinceParam = params.get("province");
+    const toolParam = params.get("tool") as ToolId | null;
+
+    if (modeParam && ["hanh_chinh", "tu_nhien", "kinh_te"].includes(modeParam)) {
+      setMode(modeParam);
+    }
+    if (provinceParam) {
+      const match = provinces.find(
+        (p) =>
+          p.properties.provinceCode.toLowerCase() === provinceParam.toLowerCase() ||
+          p.properties.name.toLowerCase() === provinceParam.toLowerCase()
+      );
+      if (match) setSelectedProvince(match);
+    }
+    if (toolParam && ["chat", "questions", "notes", "study"].includes(toolParam)) {
+      setWindows((curr) => ({
+        ...curr,
+        [toolParam]: {
+          ...curr[toolParam],
+          isOpen: true,
+          isMinimized: false,
+        },
+      }));
+    }
+  }, [provinces]);
+
+  // Điều hướng bằng Phím tắt (Keyboard Navigation & Accessibility - Mục 14 Spec)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Bỏ qua nếu đang gõ trong input, textarea hoặc contenteditable
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+
+      // Phím 1, 2, 3 chuyển chế độ bản đồ
+      if (e.key === "1") {
+        e.preventDefault();
+        setMode("hanh_chinh");
+        setSelectedRegionId(null);
+      } else if (e.key === "2") {
+        e.preventDefault();
+        setMode("tu_nhien");
+        setSelectedRegionId(null);
+      } else if (e.key === "3") {
+        e.preventDefault();
+        setMode("kinh_te");
+        setSelectedRegionId(null);
+      }
+      // Phím C, Q, N, S mở/tắt 4 công cụ
+      else if (key === "c") {
+        e.preventDefault();
+        handleToggleTool("chat");
+      } else if (key === "q") {
+        e.preventDefault();
+        handleToggleTool("questions");
+      } else if (key === "n") {
+        e.preventDefault();
+        handleToggleTool("notes");
+      } else if (key === "s") {
+        e.preventDefault();
+        handleToggleTool("study");
+      }
+      // Phím ? mở Cheat sheet phím tắt
+      else if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+      }
+      // Phím Esc đóng cửa sổ / panel
+      else if (e.key === "Escape") {
+        if (isShortcutsOpen) {
+          setIsShortcutsOpen(false);
+        } else if (selectedProvince) {
+          setSelectedProvince(null);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedProvince, isShortcutsOpen, handleToggleTool]);
+
+  // Chia sẻ liên kết kèm trạng thái góc nhìn (Mục 13 Spec)
+  const handleShare = useCallback(() => {
+    const params = new URLSearchParams();
+    params.set("mode", mode);
+    if (selectedProvince) {
+      params.set("province", selectedProvince.properties.provinceCode);
+    }
+    const openTool = (Object.keys(windows) as ToolId[]).find(
+      (k) => windows[k].isOpen && !windows[k].isMinimized
+    );
+    if (openTool) {
+      params.set("tool", openTool);
+    }
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, "", `?${params.toString()}`);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl);
+    }
+  }, [mode, selectedProvince, windows]);
+
   // Lưu câu hỏi vào bộ Học & Kiểm tra
   const handleAddToStudy = useCallback((q: GeoQuestion) => {
     alert(`Đã lưu "${q.title}" vào bộ ôn tập Học & Kiểm tra!`);
@@ -247,6 +366,8 @@ export default function HomePage() {
           setSelectedProvince(p);
         }}
         onResetLayout={handleResetLayout}
+        onOpenShortcuts={() => setIsShortcutsOpen(true)}
+        onShare={handleShare}
       />
 
       {/* Thân ứng dụng: Sidebar (UI-02) + Vùng làm việc Map Workspace */}
@@ -307,6 +428,12 @@ export default function HomePage() {
           />
         </div>
       </div>
+
+      {/* Modal Hướng dẫn Phím tắt (Accessibility - Mục 14 Spec) */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsOpen}
+        onClose={() => setIsShortcutsOpen(false)}
+      />
     </main>
   );
 }

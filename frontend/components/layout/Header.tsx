@@ -10,6 +10,9 @@ import {
   X,
   Compass,
   MapPin,
+  Share2,
+  Keyboard,
+  Check,
 } from "lucide-react";
 import { ProvinceFeature } from "@/types/geo";
 
@@ -19,6 +22,8 @@ interface HeaderProps {
   provinces: ProvinceFeature[];
   onSelectProvince: (province: ProvinceFeature) => void;
   onResetLayout: () => void;
+  onOpenShortcuts?: () => void;
+  onShare?: () => void;
 }
 
 // Hàm chuẩn hóa chuỗi tiếng Việt không dấu để tìm kiếm thông minh
@@ -37,10 +42,13 @@ export const Header: React.FC<HeaderProps> = ({
   provinces,
   onSelectProvince,
   onResetLayout,
+  onOpenShortcuts,
+  onShare,
 }) => {
   const [query, setQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isCopied, setIsCopied] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -124,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
                 VN34MG
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-blue-300 px-2 py-0.5 rounded-full border border-blue-500/30">
-                Giai đoạn 2
+                Bản đồ 34
               </span>
             </div>
             <p className="text-[11px] text-slate-400 hidden lg:block leading-tight">
@@ -212,6 +220,44 @@ export const Header: React.FC<HeaderProps> = ({
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>Hoàng Sa &amp; Trường Sa: Đầy đủ</span>
         </div>
+
+        {/* Nút Phím tắt (?) (Mục 14 Spec) */}
+        {onOpenShortcuts && (
+          <button
+            onClick={onOpenShortcuts}
+            title="Xem danh sách phím tắt điều hướng nhanh (Nhấn ?)"
+            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/70 text-slate-200 hover:text-white text-xs font-semibold transition-all shadow-sm"
+          >
+            <Keyboard className="w-4 h-4 text-indigo-400" />
+            <span className="hidden lg:inline">Phím tắt</span>
+            <kbd className="hidden sm:inline px-1 bg-slate-900 border border-slate-700 rounded text-[10px] text-amber-300 font-mono">?</kbd>
+          </button>
+        )}
+
+        {/* Nút Chia sẻ (Share URL State - Mục 13 Spec) */}
+        {onShare && (
+          <button
+            onClick={() => {
+              onShare();
+              setIsCopied(true);
+              setTimeout(() => setIsCopied(false), 2000);
+            }}
+            title="Sao chép liên kết góc nhìn bản đồ & công cụ hiện tại"
+            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-blue-950/70 hover:bg-blue-900/80 border border-blue-700/70 text-blue-200 hover:text-white text-xs font-semibold transition-all shadow-sm"
+          >
+            {isCopied ? (
+              <>
+                <Check className="w-4 h-4 text-emerald-400" />
+                <span className="hidden sm:inline text-emerald-300">Đã chép link!</span>
+              </>
+            ) : (
+              <>
+                <Share2 className="w-4 h-4 text-blue-400" />
+                <span className="hidden sm:inline">Chia sẻ</span>
+              </>
+            )}
+          </button>
+        )}
 
         {/* Nút Đặt lại bố cục (Reset Layout) */}
         <button

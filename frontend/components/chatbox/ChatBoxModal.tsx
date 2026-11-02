@@ -289,7 +289,7 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
                     <button
                       onClick={() => onOpenNotes(m.text)}
                       className="hover:text-amber-400 flex items-center gap-0.5"
-                      title="Lưu vào Ghi chú kép"
+                      title="Lưu vào Ghi chú"
                     >
                       <FileText className="w-3 h-3" />
                       <span>Lưu vào Note</span>

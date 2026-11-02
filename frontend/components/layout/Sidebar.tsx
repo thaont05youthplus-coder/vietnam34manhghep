@@ -50,8 +50,8 @@ const TOOLS: ToolItem[] = [
   },
   {
     id: "notes",
-    name: "Ghi chú kép iPad",
-    shortDesc: "Văn bản + Vẽ tay Canvas tự lưu",
+    name: "Ghi chú",
+    shortDesc: "Văn bản & vẽ tay tự lưu",
     icon: PenTool,
     badge: "Canvas",
     color: "from-amber-500 to-orange-600",
