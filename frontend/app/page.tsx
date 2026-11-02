@@ -5,15 +5,19 @@ import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { WindowManager } from "@/components/workspace/WindowManager";
 import { VietnamMap } from "@/components/map/VietnamMap";
+import { RegionCardsStrip } from "@/components/map/RegionCardsStrip";
+import { ProvinceDetailPanel } from "@/components/panels/ProvinceDetailPanel";
 import { ProvinceFeature, ProvinceFeatureCollection, MapMode } from "@/types/geo";
 import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
-import { ECONOMIC_REGIONS, NATURAL_REGIONS } from "@/lib/regions";
-import { X, ExternalLink, Layers, Sparkles } from "lucide-react";
 
 export default function HomePage() {
   const [provinces, setProvinces] = useState<ProvinceFeature[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<ProvinceFeature | null>(null);
   const [mode, setMode] = useState<MapMode>("hanh_chinh");
+
+  // Vùng đang chọn hoặc hover từ dải thẻ thông minh (RegionCardsStrip)
+  const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
+  const [hoveredRegionId, setHoveredRegionId] = useState<string | null>(null);
 
   // Trạng thái Sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -117,7 +121,7 @@ export default function HomePage() {
     });
   }, []);
 
-  // Bật/tắt mở công cụ từ Sidebar
+  // Bật/tắt mở công cụ từ Sidebar hoặc Panel chi tiết
   const handleToggleTool = useCallback(
     (toolId: ToolId) => {
       setWindows((curr) => {
@@ -164,6 +168,8 @@ export default function HomePage() {
   // Nút "Đặt lại bố cục" (Reset Layout) - Bảo toàn tối thiểu 40% diện tích bản đồ
   const handleResetLayout = useCallback(() => {
     setSelectedProvince(null);
+    setSelectedRegionId(null);
+    setHoveredRegionId(null);
     setIsSidebarOpen(false);
     // Thu nhỏ hoặc đưa các cửa sổ về trạng thái docked gọn gàng
     setWindows((curr) => {
@@ -217,93 +223,33 @@ export default function HomePage() {
         <div className="relative flex-1 h-full overflow-hidden bg-slate-950">
           <VietnamMap
             mode={mode}
-            onModeChange={setMode}
+            onModeChange={(newMode) => {
+              setMode(newMode);
+              setSelectedRegionId(null);
+            }}
             selectedProvince={selectedProvince}
             onSelectProvince={setSelectedProvince}
+            selectedRegionId={selectedRegionId}
+            hoveredRegionId={hoveredRegionId}
           />
 
-          {/* Panel chi tiết S2 tỉnh thành (Trượt ra khi nhấp chọn một tỉnh) */}
+          {/* Dải thẻ ảnh vùng thông minh (Tự co giãn dọc/ngang theo Panel chi tiết) */}
+          <RegionCardsStrip
+            mode={mode}
+            isDetailPanelOpen={!!selectedProvince}
+            selectedRegionId={selectedRegionId}
+            onSelectRegion={setSelectedRegionId}
+            onHoverRegion={setHoveredRegionId}
+          />
+
+          {/* Panel chi tiết địa phương 5 tab (Trượt ra khi nhấp chọn một tỉnh - S2 state) */}
           {selectedProvince && (
-            <aside className="absolute top-4 right-4 z-30 w-84 bg-slate-900/95 border border-slate-700/90 rounded-2xl p-5 shadow-2xl backdrop-blur-xl animate-in slide-in-from-right duration-200 max-w-sm select-none">
-              <div className="flex justify-between items-start pb-3 border-b border-slate-800">
-                <div>
-                  <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">
-                    {selectedProvince.properties.provinceCode}
-                  </span>
-                  <h3 className="text-xl font-black text-white">
-                    {selectedProvince.properties.name}
-                  </h3>
-                  <p className="text-xs text-slate-400 italic">
-                    {selectedProvince.properties.nameEn}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSelectedProvince(null)}
-                  className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 text-base leading-none transition-colors"
-                  title="Đóng thông tin"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="mt-4 space-y-2.5 text-xs text-slate-300">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Phân loại:</span>
-                  <span className="font-semibold text-slate-100">
-                    {selectedProvince.properties.type}
-                  </span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Diện tích:</span>
-                  <span className="font-semibold text-amber-300">
-                    {selectedProvince.properties.areaSqKm.toLocaleString("vi-VN")} km²
-                  </span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Vùng KT-XH:</span>
-                  <span className="font-semibold text-blue-300">
-                    {
-                      ECONOMIC_REGIONS.find((r) =>
-                        r.provinceCodes.includes(selectedProvince.properties.provinceCode)
-                      )?.name || "N/A"
-                    }
-                  </span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Khu vực tự nhiên:</span>
-                  <span className="font-semibold text-emerald-300">
-                    {
-                      NATURAL_REGIONS.find((r) =>
-                        r.provinceCodes.includes(selectedProvince.properties.provinceCode)
-                      )?.name || "N/A"
-                    }
-                  </span>
-                </div>
-
-                {selectedProvince.properties.provinceCode === "VN48" && (
-                  <div className="p-3 bg-amber-950/40 border border-amber-800/60 rounded-xl text-xs text-amber-200 mt-2.5 leading-relaxed">
-                    🏝️ Bao gồm <strong>Huyện đảo Hoàng Sa</strong> với hơn 18.000 điểm đa giác hải đảo.
-                  </div>
-                )}
-                {selectedProvince.properties.provinceCode === "VN56" && (
-                  <div className="p-3 bg-amber-950/40 border border-amber-800/60 rounded-xl text-xs text-amber-200 mt-2.5 leading-relaxed">
-                    🏝️ Bao gồm <strong>Huyện đảo Trường Sa</strong> trải rộng trên Biển Đông với hơn 54.000 điểm đa giác hải đảo.
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-5 pt-3 border-t border-slate-800 flex flex-col gap-2">
-                <button
-                  onClick={() => {
-                    handleToggleTool("chat");
-                  }}
-                  className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg transition-colors flex items-center justify-center gap-1.5"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Hỏi AI về {selectedProvince.properties.name}</span>
-                </button>
-              </div>
-            </aside>
+            <ProvinceDetailPanel
+              province={selectedProvince}
+              onClose={() => setSelectedProvince(null)}
+              onOpenAiChat={() => handleToggleTool("chat")}
+              onOpenNotes={() => handleToggleTool("notes")}
+            />
           )}
 
           {/* Trình quản lý cửa sổ đa nhiệm (Workspace Window Manager UI-07) */}

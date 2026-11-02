@@ -10,6 +10,8 @@ interface VietnamMapProps {
   onModeChange?: (mode: MapMode) => void;
   selectedProvince: ProvinceFeature | null;
   onSelectProvince: (province: ProvinceFeature | null) => void;
+  selectedRegionId?: string | null;
+  hoveredRegionId?: string | null;
 }
 
 export const VietnamMap: React.FC<VietnamMapProps> = ({
@@ -17,6 +19,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   onModeChange,
   selectedProvince,
   onSelectProvince,
+  selectedRegionId,
+  hoveredRegionId,
 }) => {
   const [geoData, setGeoData] = useState<ProvinceFeatureCollection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,6 +102,15 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     [mode]
   );
 
+  // Danh sách các mã tỉnh thuộc vùng đang chọn/hover từ Dải thẻ vùng (RegionCardsStrip)
+  const activeRegionCodes = useMemo(() => {
+    const targetId = hoveredRegionId || selectedRegionId;
+    if (!targetId || mode === "hanh_chinh") return [];
+    const list = mode === "kinh_te" ? ECONOMIC_REGIONS : NATURAL_REGIONS;
+    const reg = list.find((r) => r.id === targetId);
+    return reg ? reg.provinceCodes : [];
+  }, [hoveredRegionId, selectedRegionId, mode]);
+
   // Pre-calculate SVG path data
   const pathsData = useMemo(() => {
     if (!geoData) return [];
@@ -121,6 +134,29 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
       const isSelected = selectedProvince?.properties.provinceCode === properties.provinceCode;
       const isHovered = hoveredProvince?.properties.provinceCode === properties.provinceCode;
+      const isRegionActive = activeRegionCodes.includes(properties.provinceCode);
+      const hasActiveRegion = activeRegionCodes.length > 0;
+
+      // Tính toán opacity và stroke để nổi bật tỉnh/vùng
+      let fillOpacity = 0.68;
+      let strokeColor = "#0f172a";
+      let strokeWidth = 0.8;
+
+      if (isSelected) {
+        fillOpacity = 0.95;
+        strokeColor = "#f59e0b";
+        strokeWidth = 2.5;
+      } else if (isHovered) {
+        fillOpacity = 0.88;
+        strokeColor = "#ffffff";
+        strokeWidth = 1.8;
+      } else if (isRegionActive) {
+        fillOpacity = 0.9;
+        strokeColor = "#38bdf8";
+        strokeWidth = 1.6;
+      } else if (hasActiveRegion) {
+        fillOpacity = 0.3; // Làm mờ các tỉnh không thuộc vùng đang chọn
+      }
 
       return {
         feature,
@@ -129,9 +165,13 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         color: getProvinceColor(feature, index),
         isSelected,
         isHovered,
+        isRegionActive,
+        fillOpacity,
+        strokeColor,
+        strokeWidth,
       };
     });
-  }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince]);
+  }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince, activeRegionCodes]);
 
   // Pan event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -189,11 +229,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       {/* Background subtle grid pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
 
-      {/* Mode Switcher (UI-04) */}
-      <div className="absolute top-4 left-4 z-20 flex bg-slate-900/90 border border-slate-700/80 rounded-lg p-1 shadow-xl backdrop-blur">
+      {/* Mode Switcher (UI-04) - ĐẶC BIỆT GHI RÕ: Kinh tế - Xã hội (6 vùng) */}
+      <div className="absolute top-4 left-4 z-20 flex bg-slate-900/90 border border-slate-700/80 rounded-xl p-1 shadow-xl backdrop-blur">
         <button
           onClick={() => onModeChange?.("hanh_chinh")}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             mode === "hanh_chinh"
               ? "bg-blue-600 text-white shadow"
               : "text-slate-300 hover:text-white hover:bg-slate-800"
@@ -203,7 +243,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </button>
         <button
           onClick={() => onModeChange?.("tu_nhien")}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             mode === "tu_nhien"
               ? "bg-emerald-600 text-white shadow"
               : "text-slate-300 hover:text-white hover:bg-slate-800"
@@ -213,28 +253,28 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </button>
         <button
           onClick={() => onModeChange?.("kinh_te")}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             mode === "kinh_te"
               ? "bg-amber-600 text-white shadow"
               : "text-slate-300 hover:text-white hover:bg-slate-800"
           }`}
         >
-          Kinh tế – XH (6 vùng)
+          Kinh tế - Xã hội (6 vùng)
         </button>
       </div>
 
       {/* Navigation Controls: Zoom In / Zoom Out / Reset VN */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-lg p-1.5 shadow-xl backdrop-blur">
+      <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-xl p-1.5 shadow-xl backdrop-blur">
         <button
           onClick={handleZoomIn}
-          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-lg font-bold transition-colors"
+          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded-lg text-lg font-bold transition-colors"
           title="Phóng to (+)"
         >
           +
         </button>
         <button
           onClick={handleZoomOut}
-          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-lg font-bold transition-colors"
+          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded-lg text-lg font-bold transition-colors"
           title="Thu nhỏ (−)"
         >
           −
@@ -242,7 +282,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         <div className="w-full h-px bg-slate-700 my-0.5" />
         <button
           onClick={handleReset}
-          className="w-8 h-8 flex items-center justify-center text-amber-300 hover:bg-slate-800 rounded text-xs font-extrabold transition-colors"
+          className="w-8 h-8 flex items-center justify-center text-amber-300 hover:bg-slate-800 rounded-lg text-xs font-extrabold transition-colors"
           title="Căn giữa toàn Việt Nam"
         >
           VN
@@ -268,9 +308,9 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               key={item.feature.properties.provinceCode}
               d={item.pathString}
               fill={item.color}
-              fillOpacity={item.isSelected ? 0.95 : item.isHovered ? 0.88 : 0.68}
-              stroke={item.isSelected ? "#f59e0b" : item.isHovered ? "#ffffff" : "#0f172a"}
-              strokeWidth={item.isSelected ? 2.5 : item.isHovered ? 1.8 : 0.8}
+              fillOpacity={item.fillOpacity}
+              stroke={item.strokeColor}
+              strokeWidth={item.strokeWidth}
               strokeLinejoin="round"
               filter={item.isSelected ? "url(#glow)" : undefined}
               className="transition-all duration-150 cursor-pointer"
@@ -349,7 +389,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       {/* Hover Tooltip (S1) */}
       {hoveredProvince && (
         <div
-          className="absolute z-40 pointer-events-none bg-slate-900/95 border border-slate-700 text-white rounded-lg px-3.5 py-2.5 shadow-2xl backdrop-blur max-w-xs text-xs animate-in fade-in duration-150"
+          className="absolute z-40 pointer-events-none bg-slate-900/95 border border-slate-700 text-white rounded-xl px-3.5 py-2.5 shadow-2xl backdrop-blur max-w-xs text-xs animate-in fade-in duration-150"
           style={{ left: `${tooltipPos.x}px`, top: `${tooltipPos.y}px` }}
         >
           <div className="flex items-center gap-2">
