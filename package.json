@@ -1,0 +1,30 @@
+{
+  "name": "vietnam34manhghep",
+  "version": "1.0.0",
+  "description": "VN34MG - Bản đồ Công nghệ số Việt Nam 34 Mảnh ghép (Next.js 15 & Convex)",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "test": "powershell -ExecutionPolicy Bypass -File scratch/run_all_acceptance_tests.ps1",
+    "test:unit": "node scratch/run_phase7_tests.js"
+  },
+  "keywords": [
+    "vietnam",
+    "map",
+    "34-provinces",
+    "hoang-sa",
+    "truong-sa",
+    "education",
+    "nextjs",
+    "convex"
+  ],
+  "author": "VN34MG Team",
+  "license": "MIT"
+}
