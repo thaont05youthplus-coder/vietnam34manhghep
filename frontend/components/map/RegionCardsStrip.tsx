@@ -35,18 +35,18 @@ export const RegionCardsStrip: React.FC<RegionCardsStripProps> = ({
     <div
       className={`absolute z-20 transition-all duration-300 select-none ${
         isDetailPanelOpen
-          ? "bottom-4 left-4 right-[380px] flex items-center bg-slate-900/90 border border-slate-700/80 rounded-2xl p-2.5 shadow-2xl backdrop-blur-md overflow-x-auto custom-scroll"
-          : "top-20 right-4 w-60 max-h-[calc(100vh-170px)] flex flex-col bg-slate-900/95 border border-slate-700/80 rounded-2xl p-3 shadow-2xl backdrop-blur-xl overflow-y-auto custom-scroll"
+          ? "bottom-4 left-4 right-[380px] flex items-center bg-[#081a36]/95 border border-sky-700/60 rounded-2xl p-2.5 shadow-2xl shadow-sky-950/50 backdrop-blur-md overflow-x-auto custom-scroll"
+          : "top-20 right-4 w-60 max-h-[calc(100vh-170px)] flex flex-col bg-[#081a36]/95 border border-sky-700/60 rounded-2xl p-3 shadow-2xl shadow-sky-950/50 backdrop-blur-xl overflow-y-auto custom-scroll"
       }`}
     >
       {/* Tiêu đề dải thẻ */}
       <div
-        className={`flex items-center justify-between pb-2 mb-2 border-b border-slate-800 ${
+        className={`flex items-center justify-between pb-2 mb-2 border-b border-sky-800/40 ${
           isDetailPanelOpen ? "mr-3 pr-3 border-b-0 border-r shrink-0" : ""
         }`}
       >
         <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-blue-400" />
+          <Layers className="w-4 h-4 text-sky-400" />
           <h5 className="font-bold text-xs text-white truncate">{title}</h5>
         </div>
         {selectedRegionId && (
@@ -77,8 +77,8 @@ export const RegionCardsStrip: React.FC<RegionCardsStripProps> = ({
                 isDetailPanelOpen ? "min-w-[170px] shrink-0" : "w-full"
               } ${
                 isSelected
-                  ? "bg-slate-800 border-amber-400 shadow-md ring-1 ring-amber-400/40"
-                  : "bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-850"
+                  ? "bg-gradient-to-r from-sky-900/50 to-amber-950/40 border-amber-400 shadow-md ring-1 ring-amber-400/40"
+                  : "bg-[#061224]/80 border-sky-900/50 hover:border-sky-600/80 hover:bg-[#0c2347]"
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">

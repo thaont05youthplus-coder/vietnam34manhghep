@@ -55,42 +55,42 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
   );
 
   return (
-    <aside className="absolute top-4 right-4 z-30 w-[360px] h-[calc(100vh-100px)] flex flex-col bg-slate-900/95 border border-slate-700/90 rounded-2xl shadow-2xl backdrop-blur-xl animate-in slide-in-from-right duration-200 select-none overflow-hidden">
+    <aside className="absolute top-4 right-4 z-30 w-[360px] h-[calc(100vh-100px)] flex flex-col bg-[#081a36]/95 border border-sky-700/60 rounded-2xl shadow-2xl shadow-sky-950/60 backdrop-blur-xl animate-in slide-in-from-right duration-200 select-none overflow-hidden">
       {/* Header Panel */}
-      <div className="p-4 bg-slate-850 border-b border-slate-800 shrink-0">
+      <div className="p-4 bg-[#0a2144]/90 border-b border-sky-800/50 shrink-0">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider bg-amber-950/60 px-1.5 py-0.2 rounded border border-amber-800/60">
+              <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider bg-amber-950/70 px-1.5 py-0.2 rounded border border-amber-600/50">
                 {detail.overview.code}
               </span>
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[11px] text-sky-200/70 font-medium">
                 {detail.overview.type}
               </span>
             </div>
             <h3 className="text-xl font-black text-white mt-0.5 tracking-tight">
               {detail.overview.name}
             </h3>
-            <p className="text-xs text-slate-400 italic">{detail.overview.nameEn}</p>
+            <p className="text-xs text-sky-200/70 italic">{detail.overview.nameEn}</p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-sky-300 hover:text-white hover:bg-sky-900/50 transition-colors"
             title="Đóng thông tin chi tiết"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* 5 Thanh chuyển Tab nội dung */}
-        <div className="grid grid-cols-5 gap-1 mt-3 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-[11px] font-semibold">
+        {/* 5 Thanh chuyển Tab nội dung chuẩn màu nhận diện */}
+        <div className="grid grid-cols-5 gap-1 mt-3 bg-[#051124]/90 p-1 rounded-xl border border-sky-800/60 text-[11px] font-semibold">
           <button
             onClick={() => setActiveTab("overview")}
             className={`py-1.5 rounded-lg transition-all text-center ${
               activeTab === "overview"
-                ? "bg-blue-600 text-white shadow"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-sm"
+                : "text-sky-200/70 hover:text-white"
             }`}
           >
             Tổng quan
@@ -99,8 +99,8 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
             onClick={() => setActiveTab("nature")}
             className={`py-1.5 rounded-lg transition-all text-center ${
               activeTab === "nature"
-                ? "bg-emerald-600 text-white shadow"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-sm"
+                : "text-sky-200/70 hover:text-white"
             }`}
           >
             Tự nhiên
@@ -109,8 +109,8 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
             onClick={() => setActiveTab("economy")}
             className={`py-1.5 rounded-lg transition-all text-center ${
               activeTab === "economy"
-                ? "bg-amber-600 text-white shadow"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm"
+                : "text-sky-200/70 hover:text-white"
             }`}
           >
             Kinh tế
@@ -119,8 +119,8 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
             onClick={() => setActiveTab("images")}
             className={`py-1.5 rounded-lg transition-all text-center ${
               activeTab === "images"
-                ? "bg-purple-600 text-white shadow"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-sm"
+                : "text-sky-200/70 hover:text-white"
             }`}
           >
             Hình ảnh
@@ -129,8 +129,8 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
             onClick={() => setActiveTab("sources")}
             className={`py-1.5 rounded-lg transition-all text-center ${
               activeTab === "sources"
-                ? "bg-teal-600 text-white shadow"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-sm"
+                : "text-sky-200/70 hover:text-white"
             }`}
           >
             Nguồn

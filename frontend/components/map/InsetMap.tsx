@@ -77,29 +77,29 @@ export const InsetMap: React.FC<InsetMapProps> = ({
   return (
     <div
       onClick={() => feature && onSelect(feature)}
-      className={`relative bg-slate-900/95 border ${
-        isSelected ? "border-amber-400 ring-2 ring-amber-400/30" : "border-slate-700/80 hover:border-amber-400/80"
-      } rounded-xl p-2.5 shadow-2xl backdrop-blur cursor-pointer transition-all duration-200 select-none w-48 group`}
+      className={`relative bg-[#081a36]/95 border ${
+        isSelected ? "border-amber-400 ring-2 ring-amber-400/40" : "border-sky-700/60 hover:border-amber-400"
+      } rounded-xl p-2.5 shadow-2xl shadow-sky-950/50 backdrop-blur cursor-pointer transition-all duration-200 select-none w-48 group`}
       title={`Nhấp để chọn ${subTitle}`}
     >
-      <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-1.5">
+      <div className="flex items-center justify-between pb-1.5 border-b border-sky-800/40 mb-1.5">
         <div>
           <div className="text-xs font-bold text-amber-300 group-hover:text-amber-200">{title}</div>
-          <div className="text-[10px] text-slate-400">{subTitle}</div>
+          <div className="text-[10px] text-sky-200/70">{subTitle}</div>
         </div>
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-900/80 text-yellow-300 font-bold border border-red-700 shadow-sm">
-          VN
+        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gradient-to-r from-red-600 to-rose-600 text-yellow-300 font-bold border border-red-500 shadow-sm">
+          VN ★
         </span>
       </div>
 
-      <div className="relative w-full h-[105px] bg-slate-950/80 rounded-lg overflow-hidden border border-slate-800">
+      <div className="relative w-full h-[105px] bg-[#051124] rounded-lg overflow-hidden border border-sky-800/50">
         <svg width={w} height={h} className="w-full h-full">
-          <rect width={w} height={h} fill="#040b18" />
+          <rect width={w} height={h} fill="#06152b" />
           {pathString ? (
             <path
               d={pathString}
-              fill="#fbbf24"
-              stroke="#d97706"
+              fill="#facc15"
+              stroke="#ea580c"
               strokeWidth="1.5"
               strokeLinejoin="round"
             />

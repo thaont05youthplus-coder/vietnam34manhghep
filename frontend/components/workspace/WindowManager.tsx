@@ -85,8 +85,8 @@ export const WindowManager: React.FC<WindowManagerProps> = ({
 
       {/* Thanh Taskbar Dock nổi ở góc dưới cho các cửa sổ bị thu nhỏ */}
       {minimizedWindowList.length > 0 && (
-        <div className="fixed bottom-4 left-24 z-40 flex items-center gap-2 p-1.5 bg-slate-900/95 border border-slate-700 rounded-2xl shadow-2xl backdrop-blur-xl animate-in slide-in-from-bottom duration-200">
-          <span className="text-[10px] font-bold text-slate-400 px-2 uppercase tracking-wider">
+        <div className="fixed bottom-4 left-24 z-40 flex items-center gap-2 p-1.5 bg-[#081a36]/95 border border-sky-700/60 rounded-2xl shadow-2xl shadow-sky-950/60 backdrop-blur-xl animate-in slide-in-from-bottom duration-200">
+          <span className="text-[10px] font-bold text-sky-300 px-2 uppercase tracking-wider">
             Thu nhỏ:
           </span>
           {minimizedWindowList.map((win) => (
@@ -96,9 +96,9 @@ export const WindowManager: React.FC<WindowManagerProps> = ({
                 onUpdateWindow(win.id, (prev) => ({ ...prev, isMinimized: false }));
                 onFocusWindow(win.id);
               }}
-              className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600/70 text-slate-200 rounded-xl text-xs font-semibold transition-all hover:scale-105 shadow-md"
+              className="flex items-center gap-2 px-3 py-1.5 bg-sky-950/80 hover:bg-sky-900/90 border border-sky-600/60 text-sky-200 rounded-xl text-xs font-semibold transition-all hover:scale-105 shadow-md"
             >
-              <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
               <span>{win.title}</span>
             </button>
           ))}

@@ -169,22 +169,22 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({
       ref={frameRef}
       style={style}
       onClick={onFocus}
-      className={`fixed flex flex-col bg-slate-900/95 border border-slate-700/90 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden transition-all duration-150 ${
-        win.zIndex >= 50 ? "ring-2 ring-blue-500/40" : ""
+      className={`fixed flex flex-col bg-[#081a36]/95 border border-sky-700/60 rounded-2xl shadow-2xl shadow-sky-950/60 backdrop-blur-xl overflow-hidden transition-all duration-150 ${
+        win.zIndex >= 50 ? "ring-2 ring-sky-400/40" : ""
       }`}
     >
       {/* Title Bar / Header Cửa sổ */}
       <div
         onMouseDown={handleMouseDownHeader}
-        className={`h-10 px-3 bg-slate-850 border-b border-slate-800 flex items-center justify-between select-none ${
+        className={`h-10 px-3 bg-[#0a2144]/90 border-b border-sky-800/50 flex items-center justify-between select-none ${
           win.snap === "none" && !win.isMaximized ? "cursor-grab active:cursor-grabbing" : ""
         }`}
       >
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm" />
+          <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-red-500 to-amber-400 shadow-sm" />
           <h4 className="font-bold text-xs text-white truncate">{win.title}</h4>
           {win.snap !== "none" && (
-            <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-blue-300 border border-slate-700 font-mono">
+            <span className="text-[9px] px-1.5 py-0.2 rounded bg-sky-950/80 text-sky-200 border border-sky-700/60 font-mono">
               Ghim {win.snap.replace("-", " ")}
             </span>
           )}

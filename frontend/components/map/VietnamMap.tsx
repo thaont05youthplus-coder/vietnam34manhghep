@@ -219,24 +219,27 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full bg-slate-950 overflow-hidden select-none"
+      className="relative w-full h-full bg-[#061325] overflow-hidden select-none"
+      style={{
+        backgroundImage: "radial-gradient(circle at 65% 35%, #0a254a 0%, #061325 70%)",
+      }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
     >
-      {/* Background subtle grid pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+      {/* Background subtle ocean waves & grid */}
+      <div className="absolute inset-0 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:28px_28px] opacity-30 pointer-events-none" />
 
-      {/* Mode Switcher (UI-04) - ĐẶC BIỆT GHI RÕ: Kinh tế - Xã hội (6 vùng) */}
-      <div className="absolute top-4 left-4 z-20 flex bg-slate-900/90 border border-slate-700/80 rounded-xl p-1 shadow-xl backdrop-blur">
+      {/* Mode Switcher (UI-04) - Chuẩn màu nhận diện: Xanh Trời, Ngọc Non Nước, Cam Vàng Đỏ */}
+      <div className="absolute top-4 left-4 z-20 flex bg-[#081a36]/90 border border-sky-700/50 rounded-xl p-1 shadow-xl shadow-sky-950/40 backdrop-blur">
         <button
           onClick={() => onModeChange?.("hanh_chinh")}
           className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             mode === "hanh_chinh"
-              ? "bg-blue-600 text-white shadow"
-              : "text-slate-300 hover:text-white hover:bg-slate-800"
+              ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md shadow-sky-500/30"
+              : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
           }`}
         >
           Hành chính (34 tỉnh)
@@ -245,8 +248,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           onClick={() => onModeChange?.("tu_nhien")}
           className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             mode === "tu_nhien"
-              ? "bg-emerald-600 text-white shadow"
-              : "text-slate-300 hover:text-white hover:bg-slate-800"
+              ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30"
+              : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
           }`}
         >
           Tự nhiên (7 khu vực)
@@ -255,8 +258,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           onClick={() => onModeChange?.("kinh_te")}
           className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
             mode === "kinh_te"
-              ? "bg-amber-600 text-white shadow"
-              : "text-slate-300 hover:text-white hover:bg-slate-800"
+              ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white shadow-md shadow-amber-500/30"
+              : "text-sky-200/80 hover:text-white hover:bg-sky-900/40"
           }`}
         >
           Kinh tế - Xã hội (6 vùng)
@@ -264,17 +267,17 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       </div>
 
       {/* Navigation Controls: Zoom In / Zoom Out / Reset VN */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-xl p-1.5 shadow-xl backdrop-blur">
+      <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-[#081a36]/90 border border-sky-700/50 rounded-xl p-1.5 shadow-xl shadow-sky-950/40 backdrop-blur">
         <button
           onClick={handleZoomIn}
-          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded-lg text-lg font-bold transition-colors"
+          className="w-8 h-8 flex items-center justify-center text-sky-200 hover:text-white hover:bg-sky-900/50 rounded-lg text-lg font-bold transition-colors"
           title="Phóng to (+)"
         >
           +
         </button>
         <button
           onClick={handleZoomOut}
-          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded-lg text-lg font-bold transition-colors"
+          className="w-8 h-8 flex items-center justify-center text-sky-200 hover:text-white hover:bg-sky-900/50 rounded-lg text-lg font-bold transition-colors"
           title="Thu nhỏ (−)"
         >
           −
@@ -429,6 +432,27 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           </div>
         </div>
       )}
+
+      {/* Brand Identity Watermark (Bottom-left of Map) */}
+      <div className="absolute bottom-4 left-4 z-20 hidden md:flex items-center gap-2.5 p-2 bg-[#081a36]/80 border border-sky-700/50 rounded-2xl backdrop-blur-md shadow-xl select-none group pointer-events-none">
+        <div className="w-10 h-10 rounded-xl bg-white p-0.5 border border-sky-400/50 shadow-sm overflow-hidden flex items-center justify-center">
+          <img
+            src="/logo.jpg"
+            alt="Logo"
+            className="w-full h-full object-contain"
+          />
+        </div>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1 text-xs font-black">
+            <span className="text-white">Việt Nam</span>
+            <span className="text-amber-400">34</span>
+            <span className="text-sky-300 font-semibold text-[11px]">mảnh ghép</span>
+          </div>
+          <span className="text-[10px] text-sky-200/70 font-medium">
+            Chỉ có Việt Nam • Trọn vẹn chủ quyền
+          </span>
+        </div>
+      </div>
 
       {/* 2 Inset Maps for Hoang Sa & Truong Sa (UI bottom-right) */}
       <div className="absolute bottom-4 right-4 z-20 flex flex-col sm:flex-row gap-3">

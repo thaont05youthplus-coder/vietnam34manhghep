@@ -38,7 +38,7 @@ const TOOLS: ToolItem[] = [
     shortDesc: "Hỏi đáp ngữ cảnh & trích dẫn nguồn",
     icon: MessageSquare,
     badge: "AI",
-    color: "from-blue-500 to-indigo-600",
+    color: "from-sky-500 to-blue-600",
   },
   {
     id: "questions",
@@ -54,7 +54,7 @@ const TOOLS: ToolItem[] = [
     shortDesc: "Văn bản & vẽ tay tự lưu",
     icon: PenTool,
     badge: "Canvas",
-    color: "from-amber-500 to-orange-600",
+    color: "from-amber-500 to-orange-500",
   },
   {
     id: "study",
@@ -62,7 +62,7 @@ const TOOLS: ToolItem[] = [
     shortDesc: "Flashcard, Luyện tập, Test, Ghép thẻ",
     icon: GraduationCap,
     badge: "Quizlet",
-    color: "from-purple-500 to-pink-600",
+    color: "from-rose-500 to-red-600",
   },
 ];
 
@@ -75,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   return (
     <aside
-      className={`relative z-20 h-full bg-slate-900/95 border-r border-slate-800 transition-all duration-300 flex flex-col justify-between shrink-0 select-none shadow-xl ${
+      className={`relative z-20 h-full bg-[#07152b]/95 border-r border-sky-900/40 transition-all duration-300 flex flex-col justify-between shrink-0 select-none shadow-xl ${
         isOpen ? "w-64" : "w-16"
       }`}
     >
@@ -148,33 +148,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-2 border-t border-slate-800/80 flex flex-col gap-2">
         {/* Hộp thông số thu gọn/mở rộng */}
         {isOpen ? (
-          <div className="p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-[11px] text-slate-400 space-y-1.5">
-            <div className="flex items-center justify-between font-medium text-slate-300">
-              <span className="flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-blue-400" />
-                Hệ thống dữ liệu:
-              </span>
-              <span className="text-amber-400 font-bold">VN34</span>
+          <div className="p-2.5 bg-[#050f1f]/80 border border-sky-800/40 rounded-xl text-[11px] text-sky-200/70 space-y-2">
+            <div className="flex items-center gap-2">
+              <img
+                src="/logo.jpg"
+                alt="Logo"
+                className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 border border-sky-400/40 shrink-0"
+              />
+              <div className="flex flex-col min-w-0">
+                <span className="font-bold text-white text-[11px] truncate">Việt Nam 34 Mảnh ghép</span>
+                <span className="text-[9px] text-amber-300 font-medium">Bản đồ số Quốc gia</span>
+              </div>
             </div>
-            <div className="flex justify-between text-[10px]">
-              <span>Tỉnh / Thành phố:</span>
-              <span className="text-slate-200 font-bold">34</span>
-            </div>
-            <div className="flex justify-between text-[10px]">
-              <span>Vùng KT-XH / Tự nhiên:</span>
-              <span className="text-slate-200 font-bold">6 / 7</span>
-            </div>
-            <div className="flex justify-between text-[10px]">
-              <span>Chủ quyền biển đảo:</span>
-              <span className="text-emerald-400 font-bold">Hoàng Sa + Trường Sa</span>
+            <div className="pt-1.5 border-t border-sky-900/50 space-y-1">
+              <div className="flex justify-between text-[10px]">
+                <span>Tỉnh / Thành phố:</span>
+                <span className="text-white font-bold">34</span>
+              </div>
+              <div className="flex justify-between text-[10px]">
+                <span>Vùng KT-XH / Tự nhiên:</span>
+                <span className="text-white font-bold">6 / 7</span>
+              </div>
+              <div className="flex justify-between text-[10px]">
+                <span>Chủ quyền biển đảo:</span>
+                <span className="text-emerald-300 font-bold">Hoàng Sa + Trường Sa</span>
+              </div>
             </div>
           </div>
         ) : (
           <div
-            className="w-10 h-10 mx-auto rounded-xl bg-slate-800/50 border border-slate-700/60 flex items-center justify-center text-slate-400 hover:text-white cursor-pointer"
-            title="Hệ thống: 34 Tỉnh thành, 6 Vùng KT-XH, 7 Khu vực Tự nhiên"
+            className="w-10 h-10 mx-auto rounded-xl bg-white/90 p-0.5 border border-sky-400/40 flex items-center justify-center cursor-pointer shadow-sm overflow-hidden"
+            title="Dự án Việt Nam 34 Mảnh Ghép"
           >
-            <Info className="w-4 h-4 text-blue-400" />
+            <img src="/logo.jpg" alt="Logo" className="w-full h-full object-contain" />
           </div>
         )}
 

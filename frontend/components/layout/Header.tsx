@@ -110,33 +110,45 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="h-[68px] bg-slate-900/95 border-b border-slate-800 px-4 flex items-center justify-between z-30 backdrop-blur-md shadow-lg shrink-0 select-none">
-      {/* Cụm Trái: Nút Menu 3 gạch & Logo VN34MG */}
+    <header className="h-[68px] bg-[#091b36]/95 border-b border-sky-800/40 px-4 flex items-center justify-between z-30 backdrop-blur-md shadow-xl shadow-sky-950/30 shrink-0 select-none">
+      {/* Cụm Trái: Nút Menu 3 gạch & Logo chính thức Việt Nam 34 Mảnh Ghép */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
           aria-label="Chuyển đổi thanh công cụ"
-          className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 hover:text-white transition-all shadow-sm"
+          className="w-10 h-10 flex items-center justify-center rounded-xl bg-sky-950/70 hover:bg-sky-900/80 border border-sky-700/60 text-sky-200 hover:text-white transition-all shadow-sm"
           title={isSidebarOpen ? "Thu gọn menu (56px)" : "Mở rộng menu (240px)"}
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-3 cursor-pointer" onClick={onResetLayout}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-amber-500 flex items-center justify-center font-black text-white text-lg shadow-md shadow-blue-900/40 border border-blue-400/30">
-            34
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={onResetLayout}>
+          {/* Ảnh Logo Việt Nam 34 Mảnh ghép */}
+          <div className="w-11 h-11 rounded-2xl bg-white p-0.5 border-2 border-sky-400/60 shadow-md shadow-sky-500/20 flex items-center justify-center overflow-hidden transition-all group-hover:scale-105 group-hover:border-amber-400">
+            <img
+              src="/logo.jpg"
+              alt="Logo Việt Nam 34 Mảnh Ghép"
+              className="w-full h-full object-contain"
+            />
           </div>
+
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-                VN34MG
+              <span className="font-extrabold text-base sm:text-lg tracking-tight flex items-center gap-1.5">
+                <span className="text-sky-100 font-bold">Việt Nam</span>
+                <span className="bg-gradient-to-r from-red-500 via-rose-500 to-amber-400 bg-clip-text text-transparent font-black text-xl">
+                  34
+                </span>
+                <span className="text-amber-300 font-semibold text-xs sm:text-sm">
+                  mảnh ghép
+                </span>
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-blue-300 px-2 py-0.5 rounded-full border border-blue-500/30">
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-sky-500/20 via-amber-500/20 to-red-500/20 text-sky-200 px-2 py-0.5 rounded-full border border-sky-400/30 hidden md:inline">
                 Bản đồ 34
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 hidden lg:block leading-tight">
-              Bản đồ Công nghệ số Việt Nam 34 Mảnh ghép
+            <p className="text-[11px] text-sky-200/70 hidden lg:block leading-tight font-medium">
+              Bản đồ Công nghệ số &amp; Khám phá Địa phương
             </p>
           </div>
         </div>
@@ -159,7 +171,7 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             onKeyDown={handleKeyDown}
             placeholder="Tìm kiếm 34 tỉnh/thành (Huế, Đà Nẵng, Khánh Hòa, Cà Mau)..."
-            className="w-full h-10 pl-10 pr-9 text-xs sm:text-sm bg-slate-800/90 border border-slate-700/80 rounded-xl text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all shadow-inner"
+            className="w-full h-10 pl-10 pr-9 text-xs sm:text-sm bg-[#0c2242]/90 border border-sky-700/60 rounded-xl text-slate-100 placeholder-sky-300/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all shadow-inner"
           />
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
           {query && (
@@ -215,9 +227,9 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Cụm Phải: Chỉ số chủ quyền + Nút Đặt lại bố cục + Tài khoản */}
       <div className="flex items-center gap-2.5">
-        {/* Badge chủ quyền Hoàng Sa - Trường Sa */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-950/70 border border-emerald-700/70 text-emerald-300 rounded-xl text-xs font-semibold shadow-sm">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        {/* Badge chủ quyền Hoàng Sa - Trường Sa (Màu Quốc kỳ & Biển đảo) */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-sky-950/80 via-blue-950/80 to-emerald-950/80 border border-sky-600/50 text-sky-200 rounded-xl text-xs font-semibold shadow-sm">
+          <span className="text-amber-400 font-black text-sm drop-shadow">★</span>
           <span>Hoàng Sa &amp; Trường Sa: Đầy đủ</span>
         </div>
 
@@ -226,11 +238,11 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onOpenShortcuts}
             title="Xem danh sách phím tắt điều hướng nhanh (Nhấn ?)"
-            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/70 text-slate-200 hover:text-white text-xs font-semibold transition-all shadow-sm"
+            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-sky-950/70 hover:bg-sky-900/80 border border-sky-700/60 text-sky-200 hover:text-white text-xs font-semibold transition-all shadow-sm"
           >
-            <Keyboard className="w-4 h-4 text-indigo-400" />
+            <Keyboard className="w-4 h-4 text-sky-400" />
             <span className="hidden lg:inline">Phím tắt</span>
-            <kbd className="hidden sm:inline px-1 bg-slate-900 border border-slate-700 rounded text-[10px] text-amber-300 font-mono">?</kbd>
+            <kbd className="hidden sm:inline px-1 bg-slate-900 border border-sky-700/60 rounded text-[10px] text-amber-300 font-mono">?</kbd>
           </button>
         )}
 
@@ -243,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({
               setTimeout(() => setIsCopied(false), 2000);
             }}
             title="Sao chép liên kết góc nhìn bản đồ & công cụ hiện tại"
-            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-blue-950/70 hover:bg-blue-900/80 border border-blue-700/70 text-blue-200 hover:text-white text-xs font-semibold transition-all shadow-sm"
+            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-sky-900/70 to-blue-900/70 hover:from-sky-800/80 hover:to-blue-800/80 border border-sky-500/60 text-sky-100 hover:text-white text-xs font-semibold transition-all shadow-sm"
           >
             {isCopied ? (
               <>
@@ -252,7 +264,7 @@ export const Header: React.FC<HeaderProps> = ({
               </>
             ) : (
               <>
-                <Share2 className="w-4 h-4 text-blue-400" />
+                <Share2 className="w-4 h-4 text-sky-300" />
                 <span className="hidden sm:inline">Chia sẻ</span>
               </>
             )}
@@ -263,10 +275,10 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onResetLayout}
           title="Đặt lại bố cục cửa sổ và căn giữa bản đồ (Bảo toàn 40% diện tích map)"
-          className="h-10 px-3 flex items-center gap-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/70 text-slate-200 hover:text-amber-300 text-xs font-semibold transition-all shadow-sm group"
+          className="h-10 px-3 flex items-center gap-1.5 rounded-xl bg-sky-950/70 hover:bg-sky-900/80 border border-sky-700/60 text-sky-200 hover:text-amber-300 text-xs font-semibold transition-all shadow-sm group"
         >
           <RotateCcw className="w-4 h-4 text-amber-400 group-hover:rotate-180 transition-transform duration-500" />
-          <span className="hidden md:inline">Đặt lại bố cục</span>
+          <span className="hidden md:inline">Đặt lại</span>
         </button>
 
         {/* Avatar / Hồ sơ học tập */}

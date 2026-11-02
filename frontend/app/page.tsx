@@ -356,7 +356,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative w-screen h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <main className="relative w-screen h-screen flex flex-col bg-[#061325] text-slate-100 overflow-hidden font-sans">
       {/* Header UI-01 (Chuẩn cao 68px) */}
       <Header
         isSidebarOpen={isSidebarOpen}
@@ -382,7 +382,7 @@ export default function HomePage() {
         />
 
         {/* Vùng bản đồ cốt lõi (Core Map Workspace) */}
-        <div className="relative flex-1 h-full overflow-hidden bg-slate-950">
+        <div className="relative flex-1 h-full overflow-hidden bg-[#061325]">
           <VietnamMap
             mode={mode}
             onModeChange={(newMode) => {
