@@ -26,6 +26,7 @@ pnpm-debug.log*
 # OS Files
 .DS_Store
 Thumbs.db
+*.tsbuildinfo
 
 # Large GIS raw datasets
 vnm_admin_boundaries.geojson/
