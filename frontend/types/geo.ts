@@ -36,3 +36,32 @@ export interface RegionDefinition {
   type: "economic" | "natural";
   provinceCodes: string[];
 }
+
+export interface WardProperties {
+  id: string;
+  name: string;
+  district: string;
+  provinceCode: string;
+  provinceName: string;
+  type: string;
+  role: string;
+  isUrbanCenter?: boolean;
+  isIsland?: boolean;
+  isBorderOrExtreme?: boolean;
+}
+
+export interface WardFeature {
+  type: "Feature";
+  properties: WardProperties;
+  geometry: {
+    type: "Point";
+    coordinates: [number, number]; // [lon, lat]
+  };
+}
+
+export interface WardFeatureCollection {
+  type: "FeatureCollection";
+  name: string;
+  features: WardFeature[];
+}
+
