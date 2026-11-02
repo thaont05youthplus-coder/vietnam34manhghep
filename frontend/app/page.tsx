@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Header } from "@/components/layout/Header";
+import { SubHeader, LayerSettings } from "@/components/layout/SubHeader";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { WindowManager } from "@/components/workspace/WindowManager";
 import { VietnamMap } from "@/components/map/VietnamMap";
@@ -16,6 +17,21 @@ export default function HomePage() {
   const [provinces, setProvinces] = useState<ProvinceFeature[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<ProvinceFeature | null>(null);
   const [mode, setMode] = useState<MapMode>("hanh_chinh");
+
+  // Bộ chọn góc nhìn: Tỉnh/thành | Vùng
+  const [filterScope, setFilterScope] = useState<"province" | "region">("province");
+
+  // Cấu hình các lớp bản đồ hiển thị (Layers)
+  const [layers, setLayers] = useState<LayerSettings>({
+    wards: true,
+    boundaries: true,
+    sovereignty: true,
+    grid: true,
+  });
+
+  const handleToggleLayer = (key: keyof LayerSettings) => {
+    setLayers((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   // Vùng đang chọn hoặc hover từ dải thẻ thông minh (RegionCardsStrip)
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
@@ -101,81 +117,70 @@ export default function HomePage() {
     },
   });
 
-  // Tải danh sách tỉnh thành phục vụ tìm kiếm ở Header
+  // Tải danh sách 34 tỉnh thành từ GeoJSON
   useEffect(() => {
     fetch("/data/vietnam_34_provinces.geojson")
       .then((res) => res.json())
       .then((data: ProvinceFeatureCollection) => {
-        if (data && data.features) {
-          setProvinces(data.features);
-        }
+        setProvinces(data.features);
       })
       .catch((err) => console.error("Lỗi tải danh sách tỉnh thành:", err));
   }, []);
 
-  // Tiêu điểm cửa sổ (Bring to front)
-  const handleFocusWindow = useCallback((id: ToolId) => {
+  // Xử lý Focus cửa sổ lên trên cùng
+  const handleFocusWindow = useCallback((toolId: ToolId) => {
     setMaxZIndex((prev) => {
       const nextZ = prev + 1;
       setWindows((curr) => ({
         ...curr,
-        [id]: {
-          ...curr[id],
+        [toolId]: {
+          ...curr[toolId],
           zIndex: nextZ,
-          isMinimized: false,
         },
       }));
       return nextZ;
     });
   }, []);
 
-  // Bật/tắt mở công cụ từ Sidebar hoặc Panel chi tiết
+  // Bật/tắt công cụ từ Sidebar hoặc phím tắt
   const handleToggleTool = useCallback(
     (toolId: ToolId) => {
       setWindows((curr) => {
-        const win = curr[toolId];
-        const nextIsOpen = !win.isOpen;
-        const nextMaxZ = maxZIndex + 1;
-        setMaxZIndex(nextMaxZ);
-        return {
-          ...curr,
-          [toolId]: {
-            ...win,
-            isOpen: nextIsOpen,
-            isMinimized: false,
-            zIndex: nextIsOpen ? nextMaxZ : win.zIndex,
-          },
-        };
+        const w = curr[toolId];
+        const willOpen = !w.isOpen || w.isMinimized;
+
+        if (willOpen) {
+          const nextZ = maxZIndex + 1;
+          setMaxZIndex(nextZ);
+          return {
+            ...curr,
+            [toolId]: {
+              ...w,
+              isOpen: true,
+              isMinimized: false,
+              zIndex: nextZ,
+            },
+          };
+        } else {
+          return {
+            ...curr,
+            [toolId]: {
+              ...w,
+              isOpen: false,
+            },
+          };
+        }
       });
     },
     [maxZIndex]
   );
 
-  // Mở Ghi chú và chèn nội dung trích từ Chatbox (Mục 16.6 Spec)
-  const handleOpenNotesWithText = useCallback(
-    (text: string) => {
-      setSharedNoteText(text);
-      setWindows((curr) => {
-        const nextMaxZ = maxZIndex + 1;
-        setMaxZIndex(nextMaxZ);
-        return {
-          ...curr,
-          notes: {
-            ...curr.notes,
-            isOpen: true,
-            isMinimized: false,
-            zIndex: nextMaxZ,
-          },
-        };
-      });
-    },
-    [maxZIndex]
-  );
-
-  // Định vị tỉnh từ Bộ câu hỏi hoặc Bài kiểm tra (T46)
+  // Định vị tỉnh từ Chatbox AI hoặc Ngân hàng câu hỏi
   const handleLocateProvince = useCallback(
     (provinceCode: string) => {
-      const found = provinces.find((p) => p.properties.provinceCode === provinceCode);
+      const found = provinces.find(
+        (p) => p.properties.provinceCode.toLowerCase() === provinceCode.toLowerCase()
+      );
       if (found) {
         setSelectedProvince(found);
       }
@@ -183,18 +188,27 @@ export default function HomePage() {
     [provinces]
   );
 
-  // Đồng bộ trạng thái URL khi tải trang ban đầu (Mục 13 Spec)
+  // Mở công cụ Ghi chú và điền sẵn nội dung
+  const handleOpenNotesWithText = useCallback(
+    (text: string) => {
+      setSharedNoteText(text);
+      handleToggleTool("notes");
+    },
+    [handleToggleTool]
+  );
+
+  // Đồng bộ hóa trạng thái ứng dụng qua URL Query Params (Mục 13 Spec)
   useEffect(() => {
-    if (typeof window === "undefined" || provinces.length === 0) return;
-    const params = new URLSearchParams(window.location.search);
-    const modeParam = params.get("mode") as MapMode | null;
-    const provinceParam = params.get("province");
-    const toolParam = params.get("tool") as ToolId | null;
+    if (typeof window === "undefined") return;
+    const searchParams = new URLSearchParams(window.location.search);
+    const modeParam = searchParams.get("mode") as MapMode | null;
+    const provinceParam = searchParams.get("province");
+    const toolParam = searchParams.get("tool") as ToolId | null;
 
     if (modeParam && ["hanh_chinh", "tu_nhien", "kinh_te"].includes(modeParam)) {
       setMode(modeParam);
     }
-    if (provinceParam) {
+    if (provinceParam && provinces.length > 0) {
       const match = provinces.find(
         (p) =>
           p.properties.provinceCode.toLowerCase() === provinceParam.toLowerCase() ||
@@ -217,7 +231,6 @@ export default function HomePage() {
   // Điều hướng bằng Phím tắt (Keyboard Navigation & Accessibility - Mục 14 Spec)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Bỏ qua nếu đang gõ trong input, textarea hoặc contenteditable
       const target = e.target as HTMLElement;
       if (
         target &&
@@ -331,7 +344,6 @@ export default function HomePage() {
     setSelectedRegionId(null);
     setHoveredRegionId(null);
     setIsSidebarOpen(false);
-    // Thu nhỏ hoặc đưa các cửa sổ về trạng thái docked gọn gàng
     setWindows((curr) => {
       const reset = { ...curr };
       (Object.keys(reset) as ToolId[]).forEach((key) => {
@@ -356,8 +368,8 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative w-screen h-screen flex flex-col bg-[#061325] text-slate-100 overflow-hidden font-sans">
-      {/* Header UI-01 (Chuẩn cao 68px) */}
+    <main className="relative w-screen h-screen flex flex-col bg-slate-100 text-slate-800 overflow-hidden font-sans">
+      {/* Header UI-01 (Chuẩn cao 68px, Tone màu GIS sáng) */}
       <Header
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
@@ -370,7 +382,20 @@ export default function HomePage() {
         onShare={handleShare}
       />
 
-      {/* Thân ứng dụng: Sidebar (UI-02) + Vùng làm việc Map Workspace */}
+      {/* SubHeader: 3 Chế độ bản đồ cốt lõi + Góc nhìn + Lớp hiển thị (GIS WGS84 VN-2000) */}
+      <SubHeader
+        mode={mode}
+        onModeChange={(newMode) => {
+          setMode(newMode);
+          setSelectedRegionId(null);
+        }}
+        filterScope={filterScope}
+        onFilterScopeChange={setFilterScope}
+        layers={layers}
+        onToggleLayer={handleToggleLayer}
+      />
+
+      {/* Thân ứng dụng: Sidebar bên trái + Canvas bản đồ trung tâm + Panel Khám phá theo vùng */}
       <div className="relative flex-1 w-full flex overflow-hidden">
         {/* Sidebar công cụ bên trái */}
         <Sidebar
@@ -381,50 +406,54 @@ export default function HomePage() {
           onResetLayout={handleResetLayout}
         />
 
-        {/* Vùng bản đồ cốt lõi (Core Map Workspace) */}
-        <div className="relative flex-1 h-full overflow-hidden bg-[#061325]">
-          <VietnamMap
-            mode={mode}
-            onModeChange={(newMode) => {
-              setMode(newMode);
-              setSelectedRegionId(null);
-            }}
-            selectedProvince={selectedProvince}
-            onSelectProvince={setSelectedProvince}
-            selectedRegionId={selectedRegionId}
-            hoveredRegionId={hoveredRegionId}
-          />
+        {/* Vùng bản đồ cốt lõi & Panel vùng */}
+        <div className="relative flex-1 h-full flex overflow-hidden bg-slate-50">
+          {/* Canvas Bản đồ GIS */}
+          <div className="relative flex-1 h-full overflow-hidden">
+            <VietnamMap
+              mode={mode}
+              onModeChange={(newMode) => {
+                setMode(newMode);
+                setSelectedRegionId(null);
+              }}
+              selectedProvince={selectedProvince}
+              onSelectProvince={setSelectedProvince}
+              selectedRegionId={selectedRegionId}
+              hoveredRegionId={hoveredRegionId}
+              layers={layers}
+            />
 
-          {/* Dải thẻ ảnh vùng thông minh (Tự co giãn dọc/ngang theo Panel chi tiết) */}
+            {/* Panel chi tiết địa phương 5 tab */}
+            {selectedProvince && (
+              <ProvinceDetailPanel
+                province={selectedProvince}
+                onClose={() => setSelectedProvince(null)}
+                onOpenAiChat={() => handleToggleTool("chat")}
+                onOpenNotes={() => handleToggleTool("notes")}
+              />
+            )}
+
+            {/* Trình quản lý cửa sổ đa nhiệm (Workspace Window Manager UI-07) */}
+            <WindowManager
+              windows={windows}
+              onUpdateWindow={handleUpdateWindow}
+              onFocusWindow={handleFocusWindow}
+              onCloseWindow={handleCloseWindow}
+              selectedProvince={selectedProvince}
+              onLocateProvince={handleLocateProvince}
+              onOpenNotesWithText={handleOpenNotesWithText}
+              onAddToStudy={handleAddToStudy}
+              sharedNoteText={sharedNoteText}
+            />
+          </div>
+
+          {/* Panel "Khám phá theo vùng" bên phải với 6 thẻ ảnh phong cảnh */}
           <RegionCardsStrip
             mode={mode}
             isDetailPanelOpen={!!selectedProvince}
             selectedRegionId={selectedRegionId}
             onSelectRegion={setSelectedRegionId}
             onHoverRegion={setHoveredRegionId}
-          />
-
-          {/* Panel chi tiết địa phương 5 tab (Trượt ra khi nhấp chọn một tỉnh - S2 state) */}
-          {selectedProvince && (
-            <ProvinceDetailPanel
-              province={selectedProvince}
-              onClose={() => setSelectedProvince(null)}
-              onOpenAiChat={() => handleToggleTool("chat")}
-              onOpenNotes={() => handleToggleTool("notes")}
-            />
-          )}
-
-          {/* Trình quản lý cửa sổ đa nhiệm (Workspace Window Manager UI-07) */}
-          <WindowManager
-            windows={windows}
-            onUpdateWindow={handleUpdateWindow}
-            onFocusWindow={handleFocusWindow}
-            onCloseWindow={handleCloseWindow}
-            selectedProvince={selectedProvince}
-            onLocateProvince={handleLocateProvince}
-            onOpenNotesWithText={handleOpenNotesWithText}
-            onAddToStudy={handleAddToStudy}
-            sharedNoteText={sharedNoteText}
           />
         </div>
       </div>

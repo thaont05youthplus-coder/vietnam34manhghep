@@ -2,15 +2,15 @@
 
 import React from "react";
 import {
+  Map,
   MessageSquare,
   HelpCircle,
   PenTool,
   GraduationCap,
-  Layers,
+  MessageCircle,
+  Settings,
   ChevronLeft,
   ChevronRight,
-  Info,
-  Sparkles,
 } from "lucide-react";
 import { ToolId } from "@/types/workspace";
 
@@ -34,19 +34,11 @@ interface ToolItem {
 const TOOLS: ToolItem[] = [
   {
     id: "chat",
-    name: "Chatbox AI Địa lí",
-    shortDesc: "Hỏi đáp ngữ cảnh & trích dẫn nguồn",
+    name: "Hỏi đáp",
+    shortDesc: "Chatbox AI trích dẫn nguồn",
     icon: MessageSquare,
     badge: "AI",
     color: "from-sky-500 to-blue-600",
-  },
-  {
-    id: "questions",
-    name: "Ngân hàng Câu hỏi",
-    shortDesc: "Phân tầng 5 cấp Naugh Milk style",
-    icon: HelpCircle,
-    badge: "5 Cấp",
-    color: "from-emerald-500 to-teal-600",
   },
   {
     id: "notes",
@@ -57,8 +49,16 @@ const TOOLS: ToolItem[] = [
     color: "from-amber-500 to-orange-500",
   },
   {
+    id: "questions",
+    name: "Bộ câu hỏi",
+    shortDesc: "Ngân hàng 5 cấp Naugh Milk style",
+    icon: HelpCircle,
+    badge: "5 Cấp",
+    color: "from-emerald-500 to-teal-600",
+  },
+  {
     id: "study",
-    name: "Học & Kiểm tra",
+    name: "Học & kiểm tra",
     shortDesc: "Flashcard, Luyện tập, Test, Ghép thẻ",
     icon: GraduationCap,
     badge: "Quizlet",
@@ -73,23 +73,41 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleTool,
   onResetLayout,
 }) => {
+  const isAnyToolActive = Object.values(activeTools).some(Boolean);
+
   return (
     <aside
-      className={`relative z-20 h-full bg-[#07152b]/95 border-r border-sky-900/40 transition-all duration-300 flex flex-col justify-between shrink-0 select-none shadow-xl ${
+      className={`relative z-20 h-full bg-white border-r border-slate-200 transition-all duration-300 flex flex-col justify-between shrink-0 select-none shadow-xs text-slate-700 ${
         isOpen ? "w-64" : "w-16"
       }`}
     >
-      {/* Phần trên: Danh sách 4 công cụ chính */}
-      <div className="flex flex-col p-2 space-y-1">
-        {isOpen && (
-          <div className="px-3 py-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-            <span>Công cụ học tập</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-900/60 text-blue-300 border border-blue-800">
-              4 Modules
-            </span>
+      {/* Cụm trên: Nút Bản đồ (chính) & 4 công cụ học tập */}
+      <div className="flex flex-col p-2 space-y-1.5">
+        {/* Nút Bản đồ chính (Active mặc định hoặc khi không có cửa sổ che toàn màn hình) */}
+        <button
+          onClick={onResetLayout}
+          title="Bản đồ GIS toàn cảnh Việt Nam"
+          className={`flex items-center rounded-xl p-2.5 transition-all text-left ${
+            !isAnyToolActive
+              ? "bg-teal-50 text-teal-800 border border-teal-200 font-bold shadow-xs"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent font-medium"
+          } ${isOpen ? "gap-3 px-3" : "flex-col justify-center gap-1"}`}
+        >
+          <div
+            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+              !isAnyToolActive
+                ? "bg-teal-700 text-white shadow-xs"
+                : "bg-slate-100 text-slate-600"
+            }`}
+          >
+            <Map className="w-4 h-4" />
           </div>
-        )}
+          <span className={`truncate text-xs ${!isOpen ? "text-[10px]" : ""}`}>
+            Bản đồ
+          </span>
+        </button>
 
+        {/* Danh sách 4 công cụ */}
         {TOOLS.map((tool) => {
           const Icon = tool.icon;
           const isActive = activeTools[tool.id];
@@ -101,98 +119,72 @@ export const Sidebar: React.FC<SidebarProps> = ({
               title={!isOpen ? `${tool.name} - ${tool.shortDesc}` : undefined}
               className={`group relative flex items-center rounded-xl p-2.5 transition-all text-left ${
                 isActive
-                  ? "bg-blue-600/20 text-white border border-blue-500/40 shadow-sm"
-                  : "text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent"
-              } ${isOpen ? "gap-3 px-3" : "justify-center"}`}
+                  ? "bg-teal-50 text-teal-900 border border-teal-300 font-bold shadow-xs"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent font-medium"
+              } ${isOpen ? "gap-3 px-3" : "flex-col justify-center gap-1"}`}
             >
-              {/* Icon với hiệu ứng gradient */}
               <div
-                className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-md ${
+                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
                   isActive
-                    ? `bg-gradient-to-tr ${tool.color} text-white shadow-blue-500/20`
-                    : "bg-slate-800 text-slate-300 group-hover:text-white group-hover:bg-slate-700"
+                    ? "bg-teal-700 text-white shadow-xs"
+                    : "bg-slate-100 text-slate-600 group-hover:bg-slate-200"
                 }`}
               >
                 <Icon className="w-4 h-4" />
               </div>
 
-              {/* Thông tin nhãn khi Sidebar mở rộng */}
-              {isOpen && (
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-xs truncate">
-                      {tool.name}
-                    </span>
-                    {tool.badge && (
-                      <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-700">
-                        {tool.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[10px] text-slate-400 truncate mt-0.5">
-                    {tool.shortDesc}
-                  </p>
-                </div>
-              )}
+              <span
+                className={`truncate text-xs ${
+                  !isOpen ? "text-[10px] text-center" : "flex-1"
+                }`}
+              >
+                {tool.name}
+              </span>
 
               {/* Chấm tròn biểu thị trạng thái đang mở */}
               {isActive && (
-                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-400 ring-2 ring-blue-900 animate-pulse" />
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-teal-600 ring-2 ring-teal-200" />
               )}
             </button>
           );
         })}
       </div>
 
-      {/* Phần dưới: Thông số hệ thống & Nút thu gọn / mở rộng */}
-      <div className="p-2 border-t border-slate-800/80 flex flex-col gap-2">
-        {/* Hộp thông số thu gọn/mở rộng */}
-        {isOpen ? (
-          <div className="p-2.5 bg-[#050f1f]/80 border border-sky-800/40 rounded-xl text-[11px] text-sky-200/70 space-y-2">
-            <div className="flex items-center gap-2">
-              <img
-                src="/logo.jpg"
-                alt="Logo"
-                className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 border border-sky-400/40 shrink-0"
-              />
-              <div className="flex flex-col min-w-0">
-                <span className="font-bold text-white text-[11px] truncate">Việt Nam 34 Mảnh ghép</span>
-                <span className="text-[9px] text-amber-300 font-medium">Bản đồ số Quốc gia</span>
-              </div>
-            </div>
-            <div className="pt-1.5 border-t border-sky-900/50 space-y-1">
-              <div className="flex justify-between text-[10px]">
-                <span>Tỉnh / Thành phố:</span>
-                <span className="text-white font-bold">34</span>
-              </div>
-              <div className="flex justify-between text-[10px]">
-                <span>Vùng KT-XH / Tự nhiên:</span>
-                <span className="text-white font-bold">6 / 7</span>
-              </div>
-              <div className="flex justify-between text-[10px]">
-                <span>Chủ quyền biển đảo:</span>
-                <span className="text-emerald-300 font-bold">Hoàng Sa + Trường Sa</span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div
-            className="w-10 h-10 mx-auto rounded-xl bg-white/90 p-0.5 border border-sky-400/40 flex items-center justify-center cursor-pointer shadow-sm overflow-hidden"
-            title="Dự án Việt Nam 34 Mảnh Ghép"
-          >
-            <img src="/logo.jpg" alt="Logo" className="w-full h-full object-contain" />
-          </div>
-        )}
+      {/* Cụm dưới: Feedback (💬), Settings (⚙️) & Nút thu gọn / mở rộng */}
+      <div className="p-2 border-t border-slate-200 flex flex-col gap-1.5">
+        {/* Nút Phản hồi */}
+        <button
+          onClick={() => alert("Hòm thư góp ý & phản hồi dự án Việt Nam 34 Mảnh Ghép.")}
+          className={`flex items-center rounded-xl p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors ${
+            isOpen ? "gap-2.5 px-3" : "justify-center"
+          }`}
+          title="Góp ý &amp; Phản hồi"
+        >
+          <MessageCircle className="w-4 h-4" />
+          {isOpen && <span className="text-xs font-medium">Góp ý</span>}
+        </button>
 
-        {/* Nút bấm chuyển đổi thu gọn / mở rộng */}
+        {/* Nút Cài đặt */}
+        <button
+          onClick={() => alert("Cài đặt hiển thị & dữ liệu bản đồ.")}
+          className={`flex items-center rounded-xl p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors ${
+            isOpen ? "gap-2.5 px-3" : "justify-center"
+          }`}
+          title="Cài đặt hệ thống"
+        >
+          <Settings className="w-4 h-4" />
+          {isOpen && <span className="text-xs font-medium">Cài đặt</span>}
+        </button>
+
+        {/* Nút Thu gọn / Mở rộng Sidebar */}
         <button
           onClick={onToggle}
-          className={`flex items-center rounded-xl p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors ${
+          className={`flex items-center rounded-xl p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors ${
             isOpen ? "justify-between px-3" : "justify-center"
           }`}
-          title={isOpen ? "Thu gọn thanh công cụ (56px)" : "Mở rộng thanh công cụ (240px)"}
+          title={isOpen ? "Thu gọn menu (64px)" : "Mở rộng menu (240px)"}
         >
-          {isOpen && <span className="text-xs font-medium">Thu gọn menu</span>}
+          {isOpen && <span className="text-xs font-medium">Thu gọn</span>}
           {isOpen ? (
             <ChevronLeft className="w-4 h-4" />
           ) : (

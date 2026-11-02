@@ -35,6 +35,8 @@ export interface RegionDefinition {
   color: string;
   type: "economic" | "natural";
   provinceCodes: string[];
+  subtitle?: string;
+  imageUrl?: string;
 }
 
 export interface WardProperties {

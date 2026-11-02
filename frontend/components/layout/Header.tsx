@@ -6,13 +6,11 @@ import {
   Search,
   RotateCcw,
   User,
-  ShieldCheck,
   X,
-  Compass,
-  MapPin,
-  Share2,
   Keyboard,
+  Share2,
   Check,
+  HelpCircle,
 } from "lucide-react";
 import { ProvinceFeature } from "@/types/geo";
 
@@ -110,53 +108,51 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="h-[68px] bg-[#091b36]/95 border-b border-sky-800/40 px-4 flex items-center justify-between z-30 backdrop-blur-md shadow-xl shadow-sky-950/30 shrink-0 select-none">
-      {/* Cụm Trái: Nút Menu 3 gạch & Logo chính thức Việt Nam 34 Mảnh Ghép */}
+    <header className="h-[68px] bg-white border-b border-slate-200 px-4 flex items-center justify-between z-30 shadow-xs shrink-0 select-none text-slate-800">
+      {/* Cụm Trái: Nút Menu & Logo chính thức Việt Nam 34 Mảnh Ghép */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
           aria-label="Chuyển đổi thanh công cụ"
-          className="w-10 h-10 flex items-center justify-center rounded-xl bg-sky-950/70 hover:bg-sky-900/80 border border-sky-700/60 text-sky-200 hover:text-white transition-all shadow-sm"
-          title={isSidebarOpen ? "Thu gọn menu (56px)" : "Mở rộng menu (240px)"}
+          className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 transition-all shadow-xs"
+          title={isSidebarOpen ? "Thu gọn menu (64px)" : "Mở rộng menu (240px)"}
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-3 cursor-pointer group" onClick={onResetLayout}>
-          {/* Ảnh Logo Việt Nam 34 Mảnh ghép */}
-          <div className="w-11 h-11 rounded-2xl bg-white p-0.5 border-2 border-sky-400/60 shadow-md shadow-sky-500/20 flex items-center justify-center overflow-hidden transition-all group-hover:scale-105 group-hover:border-amber-400">
+        <div
+          className="flex items-center gap-2.5 cursor-pointer group"
+          onClick={onResetLayout}
+        >
+          {/* Logo hình ảnh tròn */}
+          <div className="w-10 h-10 rounded-full bg-white p-0.5 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
             <img
               src="/logo.jpg"
               alt="Logo Việt Nam 34 Mảnh Ghép"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
 
           <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-base sm:text-lg tracking-tight flex items-center gap-1.5">
-                <span className="text-sky-100 font-bold">Việt Nam</span>
-                <span className="bg-gradient-to-r from-red-500 via-rose-500 to-amber-400 bg-clip-text text-transparent font-black text-xl">
-                  34
-                </span>
-                <span className="text-amber-300 font-semibold text-xs sm:text-sm">
-                  mảnh ghép
-                </span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-base text-slate-900 tracking-tight leading-tight">
+                Việt Nam 34 mảnh ghép
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-sky-500/20 via-amber-500/20 to-red-500/20 text-sky-200 px-2 py-0.5 rounded-full border border-sky-400/30 hidden md:inline">
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-full border border-slate-200 hidden xl:inline">
                 Bản đồ 34
               </span>
             </div>
-            <p className="text-[11px] text-sky-200/70 hidden lg:block leading-tight font-medium">
-              Bản đồ Công nghệ số &amp; Khám phá Địa phương
+            <p className="text-[11px] text-slate-500 leading-tight font-medium">
+              Không gian học tập Địa lí
             </p>
           </div>
         </div>
       </div>
 
       {/* Cụm Giữa: Ô tìm kiếm thông minh có gợi ý (Autocomplete) */}
-      <div ref={searchContainerRef} className="relative flex-1 max-w-lg mx-4">
-        <div className="relative">
+      <div ref={searchContainerRef} className="relative flex-1 max-w-md mx-4">
+        <div className="relative flex items-center">
+          <Search className="absolute left-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
           <input
             ref={inputRef}
             type="text"
@@ -170,44 +166,47 @@ export const Header: React.FC<HeaderProps> = ({
               if (query.trim()) setIsDropdownOpen(true);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Tìm kiếm 34 tỉnh/thành (Huế, Đà Nẵng, Khánh Hòa, Cà Mau)..."
-            className="w-full h-10 pl-10 pr-9 text-xs sm:text-sm bg-[#0c2242]/90 border border-sky-700/60 rounded-xl text-slate-100 placeholder-sky-300/50 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all shadow-inner"
+            placeholder="Tìm tỉnh, thành phố hoặc vùng..."
+            className="w-full h-10 pl-10 pr-14 text-xs sm:text-sm bg-slate-100/90 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 transition-all shadow-inner"
           />
-          <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
-          {query && (
+          {query ? (
             <button
               onClick={() => {
                 setQuery("");
                 setIsDropdownOpen(false);
               }}
-              className="absolute right-3 top-3 text-slate-400 hover:text-slate-200"
+              className="absolute right-3 text-slate-400 hover:text-slate-600"
             >
               <X className="w-4 h-4" />
             </button>
+          ) : (
+            <kbd className="absolute right-3 px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-mono text-slate-400 shadow-xs pointer-events-none">
+              ⌘K
+            </kbd>
           )}
         </div>
 
         {/* Dropdown danh sách gợi ý */}
         {isDropdownOpen && filteredProvinces.length > 0 && (
-          <div className="absolute top-12 left-0 right-0 max-h-80 overflow-y-auto bg-slate-900/95 border border-slate-700 rounded-xl shadow-2xl backdrop-blur-xl z-50 divide-y divide-slate-800 custom-scroll">
+          <div className="absolute top-12 left-0 right-0 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-2xl z-50 divide-y divide-slate-100 custom-scroll animate-in fade-in zoom-in-95 duration-100">
             {filteredProvinces.map((p, idx) => (
               <div
                 key={p.properties.provinceCode}
                 onClick={() => handleSelect(p)}
                 className={`p-3 flex items-center justify-between cursor-pointer transition-colors ${
                   idx === selectedIndex
-                    ? "bg-blue-600/30 text-white"
-                    : "hover:bg-slate-800/70 text-slate-200"
+                    ? "bg-teal-50 text-teal-900"
+                    : "hover:bg-slate-50 text-slate-700"
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-300 font-mono text-[10px] font-bold">
+                  <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700 font-mono text-[10px] font-bold">
                     {p.properties.provinceCode}
                   </div>
                   <div>
                     <div className="font-semibold text-sm flex items-center gap-2">
                       <span>{p.properties.name}</span>
-                      <span className="text-[10px] font-normal text-slate-400 px-1.5 py-0.2 rounded bg-slate-800">
+                      <span className="text-[10px] font-normal text-slate-500 px-1.5 py-0.2 rounded bg-slate-100">
                         {p.properties.type}
                       </span>
                     </div>
@@ -216,7 +215,7 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="text-right text-xs text-amber-300 font-medium">
+                <div className="text-right text-xs text-amber-600 font-medium">
                   {p.properties.areaSqKm.toLocaleString("vi-VN")} km²
                 </div>
               </div>
@@ -225,28 +224,27 @@ export const Header: React.FC<HeaderProps> = ({
         )}
       </div>
 
-      {/* Cụm Phải: Chỉ số chủ quyền + Nút Đặt lại bố cục + Tài khoản */}
-      <div className="flex items-center gap-2.5">
-        {/* Badge chủ quyền Hoàng Sa - Trường Sa (Màu Quốc kỳ & Biển đảo) */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-sky-950/80 via-blue-950/80 to-emerald-950/80 border border-sky-600/50 text-sky-200 rounded-xl text-xs font-semibold shadow-sm">
-          <span className="text-amber-400 font-black text-sm drop-shadow">★</span>
+      {/* Cụm Phải: Chỉ số chủ quyền + Phím tắt + Chia sẻ + Đặt lại + Avatar */}
+      <div className="flex items-center gap-2 sm:gap-2.5">
+        {/* Badge chủ quyền Hoàng Sa & Trường Sa */}
+        <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-medium shadow-xs">
+          <span className="text-amber-500 font-black text-xs">★</span>
           <span>Hoàng Sa &amp; Trường Sa: Đầy đủ</span>
         </div>
 
-        {/* Nút Phím tắt (?) (Mục 14 Spec) */}
+        {/* Nút Phím tắt (?) */}
         {onOpenShortcuts && (
           <button
             onClick={onOpenShortcuts}
             title="Xem danh sách phím tắt điều hướng nhanh (Nhấn ?)"
-            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-sky-950/70 hover:bg-sky-900/80 border border-sky-700/60 text-sky-200 hover:text-white text-xs font-semibold transition-all shadow-sm"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-all shadow-xs"
           >
-            <Keyboard className="w-4 h-4 text-sky-400" />
-            <span className="hidden lg:inline">Phím tắt</span>
-            <kbd className="hidden sm:inline px-1 bg-slate-900 border border-sky-700/60 rounded text-[10px] text-amber-300 font-mono">?</kbd>
+            <HelpCircle className="w-4 h-4" />
+            <span className="sr-only">Phím tắt</span>
           </button>
         )}
 
-        {/* Nút Chia sẻ (Share URL State - Mục 13 Spec) */}
+        {/* Nút Chia sẻ */}
         {onShare && (
           <button
             onClick={() => {
@@ -255,36 +253,39 @@ export const Header: React.FC<HeaderProps> = ({
               setTimeout(() => setIsCopied(false), 2000);
             }}
             title="Sao chép liên kết góc nhìn bản đồ & công cụ hiện tại"
-            className="h-10 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-sky-900/70 to-blue-900/70 hover:from-sky-800/80 hover:to-blue-800/80 border border-sky-500/60 text-sky-100 hover:text-white text-xs font-semibold transition-all shadow-sm"
+            className="hidden sm:flex h-9 px-2.5 items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium transition-all shadow-xs"
           >
             {isCopied ? (
               <>
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="hidden sm:inline text-emerald-300">Đã chép link!</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-emerald-700 font-semibold">Đã chép link!</span>
               </>
             ) : (
               <>
-                <Share2 className="w-4 h-4 text-sky-300" />
-                <span className="hidden sm:inline">Chia sẻ</span>
+                <Share2 className="w-3.5 h-3.5 text-slate-500" />
+                <span>Chia sẻ</span>
               </>
             )}
           </button>
         )}
 
-        {/* Nút Đặt lại bố cục (Reset Layout) */}
+        {/* Nút Đặt lại bố cục */}
         <button
           onClick={onResetLayout}
-          title="Đặt lại bố cục cửa sổ và căn giữa bản đồ (Bảo toàn 40% diện tích map)"
-          className="h-10 px-3 flex items-center gap-1.5 rounded-xl bg-sky-950/70 hover:bg-sky-900/80 border border-sky-700/60 text-sky-200 hover:text-amber-300 text-xs font-semibold transition-all shadow-sm group"
+          title="Đặt lại bố cục cửa sổ và căn giữa bản đồ"
+          className="hidden md:flex h-9 px-2.5 items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium transition-all shadow-xs group"
         >
-          <RotateCcw className="w-4 h-4 text-amber-400 group-hover:rotate-180 transition-transform duration-500" />
-          <span className="hidden md:inline">Đặt lại</span>
+          <RotateCcw className="w-3.5 h-3.5 text-slate-500 group-hover:rotate-180 transition-transform duration-500" />
+          <span>Đặt lại</span>
         </button>
 
-        {/* Avatar / Hồ sơ học tập */}
-        <div className="flex items-center gap-2 pl-1 border-l border-slate-800">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer transition-all hover:border-blue-500/50 shadow-sm" title="Tài khoản Học sinh THCS / THPT">
-            <User className="w-5 h-5" />
+        {/* Avatar Hồ sơ người dùng (Dark teal circle matching mockup) */}
+        <div className="flex items-center pl-1">
+          <div
+            className="w-9 h-9 rounded-full bg-[#114b43] text-white flex items-center justify-center hover:opacity-90 cursor-pointer transition-opacity shadow-xs"
+            title="Tài khoản Học sinh THCS / THPT"
+          >
+            <User className="w-4 h-4" />
           </div>
         </div>
       </div>
