@@ -1,7 +1,4 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
+// If you have something like this, either remove it or sync it with netlify.toml
+const nextConfig = {
+  distDir: 'build', // ← this would cause a mismatch
 };
-
-export default nextConfig;
