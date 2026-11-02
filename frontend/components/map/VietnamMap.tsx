@@ -51,7 +51,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       })
       .catch((err) => {
         if (isMounted) {
-          setError(err.message);
+          setError(err.message || "Lỗi tải bản đồ");
           setIsLoading(false);
         }
       });
@@ -61,85 +61,81 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     };
   }, []);
 
-  // Standard Vietnam bounds (including archipelagos)
-  // Lon: 102.0 to 118.0 deg E
-  // Lat: 6.5 to 23.8 deg N
-  const bounds = useMemo(() => {
-    return {
-      minLon: 101.8,
-      maxLon: 118.2,
-      minLat: 6.8,
-      maxLat: 23.8,
-    };
+  // Vietnam Geographic bounding box including Hoang Sa & Truong Sa
+  const minLon = 101.8;
+  const maxLon = 118.2;
+  const minLat = 6.8;
+  const maxLat = 23.8;
+
+  const svgWidth = 1000;
+  const svgHeight = 1100;
+  const padding = 40;
+
+  // Simple equirectangular projection centered on Vietnam
+  const project = useCallback((lon: number, lat: number): [number, number] => {
+    const x = padding + ((lon - minLon) / (maxLon - minLon)) * (svgWidth - 2 * padding);
+    const y = svgHeight - padding - ((lat - minLat) / (maxLat - minLat)) * (svgHeight - 2 * padding);
+    return [x, y];
   }, []);
 
-  const svgViewBox = useMemo(() => {
-    return { width: 1000, height: 1100, padding: 40 };
-  }, []);
-
-  // Projection: Equirectangular / Mercator tuned for Vietnam
-  const projectCoords = useCallback(
-    (lon: number, lat: number) => {
-      const { width, height, padding } = svgViewBox;
-      const x = padding + ((lon - bounds.minLon) / (bounds.maxLon - bounds.minLon)) * (width - 2 * padding);
-      // Invert Y axis
-      const y = height - padding - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * (height - 2 * padding);
-      return [x, y];
-    },
-    [bounds, svgViewBox]
-  );
-
-  // Build SVG Path strings for each province
-  const featurePaths = useMemo(() => {
-    if (!geoData) return new Map<string, string>();
-    const map = new Map<string, string>();
-
-    for (const feat of geoData.features) {
-      const code = feat.properties.provinceCode;
-      let combinedPath = "";
-
-      for (const poly of feat.geometry.coordinates) {
-        for (const ring of poly) {
-          if (!ring || ring.length < 3) continue;
-          let ringD = "";
-          for (let i = 0; i < ring.length; i++) {
-            const [x, y] = projectCoords(ring[i][0], ring[i][1]);
-            ringD += `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)} `;
-          }
-          ringD += "Z ";
-          combinedPath += ringD;
-        }
-      }
-
-      map.set(code, combinedPath);
-    }
-    return map;
-  }, [geoData, projectCoords]);
-
-  // Determine fill color by current mode
+  // Determine fill color by active mode
   const getProvinceColor = useCallback(
-    (feat: ProvinceFeature, index: number) => {
-      const code = feat.properties.provinceCode;
+    (feature: ProvinceFeature, index: number): string => {
+      const code = feature.properties.provinceCode;
 
       if (mode === "kinh_te") {
-        const reg = ECONOMIC_REGIONS.find((r) => r.provinceCodes.includes(code));
-        return reg ? reg.color : "#94a3b8";
+        const region = ECONOMIC_REGIONS.find((r) => r.provinceCodes.includes(code));
+        return region ? region.color : "#64748b";
       }
 
       if (mode === "tu_nhien") {
-        const reg = NATURAL_REGIONS.find((r) => r.provinceCodes.includes(code));
-        return reg ? reg.color : "#94a3b8";
+        const region = NATURAL_REGIONS.find((r) => r.provinceCodes.includes(code));
+        return region ? region.color : "#64748b";
       }
 
-      // Default: Hanh chinh palette
       return PROVINCE_PALETTE[index % PROVINCE_PALETTE.length];
     },
     [mode]
   );
 
-  // Mouse pan handlers
+  // Pre-calculate SVG path data
+  const pathsData = useMemo(() => {
+    if (!geoData) return [];
+
+    return geoData.features.map((feature, index) => {
+      const { geometry, properties } = feature;
+      let pathString = "";
+
+      if (geometry && geometry.coordinates) {
+        for (const polygon of geometry.coordinates) {
+          for (const ring of polygon) {
+            if (ring.length < 3) continue;
+            ring.forEach((pt, idx) => {
+              const [px, py] = project(pt[0], pt[1]);
+              pathString += `${idx === 0 ? "M" : "L"} ${px.toFixed(1)} ${py.toFixed(1)} `;
+            });
+            pathString += "Z ";
+          }
+        }
+      }
+
+      const isSelected = selectedProvince?.properties.provinceCode === properties.provinceCode;
+      const isHovered = hoveredProvince?.properties.provinceCode === properties.provinceCode;
+
+      return {
+        feature,
+        index,
+        pathString,
+        color: getProvinceColor(feature, index),
+        isSelected,
+        isHovered,
+      };
+    });
+  }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince]);
+
+  // Pan event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only left click for pan
+    if (e.button !== 0) return;
     setIsDragging(true);
     setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
@@ -151,14 +147,6 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         y: e.clientY - dragStart.y,
       });
     }
-
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      setTooltipPos({
-        x: e.clientX - rect.left + 15,
-        y: e.clientY - rect.top + 15,
-      });
-    }
   };
 
   const handleMouseUp = () => {
@@ -167,274 +155,274 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
-    setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 0.7), 8));
+    const factor = e.deltaY < 0 ? 1.15 : 0.85;
+    setZoom((prev) => Math.min(Math.max(prev * factor, 0.6), 8));
   };
 
-  const handleResetView = () => {
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev * 1.25, 8));
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev * 0.8, 0.6));
+  const handleReset = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
   };
 
-  const daNangFeature = useMemo(() => {
-    return geoData?.features.find((f) => f.properties.provinceCode === "VN48") || null;
-  }, [geoData]);
-
-  const khanhHoaFeature = useMemo(() => {
-    return geoData?.features.find((f) => f.properties.provinceCode === "VN56") || null;
-  }, [geoData]);
+  // Find Da Nang and Khanh Hoa features for inset maps
+  const daNangFeature = useMemo(
+    () => geoData?.features.find((f) => f.properties.provinceCode === "VN48") || null,
+    [geoData]
+  );
+  const khanhHoaFeature = useMemo(
+    () => geoData?.features.find((f) => f.properties.provinceCode === "VN56") || null,
+    [geoData]
+  );
 
   return (
     <div
       ref={containerRef}
+      className="relative w-full h-full bg-slate-950 overflow-hidden select-none"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
-      className={`relative w-full h-full select-none overflow-hidden bg-slate-950 flex items-center justify-center ${
-        isDragging ? "cursor-grabbing" : "cursor-grab"
-      }`}
     >
-      {/* Background Grid & Water texture */}
+      {/* Background subtle grid pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
 
-      {/* Mode Switcher Tabs */}
-      {onModeChange && (
-        <div className="absolute top-4 left-4 z-20 flex bg-slate-900/90 border border-slate-700/80 rounded-lg p-1 shadow-xl backdrop-blur">
-          <button
-            onClick={() => onModeChange("hanh_chinh")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-              mode === "hanh_chinh"
-                ? "bg-blue-600 text-white shadow"
-                : "text-slate-300 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            Hành chính (34 tỉnh)
-          </button>
-          <button
-            onClick={() => onModeChange("tu_nhien")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-              mode === "tu_nhien"
-                ? "bg-emerald-600 text-white shadow"
-                : "text-slate-300 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            Tự nhiên (7 khu vực)
-          </button>
-          <button
-            onClick={() => onModeChange("kinh_te")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-              mode === "kinh_te"
-                ? "bg-amber-600 text-white shadow"
-                : "text-slate-300 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            Kinh tế – XH (6 vùng)
-          </button>
-        </div>
-      )}
-
-      {/* Map Control Buttons */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-lg p-1 shadow-xl backdrop-blur">
+      {/* Mode Switcher (UI-04) */}
+      <div className="absolute top-4 left-4 z-20 flex bg-slate-900/90 border border-slate-700/80 rounded-lg p-1 shadow-xl backdrop-blur">
         <button
-          onClick={() => setZoom((prev) => Math.min(prev * 1.25, 8))}
-          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-base font-bold"
+          onClick={() => onModeChange?.("hanh_chinh")}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            mode === "hanh_chinh"
+              ? "bg-blue-600 text-white shadow"
+              : "text-slate-300 hover:text-white hover:bg-slate-800"
+          }`}
+        >
+          Hành chính (34 tỉnh)
+        </button>
+        <button
+          onClick={() => onModeChange?.("tu_nhien")}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            mode === "tu_nhien"
+              ? "bg-emerald-600 text-white shadow"
+              : "text-slate-300 hover:text-white hover:bg-slate-800"
+          }`}
+        >
+          Tự nhiên (7 khu vực)
+        </button>
+        <button
+          onClick={() => onModeChange?.("kinh_te")}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+            mode === "kinh_te"
+              ? "bg-amber-600 text-white shadow"
+              : "text-slate-300 hover:text-white hover:bg-slate-800"
+          }`}
+        >
+          Kinh tế – XH (6 vùng)
+        </button>
+      </div>
+
+      {/* Navigation Controls: Zoom In / Zoom Out / Reset VN */}
+      <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-lg p-1.5 shadow-xl backdrop-blur">
+        <button
+          onClick={handleZoomIn}
+          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-lg font-bold transition-colors"
           title="Phóng to (+)"
         >
           +
         </button>
         <button
-          onClick={() => setZoom((prev) => Math.max(prev * 0.8, 0.7))}
-          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-base font-bold"
-          title="Thu nhỏ (-)"
+          onClick={handleZoomOut}
+          className="w-8 h-8 flex items-center justify-center text-slate-200 hover:bg-slate-800 rounded text-lg font-bold transition-colors"
+          title="Thu nhỏ (−)"
         >
           −
         </button>
         <div className="w-full h-px bg-slate-700 my-0.5" />
         <button
-          onClick={handleResetView}
-          className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 rounded text-[10px] font-semibold"
-          title="Về toàn Việt Nam"
+          onClick={handleReset}
+          className="w-8 h-8 flex items-center justify-center text-amber-300 hover:bg-slate-800 rounded text-xs font-extrabold transition-colors"
+          title="Căn giữa toàn Việt Nam"
         >
           VN
         </button>
       </div>
 
-      {/* Loading & Error States */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/80 z-30">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-slate-300 font-medium">Đang tải bản đồ 34 tỉnh thành...</span>
-          </div>
-        </div>
-      )}
+      {/* Main SVG Vector Map */}
+      <svg
+        className={`w-full h-full ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+      >
+        <defs>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
 
-      {error && (
-        <div className="absolute z-30 p-4 bg-red-950/90 border border-red-700 text-red-200 rounded-lg text-sm max-w-md text-center">
-          {error}
-        </div>
-      )}
+        <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+          {/* Province Vector Shapes */}
+          {pathsData.map((item) => (
+            <path
+              key={item.feature.properties.provinceCode}
+              d={item.pathString}
+              fill={item.color}
+              fillOpacity={item.isSelected ? 0.95 : item.isHovered ? 0.88 : 0.68}
+              stroke={item.isSelected ? "#f59e0b" : item.isHovered ? "#ffffff" : "#0f172a"}
+              strokeWidth={item.isSelected ? 2.5 : item.isHovered ? 1.8 : 0.8}
+              strokeLinejoin="round"
+              filter={item.isSelected ? "url(#glow)" : undefined}
+              className="transition-all duration-150 cursor-pointer"
+              onMouseEnter={(e) => {
+                setHoveredProvince(item.feature);
+                const rect = containerRef.current?.getBoundingClientRect();
+                if (rect) {
+                  setTooltipPos({
+                    x: e.clientX - rect.left + 15,
+                    y: e.clientY - rect.top + 15,
+                  });
+                }
+              }}
+              onMouseMove={(e) => {
+                const rect = containerRef.current?.getBoundingClientRect();
+                if (rect) {
+                  setTooltipPos({
+                    x: e.clientX - rect.left + 15,
+                    y: e.clientY - rect.top + 15,
+                  });
+                }
+              }}
+              onMouseLeave={() => setHoveredProvince(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectProvince(
+                  selectedProvince?.properties.provinceCode === item.feature.properties.provinceCode
+                    ? null
+                    : item.feature
+                );
+              }}
+            />
+          ))}
 
-      {/* SVG Vector Canvas */}
-      {!isLoading && geoData && (
-        <svg
-          viewBox={`0 0 ${svgViewBox.width} ${svgViewBox.height}`}
-          className="w-full h-full transition-transform duration-75"
-          style={{
-            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-            transformOrigin: "center center",
-          }}
-        >
-          <defs>
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          {/* Render 34 Provinces */}
-          {geoData.features.map((feat, idx) => {
-            const code = feat.properties.provinceCode;
-            const pathD = featurePaths.get(code) || "";
-            const isHovered = hoveredProvince?.properties.provinceCode === code;
-            const isSelected = selectedProvince?.properties.provinceCode === code;
-            const fillColor = getProvinceColor(feat, idx);
-
-            return (
-              <path
-                key={code}
-                d={pathD}
-                fill={fillColor}
-                fillOpacity={isSelected ? 0.95 : isHovered ? 0.85 : 0.65}
-                stroke={isSelected ? "#f59e0b" : isHovered ? "#ffffff" : "#0f172a"}
-                strokeWidth={isSelected ? 2.5 : isHovered ? 1.8 : 0.8}
-                strokeLinejoin="round"
-                filter={isSelected ? "url(#glow)" : undefined}
-                className="transition-all duration-150 cursor-pointer"
-                onMouseEnter={() => setHoveredProvince(feat)}
-                onMouseLeave={() => setHoveredProvince(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectProvince(isSelected ? null : feat);
-                }}
-              />
-            );
-          })}
-
-          {/* Sea Labels (Biển Đông) */}
+          {/* Biển Đông Watermark */}
           <text
-            x={svgViewBox.width * 0.65}
-            y={svgViewBox.height * 0.42}
+            x="660"
+            y="460"
             fill="#334155"
-            fontSize="18"
+            fontSize="20"
             fontWeight="bold"
             letterSpacing="6"
-            className="pointer-events-none select-none uppercase tracking-widest opacity-60"
+            className="pointer-events-none select-none uppercase opacity-60"
           >
             BIỂN ĐÔNG
           </text>
           <text
-            x={svgViewBox.width * 0.63}
-            y={svgViewBox.height * 0.45}
+            x="645"
+            y="490"
             fill="#475569"
-            fontSize="11"
+            fontSize="12"
             className="pointer-events-none select-none opacity-50"
           >
             (VIỆT NAM)
           </text>
 
-          {/* Archipelago Annotations on Main Map */}
+          {/* Archipelago Map Labels */}
           <g className="pointer-events-none select-none">
-            {/* Hoang Sa */}
-            <text x={svgViewBox.width * 0.68} y={svgViewBox.height * 0.38} fill="#fbbf24" fontSize="12" fontWeight="bold">
+            <text x="690" y="420" fill="#fbbf24" fontSize="13" fontWeight="bold">
               ★ QĐ. HOÀNG SA
             </text>
-            <text x={svgViewBox.width * 0.68} y={svgViewBox.height * 0.40} fill="#94a3b8" fontSize="10">
+            <text x="690" y="442" fill="#94a3b8" fontSize="11">
               (TP. Đà Nẵng)
             </text>
 
-            {/* Truong Sa */}
-            <text x={svgViewBox.width * 0.70} y={svgViewBox.height * 0.75} fill="#fbbf24" fontSize="12" fontWeight="bold">
+            <text x="710" y="820" fill="#fbbf24" fontSize="13" fontWeight="bold">
               ★ QĐ. TRƯỜNG SA
             </text>
-            <text x={svgViewBox.width * 0.70} y={svgViewBox.height * 0.77} fill="#94a3b8" fontSize="10">
+            <text x="710" y="842" fill="#94a3b8" fontSize="11">
               (Tỉnh Khánh Hòa)
             </text>
           </g>
-        </svg>
-      )}
+        </g>
+      </svg>
 
-      {/* Floating Tooltip (S1) */}
+      {/* Hover Tooltip (S1) */}
       {hoveredProvince && (
         <div
-          className="absolute z-40 pointer-events-none bg-slate-900/95 border border-slate-700/80 text-white rounded-lg px-3 py-2 shadow-2xl backdrop-blur transition-opacity duration-100 max-w-xs"
-          style={{
-            left: `${tooltipPos.x}px`,
-            top: `${tooltipPos.y}px`,
-          }}
+          className="absolute z-40 pointer-events-none bg-slate-900/95 border border-slate-700 text-white rounded-lg px-3.5 py-2.5 shadow-2xl backdrop-blur max-w-xs text-xs animate-in fade-in duration-150"
+          style={{ left: `${tooltipPos.x}px`, top: `${tooltipPos.y}px` }}
         >
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-blue-500" />
-            <h5 className="font-bold text-sm text-amber-300">{hoveredProvince.properties.name}</h5>
-            <span className="text-[10px] text-slate-400 font-mono">({hoveredProvince.properties.provinceCode})</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+            <h5 className="font-bold text-amber-300 text-sm">
+              {hoveredProvince.properties.name}
+            </h5>
+            <span className="text-xs text-slate-400 font-mono">
+              ({hoveredProvince.properties.provinceCode})
+            </span>
           </div>
-          <div className="text-[11px] text-slate-300 mt-1 flex flex-col gap-0.5">
+          <div className="text-xs text-slate-300 mt-1.5 flex flex-col gap-1">
             <span>Loại: {hoveredProvince.properties.type}</span>
-            <span>Diện tích: {hoveredProvince.properties.areaSqKm.toLocaleString("vi-VN")} km²</span>
+            <span>
+              Diện tích: {hoveredProvince.properties.areaSqKm.toLocaleString("vi-VN")} km²
+            </span>
+            {mode === "kinh_te" && (
+              <span className="text-amber-200 font-medium">
+                Vùng:{" "}
+                {
+                  ECONOMIC_REGIONS.find((r) =>
+                    r.provinceCodes.includes(hoveredProvince.properties.provinceCode)
+                  )?.name
+                }
+              </span>
+            )}
+            {mode === "tu_nhien" && (
+              <span className="text-emerald-200 font-medium">
+                Khu vực:{" "}
+                {
+                  NATURAL_REGIONS.find((r) =>
+                    r.provinceCodes.includes(hoveredProvince.properties.provinceCode)
+                  )?.name
+                }
+              </span>
+            )}
           </div>
         </div>
       )}
 
-      {/* Inset Maps (Hoàng Sa & Trường Sa) at Bottom-Right */}
-      <div className="absolute bottom-4 right-4 z-20 flex flex-col sm:flex-row gap-2.5">
+      {/* 2 Inset Maps for Hoang Sa & Truong Sa (UI bottom-right) */}
+      <div className="absolute bottom-4 right-4 z-20 flex flex-col sm:flex-row gap-3">
         <InsetMap
           type="hoang_sa"
           feature={daNangFeature}
-          onSelect={(f) => onSelectProvince(f)}
+          onSelect={onSelectProvince}
           isSelected={selectedProvince?.properties.provinceCode === "VN48"}
         />
         <InsetMap
           type="truong_sa"
           feature={khanhHoaFeature}
-          onSelect={(f) => onSelectProvince(f)}
+          onSelect={onSelectProvince}
           isSelected={selectedProvince?.properties.provinceCode === "VN56"}
         />
       </div>
 
-      {/* Legend / Chú giải at Bottom-Left */}
-      <div className="absolute bottom-4 left-4 z-20 bg-slate-900/90 border border-slate-800 rounded-lg p-2.5 shadow-xl backdrop-blur text-xs text-slate-300 max-w-xs hidden md:block">
-        <h6 className="font-bold text-slate-200 mb-1.5 flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-amber-400" />
-          {mode === "hanh_chinh"
-            ? "34 Đơn vị hành chính cấp Tỉnh"
-            : mode === "tu_nhien"
-            ? "7 Khu vực tra cứu Tự nhiên"
-            : "6 Vùng Kinh tế – Xã hội"}
-        </h6>
-        <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px]">
-          {mode === "kinh_te" &&
-            ECONOMIC_REGIONS.map((r) => (
-              <div key={r.id} className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: r.color }} />
-                <span className="truncate">{r.name}</span>
-              </div>
-            ))}
-          {mode === "tu_nhien" &&
-            NATURAL_REGIONS.map((r) => (
-              <div key={r.id} className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: r.color }} />
-                <span className="truncate">{r.name}</span>
-              </div>
-            ))}
-          {mode === "hanh_chinh" && (
-            <div className="col-span-2 text-[10px] text-slate-400">
-              Bao gồm đầy đủ 34 tỉnh/thành, Hoàng Sa (Đà Nẵng), Trường Sa (Khánh Hòa) theo phương án sắp xếp hành chính.
-            </div>
-          )}
+      {/* Loading & Error States */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-slate-950/80 flex items-center justify-center z-50">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-slate-300 font-medium">
+              Đang tải bản đồ số 34 tỉnh thành...
+            </p>
+          </div>
         </div>
-      </div>
+      )}
+
+      {error && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-50 bg-red-950/90 border border-red-700 text-red-200 px-4 py-2.5 rounded-lg text-xs shadow-xl backdrop-blur">
+          {error}
+        </div>
+      )}
     </div>
   );
 };
