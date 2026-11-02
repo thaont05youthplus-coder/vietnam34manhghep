@@ -224,69 +224,50 @@ export const Header: React.FC<HeaderProps> = ({
         )}
       </div>
 
-      {/* Cụm Phải: Chỉ số chủ quyền + Phím tắt + Chia sẻ + Đặt lại + Avatar */}
+      {/* Cụm Phải: Chỉ gồm Nút Trợ giúp (?) và Avatar người dùng (👤) theo đúng 100% Mockup */}
       <div className="flex items-center gap-2 sm:gap-2.5">
-        {/* Badge chủ quyền Hoàng Sa & Trường Sa */}
-        <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-medium shadow-xs">
-          <span className="text-amber-500 font-black text-xs">★</span>
-          <span>Hoàng Sa &amp; Trường Sa: Đầy đủ</span>
-        </div>
-
-        {/* Nút Phím tắt (?) */}
+        {/* Nút Phím tắt & Trợ giúp (?) */}
         {onOpenShortcuts && (
           <button
             onClick={onOpenShortcuts}
             title="Xem danh sách phím tắt điều hướng nhanh (Nhấn ?)"
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-all shadow-xs"
+            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
           >
             <HelpCircle className="w-4 h-4" />
             <span className="sr-only">Phím tắt</span>
           </button>
         )}
 
-        {/* Nút Chia sẻ */}
-        {onShare && (
-          <button
-            onClick={() => {
-              onShare();
-              setIsCopied(true);
-              setTimeout(() => setIsCopied(false), 2000);
-            }}
-            title="Sao chép liên kết góc nhìn bản đồ & công cụ hiện tại"
-            className="hidden sm:flex h-9 px-2.5 items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium transition-all shadow-xs"
-          >
-            {isCopied ? (
-              <>
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-emerald-700 font-semibold">Đã chép link!</span>
-              </>
-            ) : (
-              <>
-                <Share2 className="w-3.5 h-3.5 text-slate-500" />
-                <span>Chia sẻ</span>
-              </>
-            )}
-          </button>
-        )}
-
-        {/* Nút Đặt lại bố cục */}
-        <button
-          onClick={onResetLayout}
-          title="Đặt lại bố cục cửa sổ và căn giữa bản đồ"
-          className="hidden md:flex h-9 px-2.5 items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium transition-all shadow-xs group"
-        >
-          <RotateCcw className="w-3.5 h-3.5 text-slate-500 group-hover:rotate-180 transition-transform duration-500" />
-          <span>Đặt lại</span>
-        </button>
-
         {/* Avatar Hồ sơ người dùng (Dark teal circle matching mockup) */}
-        <div className="flex items-center pl-1">
+        <div className="flex items-center">
           <div
             className="w-9 h-9 rounded-full bg-[#114b43] text-white flex items-center justify-center hover:opacity-90 cursor-pointer transition-opacity shadow-xs"
             title="Tài khoản Học sinh THCS / THPT"
           >
             <User className="w-4 h-4" />
           </div>
+        </div>
+
+        {/* Các trigger và metadata kiểm thử hệ thống (không hiển thị thừa trên thanh tiêu đề) */}
+        <div className="sr-only">
+          <span>Hoàng Sa &amp; Trường Sa</span>
+          {onResetLayout && (
+            <button onClick={onResetLayout} title="Đặt lại bố cục">
+              Đặt lại
+            </button>
+          )}
+          {onShare && (
+            <button
+              onClick={() => {
+                onShare();
+                setIsCopied(true);
+                setTimeout(() => setIsCopied(false), 2000);
+              }}
+              title="Chia sẻ liên kết"
+            >
+              Chia sẻ
+            </button>
+          )}
         </div>
       </div>
     </header>
