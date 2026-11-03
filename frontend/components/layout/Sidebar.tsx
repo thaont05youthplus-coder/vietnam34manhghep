@@ -134,8 +134,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
 
               <span
-                className={`truncate text-xs ${
-                  !isOpen ? "text-[10px] text-center" : "flex-1"
+                className={`${
+                  !isOpen
+                    ? "text-[10px] text-center leading-tight px-0.5 line-clamp-2 max-w-[54px] break-words"
+                    : "text-xs flex-1 truncate"
                 }`}
               >
                 {tool.name}

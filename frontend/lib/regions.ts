@@ -43,7 +43,7 @@ export const ECONOMIC_REGIONS: RegionDefinition[] = [
     name: "Đông Nam Bộ",
     subtitle: "Động lực kinh tế & đô thị hóa",
     imageUrl: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=400&q=80",
-    color: "#dc2626", // Đỏ gạch
+    color: "#ea580c", // Cam đất ấm áp (Terracotta), không gây cảm giác cảnh báo
     type: "economic",
     provinceCodes: ["VN75", "VN79", "VN80"],
   },

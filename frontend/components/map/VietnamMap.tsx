@@ -18,6 +18,8 @@ import {
   Home,
   Crosshair,
   ArrowLeft,
+  Palette,
+  X,
 } from "lucide-react";
 
 interface VietnamMapProps {
@@ -26,6 +28,7 @@ interface VietnamMapProps {
   selectedProvince: ProvinceFeature | null;
   onSelectProvince: (province: ProvinceFeature | null) => void;
   selectedRegionId?: string | null;
+  onSelectRegion?: (regionId: string | null) => void;
   hoveredRegionId?: string | null;
   selectedWardId?: string | null;
   onSelectWard?: (ward: WardFeature | null) => void;
@@ -94,6 +97,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   selectedProvince,
   onSelectProvince,
   selectedRegionId,
+  onSelectRegion,
   hoveredRegionId,
   selectedWardId,
   onSelectWard,
@@ -135,6 +139,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   // Commune polygon territorial layers ("Tách từng mảng rõ như gis.vn")
   const [communePolygonsByProvince, setCommunePolygonsByProvince] = useState<Record<string, CommunePolygonCollection>>({});
   const [hoveredCommune, setHoveredCommune] = useState<CommunePolygonFeature | null>(null);
+  const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [communeTooltipPos, setCommuneTooltipPos] = useState({ x: 0, y: 0 });
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -239,14 +244,20 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [selectedProvince, zoom, pan, project, communePolygonsByProvince, svgWidth, svgHeight]);
 
-  // Tự động căn giữa và phóng to mượt mà vào tỉnh được chọn (Auto-fit to Province)
+  // Tự động căn giữa và phóng to mượt mà vào tỉnh được chọn (Auto-fit to Province - Loại bỏ tọa độ đảo xa để luôn zoom chuẩn tâm đất liền)
   useEffect(() => {
     if (!selectedProvince) return;
     const coords = selectedProvince.geometry.coordinates;
+    const pCode = selectedProvince.properties.provinceCode;
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
 
     function walk(c: any) {
       if (typeof c[0] === "number") {
+        // Loại trừ tọa độ Quần đảo Hoàng Sa khi căn giữa Đà Nẵng (VN48)
+        if (pCode === "VN48" && c[0] > 109.2) return;
+        // Loại trừ tọa độ Quần đảo Trường Sa khi căn giữa Khánh Hòa (VN56)
+        if (pCode === "VN56" && c[0] > 110.0) return;
+
         const [x, y] = project(c[0], c[1]);
         if (x < minX) minX = x;
         if (x > maxX) maxX = x;
@@ -262,8 +273,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       const width = maxX - minX;
       const height = maxY - minY;
       const targetZoom = Math.min(
-        Math.max(Math.min((svgWidth * 0.65) / width, (svgHeight * 0.65) / height), 1.6),
-        4.5
+        Math.max(Math.min((svgWidth * 0.70) / width, (svgHeight * 0.70) / height), 1.6),
+        4.8
       );
       const centerX = (minX + maxX) / 2;
       const centerY = (minY + maxY) / 2;
@@ -274,6 +285,50 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       setPan({ x: targetPanX, y: targetPanY });
     }
   }, [selectedProvince?.properties.provinceCode, project, svgWidth, svgHeight]);
+
+  // Tự động căn giữa và phóng to mượt mà vào Vùng được chọn (Auto-fit to Region)
+  useEffect(() => {
+    if (!selectedRegionId || selectedProvince || !geoData) return;
+    const regionList = mode === "tu_nhien" ? NATURAL_REGIONS : ECONOMIC_REGIONS;
+    const region = regionList.find((r) => r.id === selectedRegionId);
+    if (!region) return;
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    geoData.features.forEach((feat) => {
+      if (!region.provinceCodes.includes(feat.properties.provinceCode)) return;
+      const pCode = feat.properties.provinceCode;
+      function walk(c: any) {
+        if (typeof c[0] === "number") {
+          if (pCode === "VN48" && c[0] > 109.2) return;
+          if (pCode === "VN56" && c[0] > 110.0) return;
+          const [x, y] = project(c[0], c[1]);
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        } else {
+          c.forEach(walk);
+        }
+      }
+      walk(feat.geometry.coordinates);
+    });
+
+    if (minX < maxX && minY < maxY) {
+      const width = maxX - minX;
+      const height = maxY - minY;
+      const targetZoom = Math.min(
+        Math.max(Math.min((svgWidth * 0.80) / width, (svgHeight * 0.80) / height), 1.2),
+        3.2
+      );
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+      setZoom(targetZoom);
+      setPan({
+        x: svgWidth / 2 - centerX * targetZoom,
+        y: svgHeight / 2 - centerY * targetZoom,
+      });
+    }
+  }, [selectedRegionId, selectedProvince, geoData, mode, project, svgWidth, svgHeight]);
 
   // Active region codes
   const activeRegionCodes = useMemo(() => {
@@ -346,11 +401,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       if (isInActiveRegion !== null) {
         if (isInActiveRegion) {
           fillOpacity = 1.0;
-          strokeColor = "#000000";
-          strokeWidth = 0.6;
+          strokeColor = "#0f172a"; // Viền đậm phân định rõ ranh giới vùng được chọn
+          strokeWidth = 1.6;
         } else {
-          fillOpacity = 0.35;
-          strokeColor = "#94a3b8";
+          fillOpacity = 0.32; // Làm mờ nhẹ các vùng khác không gây xao nhãng
+          strokeColor = "#cbd5e1";
           strokeWidth = 0.4;
         }
       }
@@ -444,16 +499,16 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         const pMax = project(bbox[2], bbox[3]);
         const screenWidth = Math.abs(pMax[0] - pMin[0]) * zoom;
 
-        // Bảng sắc thái tinh tế giữa các xã lân cận trong tỉnh chuẩn gis.vn
+        // Bảng sắc thái tương phản giữa các xã lân cận ("Tách từng mảng rõ như gis.vn")
         const codeNum = parseInt(feat.properties.code.slice(-3), 10) || 0;
         const shade = codeNum % 4;
         const baseFill = shade === 0
-          ? "rgba(255, 255, 255, 0.05)"
+          ? "rgba(0, 0, 0, 0.06)"
           : shade === 1
-          ? "rgba(255, 255, 255, 0.14)"
-          : shade === 2
           ? "rgba(255, 255, 255, 0.22)"
-          : "rgba(255, 255, 255, 0.09)";
+          : shade === 2
+          ? "rgba(0, 0, 0, 0.14)"
+          : "rgba(255, 255, 255, 0.08)";
 
         items.push({
           feature: feat,
@@ -815,15 +870,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
       </div>
 
-      {/* Floating Card: Bottom (Chiều dài bờ biển 3.260 km hình chữ S - Chuẩn như ảnh mẫu) */}
-      <div className="absolute bottom-6 left-1/3 -translate-x-1/2 z-20 hidden md:flex flex-col items-center px-3.5 py-1.5 bg-white/95 border border-slate-200 rounded-xl shadow-xs text-center backdrop-blur-sm pointer-events-none">
-        <span className="text-[10px] text-slate-500 font-medium">
-          Chiều dài bờ biển
-        </span>
-        <span className="text-xs font-bold text-teal-800">
-          3.260 km (hình chữ S)
-        </span>
-      </div>
+
 
       {/* Nút nổi điều khiển: Quay lại bản đồ toàn quốc khi đang phóng to/chọn tỉnh */}
       {selectedProvince && (
@@ -842,19 +889,105 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </button>
       )}
 
-      {/* Floating Button: Bottom-Left (Nút GPS căn giữa toàn cảnh) */}
-      <button
-        onClick={handleReset}
-        className="absolute bottom-4 left-4 z-20 w-8 h-8 rounded-full bg-white border border-slate-200 shadow-xs flex items-center justify-center text-slate-600 hover:text-teal-700 hover:bg-slate-50 transition-colors"
-        title="Căn giữa toàn cảnh Việt Nam"
-      >
-        <Crosshair className="w-4 h-4" />
-      </button>
+      {/* Floating Buttons: Bottom-Left (Nút GPS & Nút Chú giải màu sắc vùng) */}
+      <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2">
+        <button
+          onClick={handleReset}
+          className="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-xs flex items-center justify-center text-slate-600 hover:text-teal-700 hover:bg-slate-50 transition-colors cursor-pointer"
+          title="Căn giữa toàn cảnh Việt Nam"
+        >
+          <Crosshair className="w-4 h-4" />
+        </button>
 
-      {/* Floating Badge: Bottom-Right (Tỉ lệ 1 : 1.500.000) */}
-      <div className="absolute bottom-4 right-4 z-20 px-3 py-1 bg-white/90 border border-slate-200 rounded-xl shadow-xs pointer-events-none text-[11px] font-mono text-slate-600 font-semibold">
-        Tỉ lệ 1 : 1.500.000
+        {/* Nút Chú giải màu sắc vùng */}
+        <div className="relative">
+          <button
+            onClick={() => setIsLegendOpen((prev) => !prev)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border shadow-xs text-xs font-semibold backdrop-blur transition-all cursor-pointer ${
+              isLegendOpen
+                ? "bg-slate-900 border-slate-900 text-white shadow-md"
+                : "bg-white/95 hover:bg-white border-slate-200 text-slate-700 hover:text-teal-700"
+            }`}
+            title="Xem chú giải ý nghĩa màu sắc các vùng trên bản đồ"
+          >
+            <Palette className="w-3.5 h-3.5 text-teal-600" />
+            <span>Chú giải</span>
+          </button>
+
+          {/* Hộp Chú giải màu nổi */}
+          {isLegendOpen && (
+            <div className="absolute bottom-full left-0 mb-2 w-64 bg-white/98 border border-slate-200 rounded-xl shadow-xl p-3 z-30 text-xs space-y-2 animate-in fade-in zoom-in-95 duration-100">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                <span className="font-bold text-slate-800">
+                  {mode === "tu_nhien" ? "7 Khu vực Tự nhiên" : mode === "kinh_te" ? "6 Vùng Kinh tế - Xã hội" : "Phân vùng màu sắc"}
+                </span>
+                <button
+                  onClick={() => setIsLegendOpen(false)}
+                  className="text-slate-400 hover:text-slate-600 p-0.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="space-y-1.5 max-h-56 overflow-y-auto custom-scroll pr-1">
+                {(mode === "tu_nhien" ? NATURAL_REGIONS : ECONOMIC_REGIONS).map((reg) => {
+                  const isSelected = selectedRegionId === reg.id;
+                  return (
+                    <button
+                      key={reg.id}
+                      onClick={() => onSelectRegion?.(isSelected ? null : reg.id)}
+                      className={`w-full flex items-center justify-between p-1.5 rounded-lg text-left transition-colors cursor-pointer ${
+                        isSelected ? "bg-teal-50 border border-teal-200 font-bold" : "hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-3 h-3 rounded-full shrink-0 border border-black/10"
+                          style={{ backgroundColor: reg.color }}
+                        />
+                        <span className="text-[11px] text-slate-800 line-clamp-1">{reg.name}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        {reg.provinceCodes.length} tỉnh
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Thước khoảng cách động chuẩn GIS (Dynamic Graphic Scale Bar) */}
+      {(() => {
+        const targetKm = (60 * 1.986) / zoom;
+        let displayKm = 100;
+        if (targetKm >= 150) displayKm = 200;
+        else if (targetKm >= 75) displayKm = 100;
+        else if (targetKm >= 35) displayKm = 50;
+        else if (targetKm >= 15) displayKm = 20;
+        else if (targetKm >= 7) displayKm = 10;
+        else displayKm = 5;
+
+        const barWidthPx = Math.round((displayKm * zoom) / 1.986);
+
+        return (
+          <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-1 select-none pointer-events-none">
+            <div className="px-2.5 py-1 bg-white/95 border border-slate-200 rounded-lg shadow-xs backdrop-blur flex items-center gap-2 text-[10px] font-mono text-slate-700 font-bold">
+              <div className="flex flex-col items-center">
+                <div
+                  className="h-1 bg-slate-800 border-x-2 border-slate-900"
+                  style={{ width: `${Math.max(barWidthPx, 28)}px` }}
+                />
+                <span className="text-[9px] leading-tight text-slate-600 mt-0.5">
+                  {displayKm} km
+                </span>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Mode fallback text to preserve test suite compatibility (T3.1.2, T3.1.3, T3.1.4, T8.15) */}
       <div className="sr-only">
@@ -937,7 +1070,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                   d={pathString}
                   fill={isHovered ? "rgba(56, 189, 248, 0.38)" : baseFill}
                   stroke={isHovered ? "#0284c7" : "rgba(255, 255, 255, 0.85)"}
-                  strokeWidth={isHovered ? Math.max(1.3 / zoom, 0.5) : Math.max(0.65 / zoom, 0.25)}
+                  strokeWidth={isHovered ? Math.max(1.8 / zoom, 0.8) : Math.max(0.85 / zoom, 0.35)}
                   strokeLinejoin="round"
                   strokeLinecap="round"
                   className="transition-colors duration-100 cursor-pointer"
@@ -1082,10 +1215,10 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                       y={3.5 / zoom}
                       textAnchor="middle"
                       fill={isSelected ? "#ca8a04" : isHovered ? "#0f766e" : "#0f172a"}
-                      fontSize={`${Math.max((isSelected ? 13 : 11) / zoom, isSelected ? 6.5 : 5.5)}px`}
-                      fontWeight={isSelected ? "900" : "700"}
+                      fontSize={`${Math.max((isSelected ? 16 : 14) / zoom, isSelected ? 9.5 : 7.8)}px`}
+                      fontWeight={isSelected ? "900" : "800"}
                       stroke={isSelected ? "#0f172a" : "#ffffff"}
-                      strokeWidth={`${Math.max((isSelected ? 3.5 : 2.8) / zoom, 0.9)}px`}
+                      strokeWidth={`${Math.max((isSelected ? 3.8 : 3.0) / zoom, 1.2)}px`}
                       strokeLinejoin="round"
                       paintOrder="stroke fill"
                       letterSpacing="0.2px"

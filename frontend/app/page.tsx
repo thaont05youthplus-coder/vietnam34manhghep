@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Header } from "@/components/layout/Header";
 import { SubHeader, LayerSettings } from "@/components/layout/SubHeader";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -9,7 +9,8 @@ import { VietnamMap } from "@/components/map/VietnamMap";
 import { RegionCardsStrip } from "@/components/map/RegionCardsStrip";
 import { ProvinceDetailPanel } from "@/components/panels/ProvinceDetailPanel";
 import { KeyboardShortcutsModal } from "@/components/workspace/KeyboardShortcutsModal";
-import { ProvinceFeature, ProvinceFeatureCollection, MapMode } from "@/types/geo";
+import { ProvinceFeature, ProvinceFeatureCollection, MapMode, RegionDefinition } from "@/types/geo";
+import { ECONOMIC_REGIONS, NATURAL_REGIONS } from "@/lib/regions";
 import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
 import { GeoQuestion } from "@/components/question-bank/QuestionBankModal";
 
@@ -20,6 +21,7 @@ export default function HomePage() {
 
   // Bộ chọn góc nhìn: Tỉnh/thành | Vùng
   const [filterScope, setFilterScope] = useState<"province" | "region">("province");
+  const [isRegionPanelOpen, setIsRegionPanelOpen] = useState(false);
 
   // Cấu hình các lớp bản đồ hiển thị (Layers)
   const [layers, setLayers] = useState<LayerSettings>({
@@ -359,6 +361,13 @@ export default function HomePage() {
     });
   }, []);
 
+  // Thông tin vùng đang được chọn (để hiển thị badge và thanh tác vụ gọn)
+  const activeRegionDef = useMemo(() => {
+    if (!selectedRegionId) return null;
+    const list: RegionDefinition[] = mode === "tu_nhien" ? NATURAL_REGIONS : ECONOMIC_REGIONS;
+    return list.find((r: RegionDefinition) => r.id === selectedRegionId) || null;
+  }, [selectedRegionId, mode]);
+
   // Trạng thái các công cụ đang mở
   const activeTools = {
     chat: windows.chat.isOpen && !windows.chat.isMinimized,
@@ -382,7 +391,7 @@ export default function HomePage() {
         onShare={handleShare}
       />
 
-      {/* SubHeader: 3 Chế độ bản đồ cốt lõi + Góc nhìn + Lớp hiển thị (GIS WGS84 VN-2000) */}
+      {/* SubHeader: 3 Chế độ bản đồ cốt lõi + Góc nhìn + Lớp hiển thị + Nút Khám phá vùng */}
       <SubHeader
         mode={mode}
         onModeChange={(newMode) => {
@@ -390,9 +399,29 @@ export default function HomePage() {
           setSelectedRegionId(null);
         }}
         filterScope={filterScope}
-        onFilterScopeChange={setFilterScope}
+        onFilterScopeChange={(scope) => {
+          setFilterScope(scope);
+          if (scope === "region") {
+            setIsRegionPanelOpen(true);
+            if (mode === "hanh_chinh") {
+              setMode("kinh_te");
+            }
+          } else {
+            setIsRegionPanelOpen(false);
+            setSelectedRegionId(null);
+          }
+        }}
         layers={layers}
         onToggleLayer={handleToggleLayer}
+        isRegionPanelOpen={isRegionPanelOpen}
+        onToggleRegionPanel={() => {
+          setIsRegionPanelOpen((prev) => {
+            const next = !prev;
+            setFilterScope(next ? "region" : "province");
+            return next;
+          });
+        }}
+        selectedRegionName={activeRegionDef?.name}
       />
 
       {/* Thân ứng dụng: Sidebar bên trái + Canvas bản đồ trung tâm + Panel Khám phá theo vùng */}
@@ -420,6 +449,7 @@ export default function HomePage() {
               onSelectProvince={setSelectedProvince}
               selectedRegionId={selectedRegionId}
               hoveredRegionId={hoveredRegionId}
+              onSelectRegion={setSelectedRegionId}
               layers={layers}
             />
 
@@ -447,12 +477,19 @@ export default function HomePage() {
             />
           </div>
 
-          {/* Panel "Khám phá theo vùng" bên phải với 6 thẻ ảnh phong cảnh */}
+          {/* Panel "Khám phá theo vùng" bên phải (Mặc định thu gọn, mở khi ấn nút Khám phá vùng) */}
           <RegionCardsStrip
             mode={mode}
             isDetailPanelOpen={!!selectedProvince}
+            isOpen={isRegionPanelOpen}
+            onClose={() => {
+              setIsRegionPanelOpen(false);
+              setFilterScope("province");
+            }}
             selectedRegionId={selectedRegionId}
-            onSelectRegion={setSelectedRegionId}
+            onSelectRegion={(regId) => {
+              setSelectedRegionId(regId);
+            }}
             onHoverRegion={setHoveredRegionId}
           />
         </div>
