@@ -250,15 +250,15 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince, activeRegionCodes]);
 
-  // LOD: Wards are natively integrated into all 3 modes (Hành chính, Tự nhiên, Kinh tế - Xã hội)
+  // LOD: Wards & Communes Level of Detail (Chuẩn GIS như gis.vn: Phóng to sâu zoom >= 2.4 mới hiển thị chữ rõ ràng, không chấm li ti nhăng nhít)
   const isWardsVisible = Boolean(
-    layers.wards && (zoom >= 1.5 || selectedProvince !== null)
+    layers.wards && (zoom >= 2.4 || (selectedProvince !== null && zoom >= 1.5))
   );
 
   // Filter wards to render based on zoom & selection
   const displayedWards = useMemo(() => {
     if (!wardsData || !isWardsVisible) return [];
-    if (selectedProvince && zoom < 1.5) {
+    if (selectedProvince && zoom < 2.8) {
       return wardsData.features.filter(
         (w) => w.properties.provinceCode === selectedProvince.properties.provinceCode
       );
@@ -754,33 +754,12 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                 const isSelectedWard = activeWardId === ward.properties.id;
                 const isHovered = hoveredWard?.properties.id === ward.properties.id;
                 const isIsland = Boolean(ward.properties.isIsland);
-                const isBorder = Boolean(ward.properties.isBorderOrExtreme);
-
-                // Pin color adapted to active mode & feature type (chuẩn hình ảnh gốc)
-                let pinColor = "#f43f5e";
-                if (isIsland) {
-                  pinColor = "#0ea5e9";
-                } else if (isBorder) {
-                  pinColor = "#10b981";
-                } else if (isSelectedProv || isSelectedWard) {
-                  pinColor = "#f59e0b";
-                } else if (mode === "tu_nhien") {
-                  pinColor = "#16a34a";
-                } else if (mode === "kinh_te") {
-                  pinColor = "#ea580c";
-                } else {
-                  pinColor = "#f43f5e";
-                }
-
-                const pinRadius = isSelectedWard ? 5.5 : isHovered ? 5.2 : isSelectedProv ? 4.5 : 3.6;
-                const showLabel =
-                  isHovered || isSelectedWard;
 
                 return (
                   <g
                     key={ward.properties.id}
                     transform={`translate(${wx}, ${wy})`}
-                    className="cursor-pointer group"
+                    className="cursor-pointer group select-none"
                     onClick={(e) => {
                       e.stopPropagation();
                       const parent = geoData?.features.find(
@@ -811,62 +790,43 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     }}
                     onMouseLeave={() => setHoveredWard(null)}
                   >
-                    {/* Animated Pulse Ring */}
-                    {(isSelectedWard || isHovered || isIsland || isSelectedProv) && (
+                    {/* Animated Pulse Ring cho đảo chủ quyền hoặc điểm được chọn */}
+                    {(isSelectedWard || (isIsland && isHovered)) && (
                       <circle
-                        r={pinRadius + 6}
-                        fill={pinColor}
+                        r={8}
+                        fill={isIsland ? "#0ea5e9" : "#f59e0b"}
                         opacity="0.35"
                         className="animate-ping pointer-events-none"
                       />
                     )}
 
-                    {/* Outer Circle Pin (Đĩa tròn trắng với viền màu tương phản cao chuẩn bản gốc) */}
-                    <circle
-                      r={pinRadius}
-                      fill="#ffffff"
-                      stroke={pinColor}
-                      strokeWidth={isSelectedWard || isHovered ? "2.0" : "1.5"}
-                      filter="url(#card-shadow)"
-                      className="transition-all duration-150"
-                    />
-
-                    {/* Inner Core Dot (Tâm điểm màu nổi bật) */}
-                    <circle
-                      r={pinRadius * 0.46}
-                      fill={pinColor}
-                      className="pointer-events-none"
-                    />
-
-                    {/* Ward Name Label (Nền tối bo tròn, viền cyan sáng, chữ trắng sắc nét chuẩn mockup) */}
-                    {showLabel && (
-                      <g
-                        transform={`translate(0, -${(pinRadius + 10) / Math.max(zoom * 0.75, 1)}) scale(${1 / Math.max(zoom * 0.75, 1)})`}
-                        className="pointer-events-none select-none transition-all duration-150"
-                      >
-                        <rect
-                          x={-(ward.properties.name.length * 3.4 + 10)}
-                          y="-18"
-                          width={ward.properties.name.length * 6.8 + 20}
-                          height="20"
-                          rx="5"
-                          fill="#0b1728"
-                          stroke={isHovered || isSelectedWard ? "#f59e0b" : "#38bdf8"}
-                          strokeWidth="1.2"
-                          filter="url(#card-shadow)"
-                        />
-                        <text
-                          textAnchor="middle"
-                          y="-4"
-                          fill="#ffffff"
-                          fontSize="9.5"
-                          fontWeight={isHovered || isSelectedWard || isIsland ? "700" : "600"}
-                          fontFamily="sans-serif"
-                        >
-                          {ward.properties.name}
-                        </text>
-                      </g>
+                    {/* Điểm neo centroid tinh tế (chỉ hiện nhẹ khi rê chuột hoặc với xã hải đảo) */}
+                    {(isIsland || isHovered || isSelectedWard) && (
+                      <circle
+                        r={isHovered || isSelectedWard ? 2.5 : 2}
+                        fill={isIsland ? "#0284c7" : isSelectedWard ? "#f59e0b" : "#475569"}
+                        stroke="#ffffff"
+                        strokeWidth="1"
+                        className="transition-all duration-150"
+                      />
                     )}
+
+                    {/* Tên Phường/Xã dạng chữ GIS sắc nét có viền trắng (Chuẩn gis.vn & bản đồ hành chính, không chấm li ti nhăng nhít) */}
+                    <text
+                      textAnchor="middle"
+                      y={isIsland ? "-6" : "3"}
+                      fill={isHovered || isSelectedWard ? "#b45309" : "#1e293b"}
+                      fontSize={`${Math.max(10.5 / Math.max(zoom * 0.45, 1), 7.8)}`}
+                      fontWeight={isHovered || isSelectedWard || isIsland ? "700" : "500"}
+                      fontFamily="sans-serif"
+                      stroke="#ffffff"
+                      strokeWidth="2.5px"
+                      strokeLinejoin="round"
+                      paintOrder="stroke fill"
+                      className="transition-all duration-150 pointer-events-none select-none"
+                    >
+                      {ward.properties.name}
+                    </text>
                   </g>
                 );
               })}

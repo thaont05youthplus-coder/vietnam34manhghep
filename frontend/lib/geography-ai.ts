@@ -81,7 +81,294 @@ export const PROVINCES_MAP = [
 export function generateGeographyAnswer(query: string, contextProvince?: string | null): GeoAnswer {
   const norm = removeAccents(query);
 
-  // 1. Câu hỏi nhanh: Thủ đô của Việt Nam
+  // 1. Câu hỏi nâng cao: Tại sao bão ít vào Nam Bộ?
+  if (
+    (norm.includes("bao") && (norm.includes("nam bo") || norm.includes("mien nam") || norm.includes("it vao"))) ||
+    (norm.includes("tai sao") && norm.includes("bao") && (norm.includes("nam") || norm.includes("it")))
+  ) {
+    return {
+      text: `Nguyên nhân Nam Bộ (miền Nam) rất ít khi có bão đổ bộ:
+
+1. Vị trí địa lí gần xích đạo và lực Coriolis yếu:
+• Nam Bộ nằm ở vĩ độ thấp (khoảng 8°30'B - 11°B). Lực Coriolis (lực làm lệch hướng chuyển động do Trái Đất tự quay) ở vùng vĩ độ thấp rất nhỏ, không đủ lực quán tính để hình thành và duy trì xoáy thuận nhiệt đới (bão thường cần lực Coriolis đủ lớn từ vĩ độ 10° trở lên).
+
+2. Quy luật di chuyển của bão trên Biển Đông:
+• Các cơn bão hình thành ở vùng biển Tây Bắc Thái Bình Dương khi vượt qua Philippines vào Biển Đông thường di chuyển theo hướng Tây hoặc Tây Bắc, đổ bộ dồn dập vào Bắc Bộ và Bắc Trung Bộ vào đầu mùa (tháng 6 - 8), sau đó dịch dần xuống Trung Bộ vào các tháng 9 - 11.
+• Đến tháng 12, khi dải hội tụ nhiệt đới lùi về phía Nam thì mùa bão cũng bước vào giai đoạn suy tàn; đồng thời các đợt không khí lạnh mạnh từ phương Bắc đẩy bão lệch xa bờ hoặc làm bão tan nhanh trên biển.
+
+3. Tính chất dị thường và cảnh báo:
+• Bão đổ bộ vào Nam Bộ là hiện tượng thời tiết hiếm gặp và dị thường (như cơn bão số 5 Linda năm 1997), vì vậy khi có bão xảy ra thường gây thiệt hại rất nặng do người dân ít có kinh nghiệm ứng phó.`,
+      citations: [
+        {
+          id: "cit_typhoon_nambo",
+          title: "Sách giáo khoa Địa lí 12 - Một số vấn đề về thiên tai và biện pháp phòng chống",
+          publisher: "Bộ Giáo dục và Đào tạo",
+          year: 2024,
+        },
+        {
+          id: "cit_climate_vn",
+          title: "Khí hậu học Việt Nam",
+          publisher: "NXB Đại học Sư phạm",
+          year: 2023,
+        },
+      ],
+    };
+  }
+
+  // 2. Câu hỏi nâng cao: Hiện tượng gió phơn Tây Nam (Gió Lào)
+  if (
+    norm.includes("gio lao") ||
+    norm.includes("gio phon") ||
+    norm.includes("phon tay nam") ||
+    (norm.includes("kho nong") && (norm.includes("mien trung") || norm.includes("bac trung bo")))
+  ) {
+    return {
+      text: `Hiện tượng gió phơn Tây Nam (thường gọi là Gió Lào) ở Bắc Trung Bộ:
+
+1. Nguồn gốc luồng gió:
+• Đầu mùa hạ, khối khí nhiệt đới ẩm từ vịnh Bengan (Bắc Ấn Độ Dương) di chuyển theo hướng Tây Nam tràn vào lãnh thổ Việt Nam mang theo hàm lượng hơi nước rất lớn.
+
+2. Hiệu ứng sườn đón gió và sườn khuất gió (Hiệu ứng Phơn):
+• Khi gặp bức tường thành tự nhiên là dãy Trường Sơn Bắc và biên giới Việt - Lào, khối khí buộc phải bốc lên cao, không khí lạnh dần đi theo tiêu chuẩn đoạn nhiệt ẩm (giảm 0,6°C khi lên cao 100m) ngưng kết sinh mưa xối xả bên sườn tây (trên đất Lào).
+• Khi vượt qua đỉnh núi tràn sang sườn đông (Bắc Trung Bộ và dải duyên hải miền Trung), luồng khí đã mất sạch hơi ẩm, bị nén lại và nóng dần lên theo tiêu chuẩn đoạn nhiệt khô (tăng 1°C khi xuống thấp 100m).
+
+3. Hệ quả thời tiết:
+• Khiến dải đất Bắc Trung Bộ có thời tiết cực kì khô nóng (nhiệt độ thường vượt 38 - 41°C, độ ẩm không khí có lúc tụt xuống dưới 45%), gây nguy cơ cháy rừng, hạn hán và thiếu nước tưới trầm trọng.`,
+      citations: [
+        {
+          id: "cit_foehn",
+          title: "Sách giáo khoa Địa lí 12 - Thiên nhiên nhiệt đới ẩm gió mùa",
+          publisher: "NXB Giáo dục Việt Nam",
+          year: 2024,
+        },
+      ],
+    };
+  }
+
+  // 3. Câu hỏi nâng cao: Tại sao Tây Bắc ấm hơn Đông Bắc vào mùa đông?
+  if (
+    (norm.includes("tay bac") && norm.includes("dong bac")) ||
+    (norm.includes("tay bac") && norm.includes("am hon")) ||
+    (norm.includes("tay bac") && norm.includes("lanh") && norm.includes("vi sao"))
+  ) {
+    return {
+      text: `Nguyên nhân vùng Tây Bắc có mùa đông ấm hơn và ít lạnh hơn Đông Bắc:
+
+1. Tác động chắn gió của dãy núi Hoàng Liên Sơn:
+• Dãy Hoàng Liên Sơn có độ cao đồ sộ bậc nhất Việt Nam (nhiều đỉnh cao trên 2.500 - 3.143m) chạy theo hướng Tây Bắc - Đông Nam đóng vai trò như một bức tường thành thiên nhiên khổng lồ, ngăn chặn các đợt gió mùa Đông Bắc lạnh buốt tràn từ phương Bắc sang.
+
+2. Cấu trúc địa hình nan quạt của vùng Đông Bắc:
+• Ngược lại, vùng Đông Bắc có 4 cánh cung núi lớn (Sông Gâm, Ngân Sơn, Bắc Sơn, Đông Triều) mở rộng về phía bắc, chụm đầu ở Tam Đảo như 4 chiếc phễu khổng lồ hút gió mùa Đông Bắc tràn sâu vào nội địa, khiến Đông Bắc chịu ảnh hưởng sớm nhất, sâu sắc nhất và có mùa đông lạnh kéo dài 2 - 3 tháng.
+
+3. Hệ quả nhiệt độ:
+• Vùng Tây Bắc (ở các thung lũng và độ cao dưới 1.000m) có mùa đông đến muộn hơn, kết thúc sớm hơn và nền nhiệt độ trung bình ấm hơn Đông Bắc từ 2 - 3°C.`,
+      citations: [
+        {
+          id: "cit_nw_ne_compare",
+          title: "Địa lí tự nhiên Việt Nam - Phân hóa lãnh thổ",
+          publisher: "Bộ Giáo dục và Đào tạo",
+          year: 2024,
+        },
+      ],
+    };
+  }
+
+  // 4. Câu hỏi nâng cao: Chế độ nước sông Cửu Long điều hòa nhờ Biển Hồ Tonle Sap
+  if (
+    norm.includes("tonle sap") ||
+    norm.includes("bien ho") ||
+    (norm.includes("che do nuoc") && (norm.includes("cuu long") || norm.includes("song hong") || norm.includes("me kong"))) ||
+    (norm.includes("dieu hoa") && norm.includes("song"))
+  ) {
+    return {
+      text: `Nguyên nhân chế độ nước sông Cửu Long (Mê Kông) điều hòa hơn sông Hồng:
+
+1. Vai trò điều tiết của Biển Hồ (Tonle Sap):
+• Biển Hồ ở Campuchia là một hồ chứa nước ngọt tự nhiên khổng lồ nối với dòng chính sông Mê Kông qua sông Tonle Sap.
+• Vào mùa lũ (mùa mưa): Nước sông Mê Kông dâng cao, dòng chảy tự động đảo chiều chảy ngược vào Biển Hồ tích trữ, giúp giảm đỉnh lũ cho hạ lưu.
+• Vào mùa cạn (mùa khô): Mực nước sông Mê Kông hạ thấp, Biển Hồ lại xả nước trở lại dòng chính tiếp tế nguồn nước ngọt dồi dào cho Đồng bằng sông Cửu Long.
+
+2. Địa hình bằng phẳng và hệ thống phân lũ tự nhiên:
+• Đồng bằng sông Cửu Long có độ dốc địa hình cực nhỏ (trung bình chỉ 1 - 2 cm/km), hệ thống kênh rạch chằng chịt và các vùng trũng ngập lũ tự nhiên (Đồng Tháp Mười, Tứ giác Long Xuyên) giúp nước lũ tràn đồng êm ả, không có lũ ống, lũ quét đột ngột.
+
+3. Ngược lại với lưu vực sông Hồng:
+• Sông Hồng có mạng lưới hình nan quạt (3 sông lớn: Sông Đà, sông Lô, sông Thao cùng hội tụ tại Việt Trì), độ dốc lưu vực lớn và rừng đầu nguồn giảm sút, khiến nước mùa mưa dồn về đồng thời rất nhanh, lũ lên nhanh và rút đột ngột.`,
+      citations: [
+        {
+          id: "cit_river_regime",
+          title: "Sách giáo khoa Địa lí 12 - Thủy văn và sông ngòi Việt Nam",
+          publisher: "Bộ Giáo dục và Đào tạo",
+          year: 2024,
+        },
+      ],
+    };
+  }
+
+  // 5. Câu hỏi nâng cao: Vùng cực Nam Trung Bộ (Ninh Thuận - Bình Thuận) khô hạn nhất cả nước
+  if (
+    (norm.includes("cuc nam trung bo") && (norm.includes("kho") || norm.includes("han"))) ||
+    ((norm.includes("ninh thuan") || norm.includes("binh thuan")) && (norm.includes("kho") || norm.includes("mua it") || norm.includes("han")))
+  ) {
+    return {
+      text: `Nguyên nhân dải Duyên hải cực Nam Trung Bộ (Ninh Thuận - Bình Thuận) là nơi khô hạn nhất Việt Nam:
+
+1. Hướng bờ biển song song với cả hai hướng gió mùa:
+• Đường bờ biển Ninh Thuận - Bình Thuận chạy theo hướng Đông Bắc - Tây Nam, gần như song song với hướng gió mùa mùa hạ (Tây Nam) và gió mùa mùa đông (Đông Bắc), do đó không có sườn núi vuông góc để đón gió tạo mưa địa hình.
+
+2. Hiệu ứng sườn khuất gió (hiệu ứng phơn):
+• Khối núi và cao nguyên Nam Trung Bộ (Lâm Đồng - Di Linh) nằm ở phía tây che chắn luồng gió mùa Tây Nam, khiến luồng khí khi trút hết mưa ở cao nguyên tràn xuống ven biển trở nên khô nóng.
+
+3. Hiện tượng dòng biển lạnh và nước trồi (Upwelling):
+• Vùng biển ven bờ Ninh Thuận - Bình Thuận có hiện tượng nước trồi (dòng hải lưu lạnh từ đáy biển dâng lên). Lớp nước biển mặt lạnh đi làm khối không khí sát mặt biển ổn định, không thể bốc hơi đối lưu để tạo mây gây mưa. Lượng mưa trung bình năm ở đây chỉ từ 700 - 800 mm.`,
+      citations: [
+        {
+          id: "cit_drought_ntbt",
+          title: "Khí hậu học Việt Nam và các vùng khô hạn ven biển",
+          publisher: "NXB Đại học Quốc gia Hà Nội",
+          year: 2023,
+        },
+      ],
+    };
+  }
+
+  // 6. Câu hỏi nâng cao: 5 vùng biển Việt Nam theo UNCLOS 1982
+  if (
+    norm.includes("noi thuy") ||
+    norm.includes("lanh hai") ||
+    norm.includes("vung dac quyen kinh te") ||
+    norm.includes("them luc dia") ||
+    norm.includes("cac vung bien")
+  ) {
+    return {
+      text: `Quy chế 5 vùng biển của Việt Nam theo Công ước Liên Hợp Quốc về Luật Biển (UNCLOS 1982) và Luật Biển Việt Nam 2012:
+
+1. Nội thủy (Internal Waters):
+• Vùng nước nằm phía trong đường cơ sở và giáp với bờ biển.
+• Quốc gia ven biển có chủ quyền hoàn toàn, tuyệt đối và đầy đủ như trên lãnh thổ đất liền.
+
+2. Lãnh hải (Territorial Sea):
+• Vùng biển có chiều rộng 12 hải lý (khoảng 22,22 km) tính từ đường cơ sở ra phía biển.
+• Ranh giới ngoài của lãnh hải chính là đường biên giới quốc gia trên biển của Việt Nam. Chủ quyền quốc gia mở rộng cả vùng trời phía trên, đáy biển và lòng đất dưới đáy biển.
+
+3. Vùng tiếp giáp lãnh hải (Contiguous Zone):
+• Vùng biển rộng 12 hải lý tiếp liền ngoài lãnh hải (cách đường cơ sở 24 hải lý).
+• Nước ta thực hiện quyền kiểm soát an ninh, hải quan, thuế khóa, y tế và môi trường.
+
+4. Vùng đặc quyền kinh tế (EEZ - Exclusive Economic Zone):
+• Vùng biển tiếp liền ngoài lãnh hải, mở rộng đến 200 hải lý (khoảng 370,4 km) tính từ đường cơ sở.
+• Việt Nam có quyền chủ quyền hoàn toàn về thăm dò, khai thác, bảo tồn và quản lí các tài nguyên sinh vật và khoáng sản phi sinh vật; các quốc gia khác có quyền tự do hàng hải và đặt cáp ngầm theo luật quốc tế.
+
+5. Thềm lục địa (Continental Shelf):
+• Vùng đáy biển và lòng đất dưới đáy biển mở rộng tự nhiên từ đất liền ra rìa ngoài lục địa (tối thiểu 200 hải lý và có thể mở rộng tới 350 hải lý).
+• Việt Nam có quyền chủ quyền hoàn toàn và độc quyền về thăm dò, khai thác tài nguyên dầu khí, khoáng sản đáy biển.`,
+      citations: [
+        {
+          id: "cit_unclos_5zones",
+          title: "Luật Biển Việt Nam năm 2012 & UNCLOS 1982",
+          publisher: "NXB Chính trị Quốc gia",
+          year: 2020,
+        },
+      ],
+    };
+  }
+
+  // 7. Câu hỏi nâng cao: Đất Feralit đỏ vàng
+  if (norm.includes("feralit") || norm.includes("dat do vang")) {
+    return {
+      text: `Đặc điểm và nguyên nhân hình thành đất Feralit ở Việt Nam:
+
+1. Quá trình Feralit:
+• Là quá trình hình thành đất đặc trưng của vùng nhiệt đới ẩm gió mùa.
+• Do nhiệt ẩm dồi dào và mưa nhiều tập trung, các chất bazơ dễ tan (như Ca²⁺, Mg²⁺, K⁺) cùng Silic (SiO₂) bị rửa trôi mạnh mẽ.
+• Đồng thời diễn ra sự tích tụ oxit sắt (Fe₂O₃ - tạo nên sắc đỏ) và oxit nhôm (Al₂O₃ - tạo sắc vàng), tạo thành tầng đất feralit đỏ vàng đặc trưng.
+
+2. Phân bố và giá trị kinh tế:
+• Chiếm tới trên 65% diện tích tự nhiên của nước ta, phân bố chủ yếu ở vùng đồi núi thấp và trung du (dưới 1.000m).
+• Tốt nhất là đất feralit phát triển trên đá bazan (Tây Nguyên, Đông Nam Bộ) và đá vôi, có tầng đất dày, tơi xốp, rất thích hợp trồng cây công nghiệp lâu năm (cà phê, cao su, chè, hồ tiêu) và cây ăn quả.`,
+      citations: [
+        {
+          id: "cit_soil_feralit",
+          title: "Sách giáo khoa Địa lí 12 - Thổ nhưỡng và sinh vật Việt Nam",
+          publisher: "NXB Giáo dục Việt Nam",
+          year: 2024,
+        },
+      ],
+    };
+  }
+
+  // 8. Câu hỏi nâng cao: Vị trí nội chí tuyến và 2 lần Mặt Trời lên thiên đỉnh
+  if (norm.includes("noi chi tuyen") || norm.includes("thien dinh") || (norm.includes("mat troi") && norm.includes("dinh"))) {
+    return {
+      text: `Ý nghĩa của vị trí địa lí nằm hoàn toàn trong vùng nội chí tuyến bán cầu Bắc của Việt Nam:
+
+1. Nền nhiệt dồi dào và góc nhập xạ lớn:
+• Lãnh thổ nước ta trải dài từ 8°34'B đến 23°23'B, nằm trọn trong vành đai nội chí tuyến Bắc bán cầu.
+• Hàng năm, tất cả các địa điểm trên toàn lãnh thổ đều có hai lần Mặt Trời đi qua thiên đỉnh (bức xạ Mặt Trời chiếu thẳng đứng vào giữa trưa).
+• Tổng lượng bức xạ Mặt Trời nhận được rất lớn (từ 100 - 150 kcal/cm²/năm), tổng số giờ nắng đạt 1.400 - 3.000 giờ/năm, nhiệt độ trung bình năm đều trên 20°C (trừ vùng núi cao).
+
+2. Khí hậu và sinh vật:
+• Tạo nên tính chất nhiệt đới của thiên nhiên, cung cấp nguồn năng lượng nhiệt và ánh sáng quanh năm để cây trồng sinh trưởng liên tục, cho phép thâm canh tăng vụ nhiều vụ trong năm.`,
+      citations: [
+        {
+          id: "cit_tropical_position",
+          title: "Sách giáo khoa Địa lí 12 - Vị trí địa lí và phạm vi lãnh thổ",
+          publisher: "Bộ Giáo dục và Đào tạo",
+          year: 2024,
+        },
+      ],
+    };
+  }
+
+  // 9. Câu hỏi nâng cao: Xâm nhập mặn ở Đồng bằng sông Cửu Long
+  if (norm.includes("xam nhap man") || (norm.includes("han man") && norm.includes("cuu long"))) {
+    return {
+      text: `Nguyên nhân và giải pháp ứng phó xâm nhập mặn ở Đồng bằng sông Cửu Long:
+
+1. Nguyên nhân chính:
+• Mùa khô kéo dài từ tháng 12 đến tháng 4 năm sau, lượng mưa tại chỗ giảm sâu.
+• Lưu lượng nước từ thượng nguồn sông Mê Kông đổ về hạ lưu bị sụt giảm (do các đập thủy điện ở thượng lưu tích nước và tác động của hiện tượng El Nino).
+• Địa hình đồng bằng thấp trũng, mạng lưới kênh rạch chằng chịt kết hợp với thủy triều Biển Đông và vịnh Thái Lan đẩy nước mặn xâm nhập sâu vào nội đồng từ 40 - 70 km, có nơi trên 90 km.
+
+2. Giải pháp thích ứng:
+• Chuyển đổi mô hình sản xuất từ 'thuần ngọt' sang mô hình 'thuận thiên' (mô hình lúa - tôm, nuôi trồng thủy sản nước lợ/mặn).
+• Xây dựng hệ thống công trình cống ngăn mặn, trữ ngọt kiểm soát nguồn nước (như hệ thống thủy lợi Cái Lớn - Cái Bé).
+• Sử dụng giống lúa và cây trồng chịu mặn, chuyển đổi lịch thời vụ né mặn.`,
+      citations: [
+        {
+          id: "cit_saline_intrusion",
+          title: "Nghị quyết 120/NQ-CP về phát triển bền vững ĐBSCL thích ứng với biến đổi khí hậu",
+          publisher: "Chính phủ CHXHCN Việt Nam",
+          year: 2021,
+        },
+      ],
+    };
+  }
+
+  // 10. Câu hỏi nâng cao: Chăn nuôi gia súc lớn (trâu, bò)
+  if (norm.includes("trau") || norm.includes("bo") || (norm.includes("gia suc") && norm.includes("chan nuoi"))) {
+    return {
+      text: `Đặc điểm phân bố chăn nuôi trâu, bò ở Việt Nam:
+
+1. Chăn nuôi trâu:
+• Phân bố nhiều nhất ở vùng Trung du và miền núi Bắc Bộ (chiếm trên 50% đàn trâu cả nước), kế đến là Bắc Trung Bộ.
+• Nguyên nhân sinh thái: Con trâu ưa ẩm, chịu rét giỏi hơn bò, thích nghi hoàn hảo với điều kiện khí hậu mùa đông lạnh và địa hình đồi núi dốc vùng Đông Bắc - Tây Bắc.
+
+2. Chăn nuôi bò (bò thịt và bò sữa):
+• Bò thịt nuôi nhiều ở Bắc Trung Bộ, Duyên hải Nam Trung Bộ và Tây Nguyên (chiếm phần lớn đàn bò cả nước).
+• Nguyên nhân: Con bò ưa khô ráo, chịu nóng tốt hơn trâu, phù hợp với các đồng cỏ trên cao nguyên bazan và vùng duyên hải.
+• Bò sữa phát triển mạnh ở ven các đô thị lớn (TP. Hồ Chí Minh, Hà Nội, Lâm Đồng/Đà Lạt, Mộc Châu/Sơn La, Nghệ An) nhờ thị trường tiêu thụ rộng và công nghệ chế biến hiện đại.`,
+      citations: [
+        {
+          id: "cit_livestock",
+          title: "Địa lí ngành Nông nghiệp Việt Nam",
+          publisher: "NXB Giáo dục Việt Nam",
+          year: 2024,
+        },
+      ],
+    };
+  }
+
+  // 11. Câu hỏi nhanh: Thủ đô của Việt Nam
   if (
     norm.includes("thu do") ||
     norm.includes("capital") ||
@@ -106,7 +393,7 @@ Hà Nội là trung tâm đầu não chính trị - hành chính quốc gia, đ�
     };
   }
 
-  // 2. Số lượng tỉnh thành Việt Nam
+  // 12. Số lượng tỉnh thành Việt Nam
   if (
     norm.includes("bao nhieu tinh") ||
     norm.includes("may tinh") ||
@@ -134,7 +421,7 @@ Hà Nội là trung tâm đầu não chính trị - hành chính quốc gia, đ�
     };
   }
 
-  // 3. Tỉnh lớn nhất / nhỏ nhất / đông dân nhất / ít dân nhất
+  // 13. Tỉnh lớn nhất / nhỏ nhất / đông dân nhất / ít dân nhất
   if (
     norm.includes("lon nhat") ||
     norm.includes("rong nhat") ||
@@ -261,7 +548,7 @@ Hà Nội là trung tâm đầu não chính trị - hành chính quốc gia, đ�
     };
   }
 
-  // 4. Chủ đề: Hoàng Sa, Trường Sa & Biển đảo
+  // 14. Chủ đề: Hoàng Sa, Trường Sa & Biển đảo
   if (
     norm.includes("hoang sa") ||
     norm.includes("truong sa") ||
@@ -297,7 +584,7 @@ Hà Nội là trung tâm đầu não chính trị - hành chính quốc gia, đ�
     };
   }
 
-  // 5. Giải thích hiện tượng thời tiết / Khí hậu / Mưa Huế
+  // 15. Giải thích hiện tượng thời tiết / Khí hậu / Mưa Huế
   if (
     (norm.includes("hue") && norm.includes("mua")) ||
     (norm.includes("mien trung") && norm.includes("mua"))
@@ -348,7 +635,7 @@ Hà Nội là trung tâm đầu não chính trị - hành chính quốc gia, đ�
     };
   }
 
-  // 6. So sánh Đồng bằng sông Hồng và Đồng bằng sông Cửu Long
+  // 16. So sánh Đồng bằng sông Hồng và Đồng bằng sông Cửu Long
   if (
     norm.includes("so sanh") &&
     (norm.includes("song hong") || norm.includes("song cuu long") || norm.includes("dong bang"))
@@ -380,7 +667,7 @@ Hà Nội là trung tâm đầu não chính trị - hành chính quốc gia, đ�
     };
   }
 
-  // 7. Bốn điểm cực lãnh thổ phần đất liền
+  // 17. Bốn điểm cực lãnh thổ phần đất liền
   if (
     norm.includes("diem cuc") ||
     norm.includes("cuc bac") ||
@@ -406,7 +693,7 @@ Hà Nội là trung tâm đầu não chính trị - hành chính quốc gia, đ�
     };
   }
 
-  // 8. Tra cứu theo tỉnh thành (trong câu hỏi hoặc ngữ cảnh đang chọn trên bản đồ)
+  // 18. Tra cứu theo tỉnh thành (trong câu hỏi hoặc ngữ cảnh đang chọn trên bản đồ)
   let matchedProv = PROVINCES_MAP.find((p) =>
     p.aliases.some((a) => norm.includes(a))
   );
@@ -457,7 +744,7 @@ ${detail.overview.sovereigntyNote ? `• Chủ quyền: ${detail.overview.sovere
     };
   }
 
-  // 9. Trả lời trực tiếp câu hỏi người dùng
+  // 19. Trả lời trực tiếp câu hỏi người dùng
   return {
     text: `Về câu hỏi: "${query}":
 
