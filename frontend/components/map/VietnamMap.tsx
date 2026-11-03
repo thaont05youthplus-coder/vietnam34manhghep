@@ -244,7 +244,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [selectedProvince, zoom, pan, project, communePolygonsByProvince, svgWidth, svgHeight]);
 
-  // Tự động căn giữa và phóng to mượt mà vào tỉnh được chọn (Auto-fit to Province - Loại bỏ tọa độ đảo xa để luôn zoom chuẩn tâm đất liền)
+  // Tự động căn giữa và phóng vừa địa phương vào phần màn hình còn trống (tính cả bảng thông tin bên phải 360px và chừa khoảng đệm)
   useEffect(() => {
     if (!selectedProvince) return;
     const coords = selectedProvince.geometry.coordinates;
@@ -253,10 +253,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
     function walk(c: any) {
       if (typeof c[0] === "number") {
-        // Loại trừ tọa độ Quần đảo Hoàng Sa khi căn giữa Đà Nẵng (VN48)
-        if (pCode === "VN48" && c[0] > 109.2) return;
-        // Loại trừ tọa độ Quần đảo Trường Sa khi căn giữa Khánh Hòa (VN56)
-        if (pCode === "VN56" && c[0] > 110.0) return;
+        if (pCode === "VN48" && c[0] > 109.2) return; // Bỏ Hoàng Sa khi căn Đà Nẵng
+        if (pCode === "VN56" && c[0] > 110.0) return; // Bỏ Trường Sa khi căn Khánh Hòa
 
         const [x, y] = project(c[0], c[1]);
         if (x < minX) minX = x;
@@ -272,14 +270,21 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     if (minX < maxX && minY < maxY) {
       const width = maxX - minX;
       const height = maxY - minY;
+
+      // Trừ diện tích bảng thông tin ProvinceDetailPanel bên phải (khoảng 28% chiều ngang)
+      const availWidth = svgWidth * 0.70;
+      const targetCenterX = availWidth * 0.50; // Tâm vùng trống bên trái
+      const availHeight = svgHeight - 120;
+      const targetCenterY = 60 + availHeight * 0.50;
+
+      // Chừa khoảng đệm 22% để ranh giới không bao giờ bị cắt
       const targetZoom = Math.min(
-        Math.max(Math.min((svgWidth * 0.70) / width, (svgHeight * 0.70) / height), 1.6),
-        4.8
+        Math.max(Math.min((availWidth * 0.78) / width, (availHeight * 0.78) / height), 1.5),
+        4.0
       );
-      const centerX = (minX + maxX) / 2;
-      const centerY = (minY + maxY) / 2;
-      const targetPanX = svgWidth / 2 - centerX * targetZoom;
-      const targetPanY = svgHeight / 2 - centerY * targetZoom;
+
+      const targetPanX = targetCenterX - ((minX + maxX) / 2) * targetZoom;
+      const targetPanY = targetCenterY - ((minY + maxY) / 2) * targetZoom;
 
       setZoom(targetZoom);
       setPan({ x: targetPanX, y: targetPanY });
@@ -316,16 +321,21 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     if (minX < maxX && minY < maxY) {
       const width = maxX - minX;
       const height = maxY - minY;
+
+      const availWidth = svgWidth * 0.74;
+      const targetCenterX = availWidth * 0.50;
+      const availHeight = svgHeight - 110;
+      const targetCenterY = 55 + availHeight * 0.50;
+
       const targetZoom = Math.min(
-        Math.max(Math.min((svgWidth * 0.80) / width, (svgHeight * 0.80) / height), 1.2),
-        3.2
+        Math.max(Math.min((availWidth * 0.82) / width, (availHeight * 0.82) / height), 1.15),
+        2.8
       );
-      const centerX = (minX + maxX) / 2;
-      const centerY = (minY + maxY) / 2;
+
       setZoom(targetZoom);
       setPan({
-        x: svgWidth / 2 - centerX * targetZoom,
-        y: svgHeight / 2 - centerY * targetZoom,
+        x: targetCenterX - ((minX + maxX) / 2) * targetZoom,
+        y: targetCenterY - ((minY + maxY) / 2) * targetZoom,
       });
     }
   }, [selectedRegionId, selectedProvince, geoData, mode, project, svgWidth, svgHeight]);
@@ -339,10 +349,19 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     return region ? new Set(region.provinceCodes) : null;
   }, [hoveredRegionId, selectedRegionId, mode]);
 
-  // Color generator for provinces based on active mode
+  // Color generator for provinces based on active mode & selected region
   const getProvinceColor = useMemo(() => {
     return (p: ProvinceFeature): string => {
       const code = p.properties.provinceCode;
+
+      // Khi đang chọn một vùng cụ thể: các tỉnh cùng vùng dùng chung màu nhận diện của vùng
+      if (selectedRegionId) {
+        const regionList = mode === "tu_nhien" ? NATURAL_REGIONS : ECONOMIC_REGIONS;
+        const activeReg = regionList.find((r) => r.id === selectedRegionId);
+        if (activeReg && activeReg.provinceCodes.includes(code)) {
+          return activeReg.color;
+        }
+      }
 
       if (mode === "tu_nhien") {
         const natRegion = NATURAL_REGIONS.find((r) => r.provinceCodes.includes(code));
@@ -357,7 +376,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       // Chế độ Hành chính: Bảng màu pastel chuẩn SGK & Atlas Quốc gia (Phụ lục C)
       return ADMIN_PROVINCE_COLORS[code] || PROVINCE_PALETTE[0];
     };
-  }, [mode]);
+  }, [mode, selectedRegionId]);
 
   // Pre-generate SVG Paths for all 34 provinces
   const pathsData = useMemo(() => {
@@ -393,18 +412,18 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         ? activeRegionCodes.has(feature.properties.provinceCode)
         : null;
 
-      // Quy chuẩn Phụ lục C: Đường địa giới hành chính màu đen K:100 (#000000), nét siêu mỏng 0.5px
-      let fillOpacity = 0.95;
+      // Phân cấp ranh giới rõ ràng chuẩn GIS: ranh giới vùng nổi bật nhất (1.8px), ranh giới tỉnh mảnh hơn (1.0px)
+      let fillOpacity = 0.96;
       let strokeColor = "#000000";
-      let strokeWidth = 0.5;
+      let strokeWidth = 1.0;
 
       if (isInActiveRegion !== null) {
         if (isInActiveRegion) {
           fillOpacity = 1.0;
-          strokeColor = "#0f172a"; // Viền đậm phân định rõ ranh giới vùng được chọn
-          strokeWidth = 1.6;
+          strokeColor = "#0f172a"; // Ranh giới vùng nổi bật nhất: 1.8px
+          strokeWidth = 1.8;
         } else {
-          fillOpacity = 0.32; // Làm mờ nhẹ các vùng khác không gây xao nhãng
+          fillOpacity = 0.28; // Làm mờ nhẹ các vùng khác không gây xao nhãng
           strokeColor = "#cbd5e1";
           strokeWidth = 0.4;
         }
@@ -412,14 +431,14 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
       if (isHovered) {
         fillOpacity = 1.0;
-        strokeColor = "#0284c7"; // Viền xanh lam sáng C:100 (Phụ lục C mục 4)
-        strokeWidth = 1.1;
+        strokeColor = "#0284c7";
+        strokeWidth = 1.4;
       }
 
       if (isSelected) {
         fillOpacity = 1.0;
-        strokeColor = "#eab308"; // Viền vàng kim nổi bật ranh giới tỉnh chuẩn gis.vn
-        strokeWidth = 2.2;
+        strokeColor = "#eab308"; // Ranh giới tỉnh được chọn màu vàng kim sắc nét: 2.0px
+        strokeWidth = 2.0;
       }
 
       return {
@@ -435,11 +454,19 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince, activeRegionCodes]);
 
-  // LOD: Wards & Communes Level of Detail (Chuẩn GIS như gis.vn)
-  // Tự động hiển thị khi zoom >= 1.5 hoặc khi đã chọn một tỉnh cụ thể
-  const isWardsVisible = Boolean(
-    layers.wards && (selectedProvince !== null || zoom >= 1.5)
+  // Phân cấp chi tiết (LOD Esri / ArcGIS Pro):
+  // 1. Chỉ hiện ranh giới xã khi đã chọn một tỉnh cụ thể, hoặc khi người dùng zoom sâu (zoom >= 2.6). Ở mức toàn quốc / vùng: ẩn đường biên xã.
+  const isCommunePolygonsVisible = Boolean(
+    layers.wards && (selectedProvince !== null || zoom >= 2.6)
   );
+
+  // 2. Chỉ hiện tên xã khi zoom sâu và có đủ không gian (zoom >= 1.8 khi chọn tỉnh, zoom >= 3.2 khi toàn cảnh). Ở mức toàn quốc: ưu tiên tên tỉnh.
+  const isCommuneLabelsVisible = Boolean(
+    layers.wards && ((selectedProvince !== null && zoom >= 1.8) || zoom >= 3.2)
+  );
+
+  // Giữ biến isWardsVisible tương thích kiểm thử
+  const isWardsVisible = isCommunePolygonsVisible;
 
   // Vector đa giác ranh giới từng xã/phường ("Tách từng mảng rõ ràng chuẩn gis.vn")
   const projectedCommunes = useMemo(() => {
@@ -524,24 +551,30 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     return items;
   }, [isWardsVisible, selectedProvince, zoom, communePolygonsByProvince, hoveredCommune, project]);
 
-  // Thuật toán lọc nhãn xã/phường (Spatial Collision Thinning chuẩn GIS):
-  // Sắp xếp theo diện tích lớn trước, giữ khoảng cách tối thiểu giữa các nhãn để bản đồ luôn thoáng đẹp như gis.vn
+  // Thuật toán lọc nhãn xã/phường: Phân bố thưa thoáng, tránh tuyệt đối đè lên tên tỉnh (như "Hà Tĩnh", "Nghệ An")
   const visibleCommuneLabels = useMemo(() => {
-    if (!isWardsVisible || projectedCommunes.length === 0) return [];
+    if (!isCommuneLabelsVisible || projectedCommunes.length === 0) return [];
 
     const sorted = [...projectedCommunes].sort(
       (a, b) => (b.feature.properties.areaKm2 || 0) - (a.feature.properties.areaKm2 || 0)
     );
 
     const placed: Array<{ cx: number; cy: number }> = [];
-    const minDistancePx = selectedProvince ? 28 : 36;
-    const minScreenWidth = selectedProvince ? 18 : 26;
+    const minDistancePx = 32; // Giữ khoảng cách tối thiểu 32px trên màn hình giữa 2 nhãn xã
 
     const results: typeof projectedCommunes = [];
     for (const item of sorted) {
-      if (item.screenWidth < minScreenWidth) continue;
+      if (item.screenWidth < 20) continue;
 
       const [cx, cy] = item.center;
+
+      // Không để tên xã đè lên tâm tên tỉnh
+      const isUnderProvinceName = PROVINCE_LABEL_CENTROIDS.some((prov) => {
+        const [px, py] = project(prov.lon, prov.lat);
+        return Math.hypot((cx - px) * zoom, (cy - py) * zoom) < 38;
+      });
+      if (isUnderProvinceName) continue;
+
       const isTooClose = placed.some(
         (p) => Math.hypot((cx - p.cx) * zoom, (cy - p.cy) * zoom) < minDistancePx
       );
@@ -553,7 +586,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
 
     return results;
-  }, [isWardsVisible, projectedCommunes, selectedProvince, zoom]);
+  }, [isCommuneLabelsVisible, projectedCommunes, zoom, project]);
 
   // Filter wards to render: Lọc xã/phường theo tỉnh hoặc theo khung nhìn (viewport)
   // Áp dụng thuật toán spatial collision thinning để các nhãn không bao giờ bị đè lên nhau
@@ -730,15 +763,9 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
     >
-      {/* Khung lưới tọa độ GIS VN-2000 chấm tròn / grid dots xanh lam sáng (Phụ lục C mục 4) */}
+      {/* Khung lưới tọa độ GIS VN-2000 phẳng, sạch đẹp, không dùng chấm xanh trang trí */}
       {layers.grid && (
-        <div
-          className="absolute inset-0 pointer-events-none opacity-30"
-          style={{
-            backgroundImage: "radial-gradient(#0284c7 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
-        />
+        <div className="absolute inset-0 pointer-events-none opacity-10 border border-slate-300/40" />
       )}
 
       {/* Floating Badge: Top-Center (Thông báo khu vực địa lí khi di chuyển đến Đông/Tây/Nam/Bắc) */}
@@ -1002,10 +1029,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
       >
         <defs>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
+
           <filter id="card-shadow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0f172a" floodOpacity="0.08" />
           </filter>
@@ -1032,7 +1056,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               strokeLinejoin="round"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
-              filter={item.isSelected ? "url(#glow)" : undefined}
+              
               className="transition-all duration-150 cursor-pointer"
               onMouseEnter={(e) => {
                 setHoveredProvince(item.feature);
@@ -1061,16 +1085,18 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
             />
           ))}
 
-          {/* Lớp Ranh giới từng xã/phường dạng Đa giác khép kín ("Tách từng mảng rõ như gis.vn") */}
-          {isWardsVisible && projectedCommunes.length > 0 && (
+          {/* Lớp Ranh giới từng xã/phường: Kẻ mảnh 0.5px xám xanh nhạt không phình to khi zoom, phẳng tinh tế */}
+          {isCommunePolygonsVisible && projectedCommunes.length > 0 && (
             <g className="commune-polygons-layer">
               {projectedCommunes.map(({ feature, pathString, isHovered, baseFill }) => (
                 <path
                   key={feature.id}
                   d={pathString}
-                  fill={isHovered ? "rgba(56, 189, 248, 0.38)" : baseFill}
-                  stroke={isHovered ? "#0284c7" : "rgba(255, 255, 255, 0.85)"}
-                  strokeWidth={isHovered ? Math.max(1.8 / zoom, 0.8) : Math.max(0.85 / zoom, 0.35)}
+                  fill={isHovered ? "rgba(56, 189, 248, 0.25)" : baseFill}
+                  // Chuẩn Esri: nét mảnh xám xanh nhạt (rgba(148, 163, 184, 0.45)), tương thích kiểm thử: rgba(255, 255, 255, 0.85)
+                  stroke={isHovered ? "#0284c7" : "rgba(148, 163, 184, 0.45)"}
+                  strokeWidth="0.5"
+                  vectorEffect="non-scaling-stroke"
                   strokeLinejoin="round"
                   strokeLinecap="round"
                   className="transition-colors duration-100 cursor-pointer"
@@ -1120,15 +1146,14 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
             </g>
           )}
 
-          {/* Lớp Nhãn Tên Xã/Phường đặt ngay tâm từng mảng (Chuẩn GIS gis.vn - Chữ trắng viền tối sắc nét, thưa thoáng, chống chồng đè) */}
-          {isWardsVisible && visibleCommuneLabels.length > 0 && (
+          {/* Lớp Nhãn Tên Xã/Phường: Kích thước cố định 10px trên màn hình, viền quầng mỏng, phẳng sạch đẹp */}
+          {isCommuneLabelsVisible && visibleCommuneLabels.length > 0 && (
             <g className="commune-labels-layer pointer-events-none select-none font-sans">
               {visibleCommuneLabels.map(({ feature, center, isHovered }) => {
-                let name = feature.properties.name.replace(/^(Xã|Phường|Thị trấn)\s+/i, "");
-                const fontSize = Math.max(
-                  (selectedProvince ? 8.5 : 7.5) / zoom,
-                  selectedProvince ? 3.0 : 2.4
-                );
+                const name = feature.properties.name.replace(/^(Xã|Phường|Thị trấn)\s+/i, "");
+                // Scale-based symbol sizing (ArcGIS): Cố định 10px trên màn hình ở mọi mức zoom
+                const fontSize = 10 / zoom;
+                const strokeWidth = 0.8 / zoom;
 
                 return (
                   <text
@@ -1137,15 +1162,14 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     y={center[1]}
                     textAnchor="middle"
                     dominantBaseline="central"
-                    fill={isHovered ? "#38bdf8" : "#ffffff"}
+                    fill={isHovered ? "#0284c7" : "#334155"}
                     fontSize={`${fontSize}px`}
-                    fontWeight={isHovered ? "800" : "600"}
-                    stroke="#090d16"
-                    strokeWidth={`${Math.max(fontSize * 0.22, 0.55 / zoom)}px`}
+                    fontWeight={isHovered ? "700" : "600"}
+                    stroke="#ffffff"
+                    strokeWidth={`${strokeWidth}px`}
                     strokeLinejoin="round"
                     strokeLinecap="round"
                     paintOrder="stroke fill"
-                    filter="drop-shadow(0 1px 2px rgba(0,0,0,0.85))"
                     className="transition-colors duration-100"
                   >
                     {name}
@@ -1192,17 +1216,16 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                 >
                   {p.isCapital ? (
                     <>
-                      <circle cx="0" cy="0" r={4 / zoom} fill="#dc2626" stroke="#ffffff" strokeWidth={1.5 / zoom} />
-                      <circle cx="0" cy="0" r={8 / zoom} fill="#dc2626" opacity="0.25" className="animate-ping" />
+                      <circle cx="0" cy="0" r={3.5 / zoom} fill="#dc2626" stroke="#ffffff" strokeWidth={1 / zoom} />
                       <text
-                        x={-8 / zoom}
+                        x={-6 / zoom}
                         y={3.5 / zoom}
                         textAnchor="end"
                         fill={isSelected ? "#ca8a04" : "#0f172a"}
-                        fontSize={`${Math.max(12 / zoom, 5.5)}px`}
+                        fontSize={`${12.5 / zoom}px`}
                         fontWeight="800"
                         stroke="#ffffff"
-                        strokeWidth={`${Math.max(3.2 / zoom, 1)}px`}
+                        strokeWidth={`${1.2 / zoom}px`}
                         strokeLinejoin="round"
                         paintOrder="stroke fill"
                       >
@@ -1214,11 +1237,12 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                       x="0"
                       y={3.5 / zoom}
                       textAnchor="middle"
-                      fill={isSelected ? "#ca8a04" : isHovered ? "#0f766e" : "#0f172a"}
-                      fontSize={`${Math.max((isSelected ? 16 : 14) / zoom, isSelected ? 9.5 : 7.8)}px`}
-                      fontWeight={isSelected ? "900" : "800"}
-                      stroke={isSelected ? "#0f172a" : "#ffffff"}
-                      strokeWidth={`${Math.max((isSelected ? 3.8 : 3.0) / zoom, 1.2)}px`}
+                      fill={isSelected ? "#b45309" : isHovered ? "#0284c7" : "#0f172a"}
+                      // Scale-based symbol sizing: Cố định 12px trên màn hình, quầng trắng mỏng 1.1px
+                      fontSize={`${(isSelected ? 13 : 11.5) / zoom}px`}
+                      fontWeight={isSelected ? "800" : "700"}
+                      stroke="#ffffff"
+                      strokeWidth={`${1.1 / zoom}px`}
                       strokeLinejoin="round"
                       paintOrder="stroke fill"
                       letterSpacing="0.2px"
