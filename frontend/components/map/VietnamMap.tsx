@@ -119,7 +119,37 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isWheeling, setIsWheeling] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const panRef = useRef(pan);
+  const zoomRef = useRef(zoom);
+  const rafIdRef = useRef<number | null>(null);
+  const loadedProvinceCodesRef = useRef<Set<string>>(new Set());
+
+  // Cache vector đa giác ranh giới xã/phường theo từng tỉnh để không bao giờ phải parse lại tọa độ khi zoom/pan
+  const communePathCacheRef = useRef<
+    Record<
+      string,
+      Array<{
+        feature: CommunePolygonFeature;
+        pathString: string;
+        center: [number, number];
+        baseFill: string;
+        baseWidth: number;
+      }>
+    >
+  >({});
+
+  useEffect(() => {
+    panRef.current = pan;
+  }, [pan]);
+
+  useEffect(() => {
+    zoomRef.current = zoom;
+  }, [zoom]);
 
   // Trạng thái góc nhìn phương hướng đang chọn
   const [activeDirection, setActiveDirection] = useState<
@@ -202,13 +232,13 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     };
   }, [minLon, maxLon, minLat, maxLat, svgWidth, svgHeight]);
 
-  // Tự động nạp vector ranh giới xã/phường (Commune Polygons) chuẩn gis.vn khi chọn tỉnh hoặc zoom sâu
+  // Tự động nạp vector ranh giới xã/phường (Commune Polygons) chuẩn gis.vn khi chọn tỉnh hoặc zoom sâu (được debounce nhẹ để không nghẽn luồng thao tác chuột)
   useEffect(() => {
     const codesToLoad: string[] = [];
 
     if (selectedProvince) {
       const code = selectedProvince.properties.provinceCode;
-      if (!communePolygonsByProvince[code]) {
+      if (!loadedProvinceCodesRef.current.has(code) && !communePolygonsByProvince[code]) {
         codesToLoad.push(code);
       }
     } else if (zoom >= 1.5) {
@@ -219,7 +249,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       const viewBottom = (svgHeight - pan.y) / zoom;
 
       for (const p of PROVINCE_LABEL_CENTROIDS) {
-        if (communePolygonsByProvince[p.code]) continue;
+        if (loadedProvinceCodesRef.current.has(p.code) || communePolygonsByProvince[p.code]) continue;
         const [px, py] = project(p.lon, p.lat);
         if (px >= viewLeft - 80 && px <= viewRight + 80 && py >= viewTop - 80 && py <= viewBottom + 80) {
           codesToLoad.push(p.code);
@@ -230,19 +260,27 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     if (codesToLoad.length === 0) return;
 
     codesToLoad.forEach((pCode) => {
-      fetch(`/data/wards/${pCode}.json`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data: CommunePolygonCollection | null) => {
-          if (data && data.features) {
-            setCommunePolygonsByProvince((prev) => {
-              if (prev[pCode]) return prev;
-              return { ...prev, [pCode]: data };
-            });
-          }
-        })
-        .catch(() => {});
+      loadedProvinceCodesRef.current.add(pCode);
     });
-  }, [selectedProvince, zoom, pan, project, communePolygonsByProvince, svgWidth, svgHeight]);
+
+    const timer = setTimeout(() => {
+      codesToLoad.forEach((pCode) => {
+        fetch(`/data/wards/${pCode}.json`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data: CommunePolygonCollection | null) => {
+            if (data && data.features) {
+              setCommunePolygonsByProvince((prev) => {
+                if (prev[pCode]) return prev;
+                return { ...prev, [pCode]: data };
+              });
+            }
+          })
+          .catch(() => {});
+      });
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [selectedProvince?.properties.provinceCode, zoom >= 1.5, Math.round(pan.x / 50), Math.round(pan.y / 50), project, svgWidth, svgHeight]);
 
   // Tự động căn giữa và phóng vừa địa phương vào phần màn hình còn trống (tính cả bảng thông tin bên phải 360px và chừa khoảng đệm)
   useEffect(() => {
@@ -286,6 +324,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       const targetPanX = targetCenterX - ((minX + maxX) / 2) * targetZoom;
       const targetPanY = targetCenterY - ((minY + maxY) / 2) * targetZoom;
 
+      setIsAnimating(true);
       setZoom(targetZoom);
       setPan({ x: targetPanX, y: targetPanY });
     }
@@ -332,6 +371,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         2.8
       );
 
+      setIsAnimating(true);
       setZoom(targetZoom);
       setPan({
         x: targetCenterX - ((minX + maxX) / 2) * targetZoom,
@@ -469,6 +509,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const isWardsVisible = isCommunePolygonsVisible;
 
   // Vector đa giác ranh giới từng xã/phường ("Tách từng mảng rõ ràng chuẩn gis.vn")
+  // Dùng bộ nhớ cache communePathCacheRef để giải phóng CPU khi kéo/phóng to bản đồ
   const projectedCommunes = useMemo(() => {
     if (!isWardsVisible) return [];
 
@@ -490,66 +531,78 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }> = [];
 
     for (const pCode of targetProvinceCodes) {
-      const coll = communePolygonsByProvince[pCode];
-      if (!coll || !coll.features) continue;
+      let cachedList = communePathCacheRef.current[pCode];
+      if (!cachedList) {
+        const coll = communePolygonsByProvince[pCode];
+        if (!coll || !coll.features) continue;
 
-      for (const feat of coll.features) {
-        let pathString = "";
-        const coords = feat.geometry.coordinates;
+        cachedList = [];
+        for (const feat of coll.features) {
+          let pathString = "";
+          const coords = feat.geometry.coordinates;
 
-        if (feat.geometry.type === "Polygon") {
-          coords.forEach((ring: any) => {
-            ring.forEach(([lon, lat]: [number, number], i: number) => {
-              const [x, y] = project(lon, lat);
-              pathString += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
-            });
-            pathString += " Z ";
-          });
-        } else if (feat.geometry.type === "MultiPolygon") {
-          coords.forEach((polygon: any) => {
-            polygon.forEach((ring: any) => {
+          if (feat.geometry.type === "Polygon") {
+            coords.forEach((ring: any) => {
               ring.forEach(([lon, lat]: [number, number], i: number) => {
                 const [x, y] = project(lon, lat);
                 pathString += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
               });
               pathString += " Z ";
             });
+          } else if (feat.geometry.type === "MultiPolygon") {
+            coords.forEach((polygon: any) => {
+              polygon.forEach((ring: any) => {
+                ring.forEach(([lon, lat]: [number, number], i: number) => {
+                  const [x, y] = project(lon, lat);
+                  pathString += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+                });
+                pathString += " Z ";
+              });
+            });
+          }
+
+          const center = project(feat.properties.centroid[0], feat.properties.centroid[1]);
+          const bbox = feat.properties.bbox;
+          const pMin = project(bbox[0], bbox[1]);
+          const pMax = project(bbox[2], bbox[3]);
+          const baseWidth = Math.abs(pMax[0] - pMin[0]);
+
+          const codeNum = parseInt(feat.properties.code.slice(-3), 10) || 0;
+          const shade = codeNum % 4;
+          const baseFill =
+            shade === 0
+              ? "rgba(0, 0, 0, 0.06)"
+              : shade === 1
+              ? "rgba(255, 255, 255, 0.22)"
+              : shade === 2
+              ? "rgba(0, 0, 0, 0.14)"
+              : "rgba(255, 255, 255, 0.08)";
+
+          cachedList.push({
+            feature: feat,
+            pathString,
+            center,
+            baseFill,
+            baseWidth,
           });
         }
+        communePathCacheRef.current[pCode] = cachedList;
+      }
 
-        const center = project(feat.properties.centroid[0], feat.properties.centroid[1]);
-        const isHovered = hoveredCommune?.id === feat.id;
-
-        // Tính bề rộng ước lượng trên màn hình để kiểm soát hiển thị nhãn
-        const bbox = feat.properties.bbox;
-        const pMin = project(bbox[0], bbox[1]);
-        const pMax = project(bbox[2], bbox[3]);
-        const screenWidth = Math.abs(pMax[0] - pMin[0]) * zoom;
-
-        // Bảng sắc thái tương phản giữa các xã lân cận ("Tách từng mảng rõ như gis.vn")
-        const codeNum = parseInt(feat.properties.code.slice(-3), 10) || 0;
-        const shade = codeNum % 4;
-        const baseFill = shade === 0
-          ? "rgba(0, 0, 0, 0.06)"
-          : shade === 1
-          ? "rgba(255, 255, 255, 0.22)"
-          : shade === 2
-          ? "rgba(0, 0, 0, 0.14)"
-          : "rgba(255, 255, 255, 0.08)";
-
+      for (const item of cachedList) {
         items.push({
-          feature: feat,
-          pathString,
-          center,
-          isHovered,
-          baseFill,
-          screenWidth,
+          feature: item.feature,
+          pathString: item.pathString,
+          center: item.center,
+          isHovered: hoveredCommune?.id === item.feature.id,
+          baseFill: item.baseFill,
+          screenWidth: item.baseWidth * zoom,
         });
       }
     }
 
     return items;
-  }, [isWardsVisible, selectedProvince, zoom, communePolygonsByProvince, hoveredCommune, project]);
+  }, [isWardsVisible, selectedProvince?.properties.provinceCode, zoom, communePolygonsByProvince, hoveredCommune?.id, project]);
 
   // Thuật toán lọc nhãn xã/phường: Phân bố thưa thoáng, tránh tuyệt đối đè lên tên tỉnh (như "Hà Tĩnh", "Nghệ An")
   const visibleCommuneLabels = useMemo(() => {
@@ -588,8 +641,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     return results;
   }, [isCommuneLabelsVisible, projectedCommunes, zoom, project]);
 
-  // Filter wards to render: Lọc xã/phường theo tỉnh hoặc theo khung nhìn (viewport)
-  // Áp dụng thuật toán spatial collision thinning để các nhãn không bao giờ bị đè lên nhau
+  // Filter wards to render: Lọc xã/phường theo tỉnh hoặc theo khung nhìn
+  // Tối ưu loại bỏ phụ thuộc pan để việc kéo rê bản đồ đạt chuẩn 60fps mượt mà
   const displayedWards = useMemo(() => {
     if (!wardsData || !isWardsVisible) return [];
 
@@ -600,23 +653,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       candidates = wardsData.features.filter(
         (w) => w.properties.provinceCode === selectedProvince.properties.provinceCode
       );
-    } else if (zoom >= 1.5) {
-      // Nếu zoom >= 1.5: Lấy các xã/phường nằm trong vùng hiển thị (viewport)
-      const viewLeft = -pan.x / zoom;
-      const viewRight = (svgWidth - pan.x) / zoom;
-      const viewTop = -pan.y / zoom;
-      const viewBottom = (svgHeight - pan.y) / zoom;
-
-      candidates = wardsData.features.filter((w) => {
-        const [lon, lat] = w.geometry.coordinates;
-        const [wx, wy] = project(lon, lat);
-        return (
-          wx >= viewLeft - 30 &&
-          wx <= viewRight + 30 &&
-          wy >= viewTop - 30 &&
-          wy <= viewBottom + 30
-        );
-      });
+    } else {
+      candidates = wardsData.features;
     }
 
     // Nếu đã có vector đa giác ranh giới xã/phường cho tỉnh này, chỉ giữ lại các điểm đảo (Hoàng Sa, Trường Sa, Côn Đảo, Phú Quốc)
@@ -644,47 +682,101 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
 
     return result;
-  }, [wardsData, isWardsVisible, selectedProvince, zoom, pan, project, svgWidth, svgHeight]);
+  }, [wardsData, isWardsVisible, selectedProvince, zoom, project, projectedCommunes.length]);
 
-  // Pan event handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
+  // Pan & Drag event handlers (Thao tác tức thời mượt mà 60fps qua requestAnimationFrame và Pointer Capture)
+  const handlePointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
+    setIsAnimating(false);
+    isDraggingRef.current = true;
     setIsDragging(true);
-    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    dragStartRef.current = {
+      x: e.clientX - panRef.current.x,
+      y: e.clientY - panRef.current.y,
+    };
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {}
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging) {
-      setPan({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDraggingRef.current) return;
+    const nextX = e.clientX - dragStartRef.current.x;
+    const nextY = e.clientY - dragStartRef.current.y;
+
+    if (!rafIdRef.current) {
+      rafIdRef.current = requestAnimationFrame(() => {
+        setPan({ x: nextX, y: nextY });
+        rafIdRef.current = null;
       });
     }
   };
 
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {}
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    setIsAnimating(false);
+    isDraggingRef.current = true;
+    setIsDragging(true);
+    dragStartRef.current = { x: e.clientX - panRef.current.x, y: e.clientY - panRef.current.y };
+    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDraggingRef.current || isDragging) {
+      const nextX = e.clientX - dragStartRef.current.x;
+      const nextY = e.clientY - dragStartRef.current.y;
+      if (!rafIdRef.current) {
+        rafIdRef.current = requestAnimationFrame(() => {
+          setPan({ x: nextX, y: nextY });
+          rafIdRef.current = null;
+        });
+      }
+    }
+  };
+
   const handleMouseUp = () => {
+    isDraggingRef.current = false;
     setIsDragging(false);
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
   };
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
+    setIsAnimating(false);
     setIsWheeling(true);
     if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
-    wheelTimeoutRef.current = setTimeout(() => setIsWheeling(false), 120);
+    wheelTimeoutRef.current = setTimeout(() => setIsWheeling(false), 80);
 
-    const factor = e.deltaY < 0 ? 1.09 : 0.91;
-    const newZoom = Math.min(Math.max(zoom * factor, 0.6), 8);
-    if (newZoom === zoom) return;
+    const factor = e.deltaY < 0 ? 1.15 : 0.87;
+    const currentZ = zoomRef.current;
+    const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 8);
+    if (newZoom === currentZ) return;
 
-    // Zoom hướng tâm chính xác theo vị trí con trỏ chuột (Focal Point Zoom chuẩn GIS)
-    // Giữ điểm bản đồ nằm dưới con trỏ chuột không bị chạy lệch ("bị lố sang phần khác")
     const rect = containerRef.current?.getBoundingClientRect();
     if (rect && rect.width > 0 && rect.height > 0) {
       const mouseX = (e.clientX - rect.left) * (svgWidth / rect.width);
       const mouseY = (e.clientY - rect.top) * (svgHeight / rect.height);
-      const ratio = newZoom / zoom;
-      const newPanX = mouseX - (mouseX - pan.x) * ratio;
-      const newPanY = mouseY - (mouseY - pan.y) * ratio;
+      const ratio = newZoom / currentZ;
+      const currentP = panRef.current;
+      const newPanX = mouseX - (mouseX - currentP.x) * ratio;
+      const newPanY = mouseY - (mouseY - currentP.y) * ratio;
 
       setZoom(newZoom);
       setPan({ x: newPanX, y: newPanY });
@@ -693,9 +785,49 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
   };
 
+  // Active wheel listener with passive: false to eliminate browser wheel hitching
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      setIsAnimating(false);
+      setIsWheeling(true);
+      if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
+      wheelTimeoutRef.current = setTimeout(() => setIsWheeling(false), 80);
+
+      const factor = e.deltaY < 0 ? 1.15 : 0.87;
+      const currentZ = zoomRef.current;
+      const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 8);
+      if (newZoom === currentZ) return;
+
+      const rect = el.getBoundingClientRect();
+      if (rect && rect.width > 0 && rect.height > 0) {
+        const mouseX = (e.clientX - rect.left) * (svgWidth / rect.width);
+        const mouseY = (e.clientY - rect.top) * (svgHeight / rect.height);
+        const ratio = newZoom / currentZ;
+        const currentP = panRef.current;
+        const newPanX = mouseX - (mouseX - currentP.x) * ratio;
+        const newPanY = mouseY - (mouseY - currentP.y) * ratio;
+
+        setZoom(newZoom);
+        setPan({ x: newPanX, y: newPanY });
+      } else {
+        setZoom(newZoom);
+      }
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+    };
+  }, [svgWidth, svgHeight]);
+
   // Zoom in/out giữ nguyên tâm giữa màn hình (Center Focal Zoom)
   const handleZoomIn = () => {
-    const newZoom = Math.min(zoom * 1.25, 8);
+    setIsAnimating(true);
+    const newZoom = Math.min(zoom * 1.3, 8);
     if (newZoom === zoom) return;
     const ratio = newZoom / zoom;
     const cx = svgWidth / 2;
@@ -708,7 +840,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   };
 
   const handleZoomOut = () => {
-    const newZoom = Math.max(zoom * 0.8, 0.6);
+    setIsAnimating(true);
+    const newZoom = Math.max(zoom * 0.77, 0.6);
     if (newZoom === zoom) return;
     const ratio = newZoom / zoom;
     const cx = svgWidth / 2;
@@ -722,6 +855,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
   // Reset về góc nhìn toàn cảnh toàn vẹn Việt Nam
   const handleReset = () => {
+    setIsAnimating(true);
     setZoom(1);
     setPan({ x: 0, y: 0 });
     setActiveWardId(null);
@@ -732,6 +866,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   // DI CHUYỂN BẢN ĐỒ ĐẾN GÓC ĐÔNG / TÂY / NAM / BẮC (ĐÚNG TÂM ĐỊA LÝ, LƯỚT MƯỢT MÀ)
   // =========================================================================
   const handleFlyToCorner = (direction: "bac" | "dong" | "nam" | "tay") => {
+    setIsAnimating(true);
     setActiveDirection(direction);
 
     if (direction === "bac") {
@@ -756,7 +891,13 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full bg-[#edf6fd] overflow-hidden select-none"
+      className={`relative w-full h-full bg-[#edf6fd] overflow-hidden select-none touch-none ${
+        isDragging ? "cursor-grabbing" : "cursor-grab"
+      }`}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -1038,10 +1179,12 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         {/* Khung chứa bản đồ lướt mượt mà (chỉ pan và zoom, 100% không xoay) */}
         <g
           transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
+          onTransitionEnd={() => setIsAnimating(false)}
           style={{
-            transition: isDragging || isWheeling
-              ? "none"
-              : "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
+            transition: isAnimating
+              ? "transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)"
+              : "none",
+            willChange: isDragging || isWheeling ? "transform" : "auto",
           }}
         >
           {/* Province Vector Shapes */}
@@ -1057,8 +1200,9 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
               
-              className="transition-all duration-150 cursor-pointer"
+              className="cursor-pointer"
               onMouseEnter={(e) => {
+                if (isDraggingRef.current) return;
                 setHoveredProvince(item.feature);
                 const rect = containerRef.current?.getBoundingClientRect();
                 if (rect) {
@@ -1069,6 +1213,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                 }
               }}
               onMouseMove={(e) => {
+                if (isDraggingRef.current) return;
                 const rect = containerRef.current?.getBoundingClientRect();
                 if (rect) {
                   setTooltipPos({
@@ -1099,8 +1244,9 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                   vectorEffect="non-scaling-stroke"
                   strokeLinejoin="round"
                   strokeLinecap="round"
-                  className="transition-colors duration-100 cursor-pointer"
+                  className="cursor-pointer"
                   onMouseEnter={(e) => {
+                    if (isDraggingRef.current) return;
                     setHoveredCommune(feature);
                     const rect = containerRef.current?.getBoundingClientRect();
                     if (rect) {
@@ -1111,6 +1257,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     }
                   }}
                   onMouseMove={(e) => {
+                    if (isDraggingRef.current) return;
                     const rect = containerRef.current?.getBoundingClientRect();
                     if (rect) {
                       setCommuneTooltipPos({
