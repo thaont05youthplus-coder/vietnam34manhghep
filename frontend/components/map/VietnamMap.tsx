@@ -17,6 +17,7 @@ import {
   Globe,
   Home,
   Crosshair,
+  ArrowLeft,
 } from "lucide-react";
 
 interface VietnamMapProps {
@@ -238,6 +239,42 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [selectedProvince, zoom, pan, project, communePolygonsByProvince, svgWidth, svgHeight]);
 
+  // Tự động căn giữa và phóng to mượt mà vào tỉnh được chọn (Auto-fit to Province)
+  useEffect(() => {
+    if (!selectedProvince) return;
+    const coords = selectedProvince.geometry.coordinates;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+
+    function walk(c: any) {
+      if (typeof c[0] === "number") {
+        const [x, y] = project(c[0], c[1]);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      } else {
+        c.forEach(walk);
+      }
+    }
+    walk(coords);
+
+    if (minX < maxX && minY < maxY) {
+      const width = maxX - minX;
+      const height = maxY - minY;
+      const targetZoom = Math.min(
+        Math.max(Math.min((svgWidth * 0.65) / width, (svgHeight * 0.65) / height), 1.6),
+        4.5
+      );
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+      const targetPanX = svgWidth / 2 - centerX * targetZoom;
+      const targetPanY = svgHeight / 2 - centerY * targetZoom;
+
+      setZoom(targetZoom);
+      setPan({ x: targetPanX, y: targetPanY });
+    }
+  }, [selectedProvince?.properties.provinceCode, project, svgWidth, svgHeight]);
+
   // Active region codes
   const activeRegionCodes = useMemo(() => {
     const targetRegionId = hoveredRegionId || selectedRegionId;
@@ -326,8 +363,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
       if (isSelected) {
         fillOpacity = 1.0;
-        strokeColor = "#d97706";
-        strokeWidth = 1.3;
+        strokeColor = "#eab308"; // Viền vàng kim nổi bật ranh giới tỉnh chuẩn gis.vn
+        strokeWidth = 2.2;
       }
 
       return {
@@ -432,6 +469,37 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     return items;
   }, [isWardsVisible, selectedProvince, zoom, communePolygonsByProvince, hoveredCommune, project]);
 
+  // Thuật toán lọc nhãn xã/phường (Spatial Collision Thinning chuẩn GIS):
+  // Sắp xếp theo diện tích lớn trước, giữ khoảng cách tối thiểu giữa các nhãn để bản đồ luôn thoáng đẹp như gis.vn
+  const visibleCommuneLabels = useMemo(() => {
+    if (!isWardsVisible || projectedCommunes.length === 0) return [];
+
+    const sorted = [...projectedCommunes].sort(
+      (a, b) => (b.feature.properties.areaKm2 || 0) - (a.feature.properties.areaKm2 || 0)
+    );
+
+    const placed: Array<{ cx: number; cy: number }> = [];
+    const minDistancePx = selectedProvince ? 28 : 36;
+    const minScreenWidth = selectedProvince ? 18 : 26;
+
+    const results: typeof projectedCommunes = [];
+    for (const item of sorted) {
+      if (item.screenWidth < minScreenWidth) continue;
+
+      const [cx, cy] = item.center;
+      const isTooClose = placed.some(
+        (p) => Math.hypot((cx - p.cx) * zoom, (cy - p.cy) * zoom) < minDistancePx
+      );
+
+      if (!isTooClose) {
+        placed.push({ cx, cy });
+        results.push(item);
+      }
+    }
+
+    return results;
+  }, [isWardsVisible, projectedCommunes, selectedProvince, zoom]);
+
   // Filter wards to render: Lọc xã/phường theo tỉnh hoặc theo khung nhìn (viewport)
   // Áp dụng thuật toán spatial collision thinning để các nhãn không bao giờ bị đè lên nhau
   const displayedWards = useMemo(() => {
@@ -461,6 +529,13 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           wy <= viewBottom + 30
         );
       });
+    }
+
+    // Nếu đã có vector đa giác ranh giới xã/phường cho tỉnh này, chỉ giữ lại các điểm đảo (Hoàng Sa, Trường Sa, Côn Đảo, Phú Quốc)
+    // để loại bỏ hoàn toàn tình trạng chấm li ti và nhãn chữ đè lấn nhau trên đất liền
+    const isPolygonsActive = projectedCommunes.length > 0;
+    if (isPolygonsActive) {
+      return candidates.filter((w) => Boolean(w.properties.isIsland));
     }
 
     // Spatial collision avoidance: Giữ khoảng cách tối thiểu giữa 2 nhãn trên màn hình (~18-22px)
@@ -750,6 +825,23 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </span>
       </div>
 
+      {/* Nút nổi điều khiển: Quay lại bản đồ toàn quốc khi đang phóng to/chọn tỉnh */}
+      {selectedProvince && (
+        <button
+          onClick={() => {
+            onSelectProvince(null);
+            handleReset();
+          }}
+          className="absolute top-4 left-4 z-30 flex items-center gap-2 px-3.5 py-2 bg-white/95 hover:bg-white border border-slate-200 text-slate-700 hover:text-teal-700 rounded-xl shadow-lg backdrop-blur text-xs font-bold transition-all group cursor-pointer"
+          title="Quay lại bản đồ toàn cảnh 34 tỉnh thành"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-teal-600" />
+          <span>Toàn quốc</span>
+          <span className="text-slate-300 font-normal">|</span>
+          <span className="text-teal-700">{selectedProvince.properties.name}</span>
+        </button>
+      )}
+
       {/* Floating Button: Bottom-Left (Nút GPS căn giữa toàn cảnh) */}
       <button
         onClick={handleReset}
@@ -796,7 +888,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           }}
         >
           {/* Province Vector Shapes */}
-          {pathsData.map((item) => (
+          {pathsData.slice().sort((a, b) => (a.isSelected ? 1 : 0) - (b.isSelected ? 1 : 0)).map((item) => (
             <path
               key={item.feature.properties.provinceCode}
               d={item.pathString}
@@ -895,41 +987,38 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
             </g>
           )}
 
-          {/* Lớp Nhãn Tên Xã/Phường đặt ngay tâm từng mảng (Chuẩn GIS gis.vn - Chữ sắc nét, halo trắng, không nhăng nhít) */}
-          {isWardsVisible && projectedCommunes.length > 0 && (
+          {/* Lớp Nhãn Tên Xã/Phường đặt ngay tâm từng mảng (Chuẩn GIS gis.vn - Chữ trắng viền tối sắc nét, thưa thoáng, chống chồng đè) */}
+          {isWardsVisible && visibleCommuneLabels.length > 0 && (
             <g className="commune-labels-layer pointer-events-none select-none font-sans">
-              {projectedCommunes
-                .filter(({ screenWidth }) => screenWidth >= (selectedProvince ? 16 : 24))
-                .map(({ feature, center, isHovered }) => {
-                  let name = feature.properties.name;
-                  if (name.length > 14 && zoom < 2.5) {
-                    name = name.replace(/^(Xã|Phường|Thị trấn)s+/i, "");
-                  }
-                  const fontSize = Math.max(
-                    (selectedProvince ? 10.5 : 9.5) / zoom,
-                    selectedProvince ? 4.8 : 3.8
-                  );
+              {visibleCommuneLabels.map(({ feature, center, isHovered }) => {
+                let name = feature.properties.name.replace(/^(Xã|Phường|Thị trấn)\s+/i, "");
+                const fontSize = Math.max(
+                  (selectedProvince ? 8.5 : 7.5) / zoom,
+                  selectedProvince ? 3.0 : 2.4
+                );
 
-                  return (
-                    <text
-                      key={`lbl-${feature.id}`}
-                      x={center[0]}
-                      y={center[1]}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      fill={isHovered ? "#0369a1" : "#0f172a"}
-                      fontSize={`${fontSize}px`}
-                      fontWeight={isHovered ? "800" : "600"}
-                      stroke="#ffffff"
-                      strokeWidth={`${Math.max(fontSize * 0.32, 0.7 / zoom)}px`}
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      paintOrder="stroke fill"
-                    >
-                      {name}
-                    </text>
-                  );
-                })}
+                return (
+                  <text
+                    key={`lbl-${feature.id}`}
+                    x={center[0]}
+                    y={center[1]}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fill={isHovered ? "#38bdf8" : "#ffffff"}
+                    fontSize={`${fontSize}px`}
+                    fontWeight={isHovered ? "800" : "600"}
+                    stroke="#090d16"
+                    strokeWidth={`${Math.max(fontSize * 0.22, 0.55 / zoom)}px`}
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    paintOrder="stroke fill"
+                    filter="drop-shadow(0 1px 2px rgba(0,0,0,0.85))"
+                    className="transition-colors duration-100"
+                  >
+                    {name}
+                  </text>
+                );
+              })}
             </g>
           )}
 
