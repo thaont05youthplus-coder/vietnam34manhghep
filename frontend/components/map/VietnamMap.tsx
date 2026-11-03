@@ -250,21 +250,59 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince, activeRegionCodes]);
 
-  // LOD: Wards & Communes Level of Detail (Chuẩn GIS như gis.vn: Phóng to sâu zoom >= 2.4 mới hiển thị chữ rõ ràng, không chấm li ti nhăng nhít)
+  // LOD: Wards & Communes Level of Detail (Chuẩn GIS như gis.vn: Chỉ hiển thị các xã/phường của TỈNH ĐANG CHỌN)
+  // Tuyệt đối không bao giờ hiển thị 78 xã/phường cùng lúc gây chồng đè chi chít
   const isWardsVisible = Boolean(
-    layers.wards && (zoom >= 2.4 || (selectedProvince !== null && zoom >= 1.5))
+    layers.wards && (selectedProvince !== null || zoom >= 3.2)
   );
 
-  // Filter wards to render based on zoom & selection
+  // Filter wards to render: CHỈ HIỂN THỊ CÁC XÃ/PHƯỜNG CỦA 1 TỈNH DUY NHẤT ĐANG XEM
   const displayedWards = useMemo(() => {
     if (!wardsData || !isWardsVisible) return [];
-    if (selectedProvince && zoom < 2.8) {
+
+    // Nếu đã chọn một tỉnh cụ thể: CHỈ hiển thị đúng các xã/phường của tỉnh đó (tối đa 2-4 điểm, cách xa nhau)
+    if (selectedProvince) {
       return wardsData.features.filter(
         (w) => w.properties.provinceCode === selectedProvince.properties.provinceCode
       );
     }
-    return wardsData.features;
-  }, [wardsData, isWardsVisible, selectedProvince, zoom]);
+
+    // Nếu zoom sâu (>= 3.2) mà chưa bấm chọn tỉnh: Xác định duy nhất 1 tỉnh đang nằm ở tâm màn hình
+    if (zoom >= 3.2 && geoData) {
+      const centerSvgX = (500 - pan.x) / zoom;
+      const centerSvgY = (500 - pan.y) / zoom;
+      let closestProvCode: string | null = null;
+      let minDist = Infinity;
+
+      for (const f of geoData.features) {
+        const rawCoords: any = f.geometry.coordinates;
+        let lon = 105;
+        let lat = 16;
+        if (Array.isArray(rawCoords) && rawCoords.length > 0) {
+          const ring = Array.isArray(rawCoords[0]) ? rawCoords[0] : [];
+          const pt = Array.isArray(ring[0]) ? ring[0] : ring;
+          if (typeof pt[0] === "number" && typeof pt[1] === "number") {
+            lon = pt[0];
+            lat = pt[1];
+          }
+        }
+        const [px, py] = project(lon, lat);
+        const dist = (px - centerSvgX) ** 2 + (py - centerSvgY) ** 2;
+        if (dist < minDist) {
+          minDist = dist;
+          closestProvCode = f.properties.provinceCode;
+        }
+      }
+
+      if (closestProvCode) {
+        return wardsData.features.filter(
+          (w) => w.properties.provinceCode === closestProvCode
+        );
+      }
+    }
+
+    return [];
+  }, [wardsData, isWardsVisible, selectedProvince, zoom, pan, geoData, project]);
 
   // Pan event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -793,7 +831,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     {/* Animated Pulse Ring cho đảo chủ quyền hoặc điểm được chọn */}
                     {(isSelectedWard || (isIsland && isHovered)) && (
                       <circle
-                        r={8}
+                        r={8 / zoom}
                         fill={isIsland ? "#0ea5e9" : "#f59e0b"}
                         opacity="0.35"
                         className="animate-ping pointer-events-none"
@@ -803,29 +841,29 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     {/* Điểm neo centroid tinh tế (chỉ hiện nhẹ khi rê chuột hoặc với xã hải đảo) */}
                     {(isIsland || isHovered || isSelectedWard) && (
                       <circle
-                        r={isHovered || isSelectedWard ? 2.5 : 2}
+                        r={isHovered || isSelectedWard ? 2.5 / zoom : 2 / zoom}
                         fill={isIsland ? "#0284c7" : isSelectedWard ? "#f59e0b" : "#475569"}
                         stroke="#ffffff"
-                        strokeWidth="1"
+                        strokeWidth={1 / zoom}
                         className="transition-all duration-150"
                       />
                     )}
 
-                    {/* Tên Phường/Xã dạng chữ GIS sắc nét có viền trắng (Chuẩn gis.vn & bản đồ hành chính, không chấm li ti nhăng nhít) */}
+                    {/* Tên Phường/Xã dạng chữ GIS sắc nét gọn gàng (Chuẩn gis.vn: Bỏ tiền tố Xã/Phường, viền trắng mỏng, kích thước đồng nhất, không che khuất) */}
                     <text
                       textAnchor="middle"
-                      y={isIsland ? "-6" : "3"}
-                      fill={isHovered || isSelectedWard ? "#b45309" : "#1e293b"}
-                      fontSize={`${Math.max(10.5 / Math.max(zoom * 0.45, 1), 7.8)}`}
-                      fontWeight={isHovered || isSelectedWard || isIsland ? "700" : "500"}
-                      fontFamily="sans-serif"
+                      y={isIsland ? -4 / zoom : 3.5 / zoom}
+                      fill={isHovered || isSelectedWard ? "#b45309" : "#0f172a"}
+                      fontSize={`${Math.max(11 / zoom, 2.8)}px`}
+                      fontWeight="600"
+                      fontFamily="system-ui, -apple-system, sans-serif"
                       stroke="#ffffff"
-                      strokeWidth="2.5px"
+                      strokeWidth={`${Math.max(2 / zoom, 0.6)}px`}
                       strokeLinejoin="round"
                       paintOrder="stroke fill"
                       className="transition-all duration-150 pointer-events-none select-none"
                     >
-                      {ward.properties.name}
+                      {ward.properties.name.replace(/^(Phường|Xã|Thị trấn)\s+/i, "")}
                     </text>
                   </g>
                 );
