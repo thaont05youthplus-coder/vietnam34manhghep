@@ -415,7 +415,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
   // Tự động căn giữa và phóng vừa địa phương vào phần màn hình còn trống (tính cả bảng thông tin bên phải 360px và chừa khoảng đệm)
   useEffect(() => {
-    if (!selectedProvince) return;
+    if (!selectedProvince || selectedCommune) return;
     const coords = selectedProvince.geometry.coordinates;
     const pCode = selectedProvince.properties.provinceCode;
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
@@ -460,7 +460,57 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       setZoom(targetZoom);
       setPan({ x: targetPanX, y: targetPanY });
     }
-  }, [selectedProvince?.properties.provinceCode, project, svgWidth, svgHeight]);
+  }, [selectedProvince?.properties.provinceCode, selectedCommune, project, svgWidth, svgHeight]);
+
+  // Tự động căn giữa và phóng to vừa vặn vào Xã/Phường được chọn (Auto-fit to Commune)
+  // Đảm bảo khi ấn vào địa danh, hình học xã được phóng to rõ ràng, không bị quá nhỏ
+  const handleZoomToCommune = useCallback((commune: CommunePolygonFeature) => {
+    const coords = commune.geometry.coordinates;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    function walk(c: any) {
+      if (typeof c[0] === "number") {
+        const [x, y] = project(c[0], c[1]);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      } else {
+        c.forEach(walk);
+      }
+    }
+    walk(coords);
+
+    if (minX < maxX && minY < maxY) {
+      const width = maxX - minX;
+      const height = maxY - minY;
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      const containerW = containerRef.current?.clientWidth || svgWidth;
+      const containerH = containerRef.current?.clientHeight || svgHeight;
+
+      // Phóng to xã để chiếm khoảng 35-45% diện tích màn hình, nhìn rõ ranh giới, hình học và các xã xung quanh
+      const targetZoom = Math.min(
+        Math.max(Math.min((containerW * 0.40) / Math.max(width, 10), (containerH * 0.40) / Math.max(height, 10)), 3.2),
+        6.5
+      );
+
+      // Căn giữa xã trên màn hình
+      const targetPanX = containerW / 2 - centerX * targetZoom;
+      const targetPanY = containerH / 2 - centerY * targetZoom;
+
+      setIsAnimating(true);
+      setZoom(targetZoom);
+      setPan({ x: targetPanX, y: targetPanY });
+    }
+  }, [project, svgWidth, svgHeight]);
+
+  // Kích hoạt zoom tự động khi chọn xã
+  useEffect(() => {
+    if (selectedCommune) {
+      handleZoomToCommune(selectedCommune);
+    }
+  }, [selectedCommune?.id, handleZoomToCommune]);
 
   // Tự động căn giữa và phóng to mượt mà vào Vùng được chọn (Auto-fit to Region)
   useEffect(() => {
@@ -1039,41 +1089,32 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     return screenX > containerWidth / 2 ? "left" : "right";
   }, [selectedCommune, project, zoom, pan.x, svgWidth]);
 
-  // Căn giữa xã vào vùng nhìn thấy tự do
+  // Căn giữa xã vào vùng nhìn thấy tự do (Đồng thời đảm bảo xã được phóng to đủ lớn để quan sát)
   const handleCenterOnCommune = useCallback((commune: CommunePolygonFeature) => {
-    const [lon, lat] = commune.properties.centroid;
-    const [cx, cy] = project(lon, lat);
-    const containerWidth = containerRef.current?.clientWidth || svgWidth;
-    const containerHeight = containerRef.current?.clientHeight || svgHeight;
-    const offsetX = selectedCommuneDockPosition === "left" ? 130 : -130;
-    const newPanX = containerWidth / 2 - cx * zoom + offsetX;
-    const newPanY = containerHeight / 2 - cy * zoom;
-    setIsAnimating(true);
-    setPan({ x: newPanX, y: newPanY });
-  }, [project, zoom, selectedCommuneDockPosition, svgWidth, svgHeight]);
+    handleZoomToCommune(commune);
+  }, [handleZoomToCommune]);
 
-  // Tính toán toạ độ tooltip xã/phường có cơ chế đảo chiều thông minh (Flip Tooltip)
-  // Ngăn chặn triệt để tình trạng thẻ tràn mép phải màn hình làm biến mất số liệu Diện tích & Dân số
+  // Tính toán toạ độ tooltip xã/phường khi rê chuột (Mini Pill siêu gọn, không che đa giác)
   const updateCommuneTooltipPos = useCallback((clientX: number, clientY: number) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    const pillWidth = 240;
-    const pillHeight = 32;
+    const pillWidth = 180;
+    const pillHeight = 24;
     const relX = clientX - rect.left;
     const relY = clientY - rect.top;
 
     // Tự động đảo sang bên trái con trỏ nếu ở gần mép phải màn hình
-    let x = relX + 12;
-    if (x + pillWidth > rect.width - 12) {
-      x = relX - pillWidth - 12;
+    let x = relX + 10;
+    if (x + pillWidth > rect.width - 10) {
+      x = relX - pillWidth - 10;
     }
     x = Math.max(10, Math.min(x, rect.width - pillWidth - 10));
 
     // Đặt ở phía trên con trỏ để không che đa giác xã bên dưới
-    let y = relY - pillHeight - 8;
+    let y = relY - pillHeight - 10;
     if (y < 10) {
-      y = relY + 18;
+      y = relY + 20;
     }
     y = Math.max(10, Math.min(y, rect.height - pillHeight - 10));
 
@@ -1258,21 +1299,39 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
 
 
-      {/* Nút nổi điều khiển: Quay lại bản đồ toàn quốc khi đang phóng to/chọn tỉnh */}
-      {selectedProvince && (
-        <button
-          onClick={() => {
-            onSelectProvince(null);
-            handleReset();
-          }}
-          className="absolute top-4 left-4 z-30 flex items-center gap-2 px-3.5 py-2 bg-white/95 hover:bg-white border border-slate-200 text-slate-700 hover:text-teal-700 rounded-xl shadow-lg backdrop-blur text-xs font-bold transition-all group cursor-pointer"
-          title="Quay lại bản đồ toàn cảnh 34 tỉnh thành"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-teal-600" />
-          <span>Toàn quốc</span>
-          <span className="text-slate-300 font-normal">|</span>
-          <span className="text-teal-700">{selectedProvince.properties.name}</span>
-        </button>
+      {/* Nút nổi điều khiển: Điều hướng toàn cảnh / tỉnh / xã */}
+      {(selectedProvince || selectedCommune) && (
+        <div className="absolute top-4 left-4 z-30 flex items-center gap-1.5 animate-in fade-in duration-150 select-none">
+          <button
+            onClick={() => {
+              setSelectedCommune(null);
+              onSelectProvince(null);
+              handleReset();
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/95 hover:bg-white border border-slate-200 text-slate-700 hover:text-teal-700 rounded-xl shadow-md backdrop-blur text-xs font-bold transition-all group cursor-pointer"
+            title="Quay lại bản đồ toàn cảnh 34 tỉnh thành"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform text-teal-600" />
+            <span>Toàn quốc</span>
+          </button>
+          {selectedProvince && (
+            <button
+              onClick={() => {
+                setSelectedCommune(null);
+              }}
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-white/95 hover:bg-white border border-teal-200 text-teal-700 rounded-xl shadow-md backdrop-blur text-xs font-bold transition-all cursor-pointer"
+              title="Quay lại toàn cảnh tỉnh"
+            >
+              <span>{selectedProvince.properties.name}</span>
+            </button>
+          )}
+          {selectedCommune && (
+            <span className="px-2.5 py-1.5 bg-sky-50 border border-sky-200 text-sky-800 rounded-xl shadow-xs text-xs font-extrabold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+              <span>{selectedCommune.properties.name}</span>
+            </span>
+          )}
+        </div>
       )}
 
       {/* Floating Buttons: Bottom-Left (Nút GPS & Nút Chú giải màu sắc vùng) */}
@@ -1488,9 +1547,20 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                   onMouseLeave={() => setHoveredCommune(null)}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedCommune((prev) => (prev?.id === feature.id ? null : feature));
-                    setActiveWardId(feature.properties.id);
-                    if (onSelectWard) {
+                    const willSelect = selectedCommune?.id !== feature.id;
+                    setSelectedCommune(willSelect ? feature : null);
+                    setHoveredCommune(null);
+                    setActiveWardId(willSelect ? feature.properties.id : null);
+                    if (willSelect) {
+                      const parentProv = geoData?.features.find(
+                        (p) => p.properties.provinceCode === feature.properties.provinceCode
+                      );
+                      if (parentProv && selectedProvince?.properties.provinceCode !== parentProv.properties.provinceCode) {
+                        onSelectProvince(parentProv);
+                      }
+                      handleZoomToCommune(feature);
+                    }
+                    if (onSelectWard && willSelect) {
                       onSelectWard({
                         type: "Feature",
                         properties: {
@@ -1899,36 +1969,32 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
       )}
 
-      {/* Commune Polygon Hover Pill (Nhẹ nhàng, tinh tế, không che mảng xã bên dưới) */}
+      {/* Commune Polygon Hover Pill (Siêu nhẹ, gọn 1 dòng, không che mảng xã bên dưới) */}
       {hoveredCommune && !hoveredWard && !selectedCommune && (
         <div
-          className="absolute z-40 pointer-events-none bg-slate-900/90 text-white border border-slate-700/80 rounded-full px-2.5 py-1 shadow-lg backdrop-blur-md text-[11px] font-medium flex items-center gap-1.5 select-none animate-in fade-in duration-100"
+          className="absolute z-40 pointer-events-none bg-slate-900/90 text-white border border-slate-700/80 rounded-full px-2 py-0.5 shadow-md backdrop-blur-md flex items-center gap-1.5 select-none animate-in fade-in duration-100"
           style={{
             left: `${communeTooltipPos.x}px`,
             top: `${communeTooltipPos.y}px`,
-            maxWidth: "260px",
-            fontSize: "11px",
+            maxWidth: "190px",
+            fontSize: "10px",
             lineHeight: "1.2",
+            whiteSpace: "nowrap",
           }}
         >
-          <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shrink-0" />
-          <span className="font-bold text-sky-200 truncate">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse shrink-0" />
+          <span className="font-bold text-sky-200 truncate min-w-0" style={{ maxWidth: "105px" }}>
             {hoveredCommune.properties.type} {hoveredCommune.properties.name}
           </span>
-          <span className="text-slate-400 font-mono text-[10px] shrink-0">
+          <span className="text-slate-400 text-[9px] shrink-0 font-mono">
             ({hoveredCommune.properties.provinceName})
           </span>
-          {hoveredCommune.properties.areaKm2 > 0 && (
-            <span className="text-slate-300 border-l border-slate-700 pl-1.5 shrink-0">
-              {hoveredCommune.properties.areaKm2.toLocaleString("vi-VN")} km²
-            </span>
-          )}
           {/* Để đảm bảo bài kiểm thử T9.13: Trụ sở UBND */}
           <span className="sr-only">Trụ sở UBND: {hoveredCommune.properties.headquarters || "Đang cập nhật"}</span>
         </div>
       )}
 
-      {/* Commune Detail Inspector Card (Thu nhỏ / Mở rộng linh hoạt, không che khuất mảng xã) */}
+      {/* Commune Detail Inspector Card (Thu nhỏ gọn gàng, neo ở góc, không che hình học xã) */}
       {selectedCommune && (
         <div
           className={`absolute z-40 transition-all duration-200 select-none ${
@@ -1937,53 +2003,48 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               : "top-16 right-4"
           }`}
           style={{
-            maxWidth: isCommuneCardCollapsed ? "340px" : "250px",
-            width: isCommuneCardCollapsed ? "auto" : "250px",
-            fontSize: "11px",
+            maxWidth: isCommuneCardCollapsed ? "260px" : "220px",
+            width: isCommuneCardCollapsed ? "auto" : "220px",
+            fontSize: "10.5px",
           }}
         >
           {isCommuneCardCollapsed ? (
             /* Dạng thanh thu nhỏ (Collapsed Mini Pill) */
-            <div className="flex items-center gap-2 bg-white/95 border border-sky-400 rounded-full px-3 py-1.5 shadow-xl backdrop-blur-md text-[11px]">
-              <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
-              <span className="font-bold text-slate-900 truncate">
-                {selectedCommune.properties.type} {selectedCommune.properties.name}
+            <div className="flex items-center gap-1.5 bg-white/95 border border-sky-400 rounded-full px-2.5 py-1 shadow-lg backdrop-blur-md text-[10px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
+              <span className="font-bold text-slate-900 truncate max-w-[100px]">
+                {selectedCommune.properties.name}
               </span>
-              <span className="text-slate-500 text-[10px]">
+              <span className="text-slate-500 text-[9px] shrink-0">
                 ({selectedCommune.properties.provinceName})
               </span>
-              {selectedCommune.properties.areaKm2 > 0 && (
-                <span className="text-sky-700 font-semibold border-l border-slate-200 pl-1.5">
-                  {selectedCommune.properties.areaKm2.toLocaleString("vi-VN")} km²
-                </span>
-              )}
               <button
                 onClick={() => setIsCommuneCardCollapsed(false)}
-                className="p-1 rounded-full text-slate-500 hover:text-sky-700 hover:bg-sky-50 transition-colors ml-1 cursor-pointer"
+                className="p-0.5 rounded-full text-slate-500 hover:text-sky-700 hover:bg-sky-50 transition-colors cursor-pointer"
                 title="Mở rộng chi tiết"
               >
-                <Maximize2 className="w-3.5 h-3.5" />
+                <Maximize2 className="w-3 h-3" />
               </button>
               <button
                 onClick={() => setSelectedCommune(null)}
-                className="p-1 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                className="p-0.5 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                 title="Bỏ chọn xã"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3" />
               </button>
             </div>
           ) : (
             /* Dạng thẻ chi tiết thu nhỏ gọn gàng (Compact Card) */
-            <div className="bg-white/95 border border-sky-300 rounded-xl shadow-xl backdrop-blur-md p-3 text-[11px] animate-in fade-in zoom-in-95 duration-150">
+            <div className="bg-white/95 border border-sky-300 rounded-xl shadow-lg backdrop-blur-md p-2.5 text-[10.5px] animate-in fade-in zoom-in-95 duration-150">
               {/* Card Header */}
-              <div className="flex items-start justify-between gap-1.5 border-b border-sky-100 pb-2 mb-2">
+              <div className="flex items-start justify-between gap-1 border-b border-sky-100 pb-1.5 mb-1.5">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
                   <div className="min-w-0">
-                    <div className="text-[10px] text-slate-500 font-medium">
+                    <div className="text-[9.5px] text-slate-400 font-medium truncate">
                       {selectedCommune.properties.type} · {selectedCommune.properties.provinceName}
                     </div>
-                    <h4 className="font-bold text-slate-900 text-xs truncate">
+                    <h4 className="font-bold text-slate-900 text-[11.5px] truncate">
                       {selectedCommune.properties.name}
                     </h4>
                   </div>
@@ -1991,35 +2052,35 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                 <div className="flex items-center gap-0.5 shrink-0">
                   <button
                     onClick={() => setIsCommuneCardCollapsed(true)}
-                    className="p-1 rounded-md text-slate-400 hover:text-sky-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-1 rounded text-slate-400 hover:text-sky-700 hover:bg-slate-100 transition-colors cursor-pointer"
                     title="Thu nhỏ thanh"
                   >
-                    <Minimize2 className="w-3.5 h-3.5" />
+                    <Minimize2 className="w-3 h-3" />
                   </button>
                   <button
                     onClick={() => setSelectedCommune(null)}
-                    className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                     title="Đóng"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-3 h-3" />
                   </button>
                 </div>
               </div>
 
-              {/* Thông số địa bàn thu nhỏ */}
-              <div className="space-y-1.5 text-slate-700">
-                <div className="grid grid-cols-2 gap-1.5 bg-slate-50 p-2 rounded-lg border border-slate-200/70">
+              {/* Thông số địa bàn */}
+              <div className="space-y-1 text-slate-700">
+                <div className="grid grid-cols-2 gap-1 bg-slate-50 p-1.5 rounded-lg border border-slate-200/70">
                   <div>
-                    <div className="text-[9.5px] text-slate-400">Diện tích</div>
-                    <div className="font-bold text-slate-900 text-[11px]">
+                    <div className="text-[9px] text-slate-400">Diện tích</div>
+                    <div className="font-bold text-slate-900 text-[10.5px]">
                       {selectedCommune.properties.areaKm2 > 0
                         ? `${selectedCommune.properties.areaKm2.toLocaleString("vi-VN")} km²`
                         : "Đang cập nhật"}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[9.5px] text-slate-400">Dân số</div>
-                    <div className="font-bold text-slate-900 text-[11px]">
+                    <div className="text-[9px] text-slate-400">Dân số</div>
+                    <div className="font-bold text-slate-900 text-[10.5px]">
                       {selectedCommune.properties.population > 0
                         ? `${selectedCommune.properties.population.toLocaleString("vi-VN")} người`
                         : "Đang cập nhật"}
@@ -2027,29 +2088,29 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                   </div>
                   {selectedCommune.properties.density > 0 && (
                     <div>
-                      <div className="text-[9.5px] text-slate-400">Mật độ</div>
-                      <div className="font-bold text-slate-900 text-[11px]">
+                      <div className="text-[9px] text-slate-400">Mật độ</div>
+                      <div className="font-bold text-slate-900 text-[10.5px]">
                         {Math.round(selectedCommune.properties.density).toLocaleString("vi-VN")} ng/km²
                       </div>
                     </div>
                   )}
                   <div>
-                    <div className="text-[9.5px] text-slate-400">Tọa độ tâm</div>
-                    <div className="font-mono text-slate-700 text-[10px] font-semibold">
+                    <div className="text-[9px] text-slate-400">Tọa độ tâm</div>
+                    <div className="font-mono text-slate-700 text-[9.5px] font-semibold">
                       {selectedCommune.properties.centroid[1].toFixed(2)}°B, {selectedCommune.properties.centroid[0].toFixed(2)}°Đ
                     </div>
                   </div>
                 </div>
 
                 {selectedCommune.properties.headquarters && (
-                  <div className="text-[10px] bg-sky-50/60 p-1.5 rounded border border-sky-100 leading-tight">
+                  <div className="text-[9.5px] bg-sky-50/60 p-1 rounded border border-sky-100 leading-tight">
                     <span className="font-semibold text-sky-900">Trụ sở UBND: </span>
                     <span className="text-slate-600">{selectedCommune.properties.headquarters}</span>
                   </div>
                 )}
 
                 {selectedCommune.properties.mergedFrom && (
-                  <div className="text-[10px] bg-amber-50/60 p-1.5 rounded border border-amber-100 leading-tight max-h-16 overflow-y-auto">
+                  <div className="text-[9.5px] bg-amber-50/60 p-1 rounded border border-amber-100 leading-tight max-h-14 overflow-y-auto">
                     <span className="font-semibold text-amber-900">Sáp nhập: </span>
                     <span className="text-slate-600">{selectedCommune.properties.mergedFrom}</span>
                   </div>
@@ -2057,24 +2118,24 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               </div>
 
               {/* Action buttons */}
-              <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
+              <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1">
                 <button
-                  onClick={() => handleCenterOnCommune(selectedCommune)}
-                  className="flex-1 py-1 px-2 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded text-[10.5px] border border-sky-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                  onClick={() => handleZoomToCommune(selectedCommune)}
+                  className="flex-1 py-1 px-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded text-[10px] border border-sky-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <Crosshair className="w-3 h-3" />
                   Căn giữa xã
                 </button>
                 <button
                   onClick={() => setIsCommuneCardCollapsed(true)}
-                  className="py-1 px-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded text-[10.5px] transition-colors cursor-pointer"
+                  className="py-1 px-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded text-[10px] transition-colors cursor-pointer"
                   title="Thu nhỏ thành thanh gọn"
                 >
                   Thu nhỏ
                 </button>
                 <button
                   onClick={() => setSelectedCommune(null)}
-                  className="py-1 px-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded text-[10.5px] transition-colors cursor-pointer"
+                  className="py-1 px-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded text-[10px] transition-colors cursor-pointer"
                 >
                   Bỏ chọn
                 </button>
