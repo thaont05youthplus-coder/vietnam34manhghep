@@ -67,6 +67,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isWheeling, setIsWheeling] = useState(false);
+  const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Trạng thái góc nhìn phương hướng đang chọn
   const [activeDirection, setActiveDirection] = useState<
@@ -286,7 +288,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const factor = e.deltaY < 0 ? 1.15 : 0.85;
+    setIsWheeling(true);
+    if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
+    wheelTimeoutRef.current = setTimeout(() => setIsWheeling(false), 120);
+
+    const factor = e.deltaY < 0 ? 1.09 : 0.91;
     const newZoom = Math.min(Math.max(zoom * factor, 0.6), 8);
     if (newZoom === zoom) return;
 
@@ -567,7 +573,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         <g
           transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
           style={{
-            transition: isDragging
+            transition: isDragging || isWheeling
               ? "none"
               : "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
           }}
@@ -768,7 +774,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
                 const pinRadius = isSelectedWard ? 5.5 : isHovered ? 5.2 : isSelectedProv ? 4.5 : 3.6;
                 const showLabel =
-                  isHovered || isSelectedWard || (zoom >= 2.4);
+                  isHovered || isSelectedWard;
 
                 return (
                   <g
@@ -835,7 +841,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     {/* Ward Name Label (Nền tối bo tròn, viền cyan sáng, chữ trắng sắc nét chuẩn mockup) */}
                     {showLabel && (
                       <g
-                        transform={`translate(0, -${pinRadius + 12})`}
+                        transform={`translate(0, -${(pinRadius + 10) / Math.max(zoom * 0.75, 1)}) scale(${1 / Math.max(zoom * 0.75, 1)})`}
                         className="pointer-events-none select-none transition-all duration-150"
                       >
                         <rect

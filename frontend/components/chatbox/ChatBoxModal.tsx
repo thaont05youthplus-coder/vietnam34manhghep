@@ -46,7 +46,7 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
       id: "msg_init",
       sender: "ai",
       text: selectedProvince
-        ? `Xin chào! Tôi là Trợ lí AI Địa lí VN34MG. Tôi nhận thấy bạn đang tìm hiểu về **${selectedProvince.properties.name}** (${selectedProvince.properties.type}).\n\nBạn có thể hỏi tôi về đặc điểm tự nhiên, khí hậu, thế mạnh kinh tế, quy hoạch liên vùng hoặc vai trò của địa phương trong vùng kinh tế - xã hội!`
+        ? `Xin chào! Tôi là Trợ lí AI Địa lí VN34MG. Tôi nhận thấy bạn đang tìm hiểu về ${selectedProvince.properties.name} (${selectedProvince.properties.type}).\n\nBạn có thể hỏi tôi về đặc điểm tự nhiên, khí hậu, thế mạnh kinh tế, quy hoạch liên vùng hoặc vai trò của địa phương trong vùng kinh tế - xã hội!`
         : `Xin chào! Tôi là Trợ lí AI Địa lí VN34MG. Tôi có thể hỗ trợ bạn tra cứu kiến thức Địa lí 34 tỉnh/thành phố, giải thích nguyên nhân hiện tượng tự nhiên, so sánh các vùng kinh tế và rèn luyện kĩ năng đọc bản đồ. Hãy chọn một câu hỏi gợi ý bên dưới hoặc nhập câu hỏi của bạn!`,
       citations: [
         {
@@ -201,7 +201,7 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
   };
 
   const handleCopy = (id: string, text: string) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text.replace(/\*\*(.*?)\*\*/g, "$1").replace(/\*\*/g, ""));
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
@@ -280,7 +280,9 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
                   : "bg-slate-900 border border-slate-800 text-slate-100 rounded-bl-none"
               }`}
             >
-              <div className="whitespace-pre-wrap space-y-1">{m.text}</div>
+              <div className="whitespace-pre-wrap space-y-1">
+                {m.text.replace(/\*\*(.*?)\*\*/g, "$1").replace(/\*\*/g, "")}
+              </div>
 
               {/* Bảng trích dẫn nguồn có kiểm chứng (T27) */}
               {m.citations && m.citations.length > 0 && (
