@@ -892,7 +892,7 @@
       "type": "Feature",
       "properties": {
         "id": "ward_dt_01",
-        "name": "Phường 1",
+        "name": "TP. Cao Lãnh",
         "district": "TP. Cao Lãnh",
         "provinceCode": "VN82",
         "provinceName": "Đồng Tháp",
@@ -914,7 +914,7 @@
       "type": "Feature",
       "properties": {
         "id": "ward_dt_02",
-        "name": "Phường 2",
+        "name": "TP. Sa Đéc",
         "district": "TP. Sa Đéc",
         "provinceCode": "VN82",
         "provinceName": "Đồng Tháp",
@@ -1068,7 +1068,7 @@
       "type": "Feature",
       "properties": {
         "id": "ward_ld_01",
-        "name": "Phường 1",
+        "name": "TP. Đà Lạt",
         "district": "TP. Đà Lạt",
         "provinceCode": "VN68",
         "provinceName": "Lâm Đồng",
@@ -1442,7 +1442,7 @@
       "type": "Feature",
       "properties": {
         "id": "ward_qt_01",
-        "name": "Phường 1",
+        "name": "TP. Đông Hà",
         "district": "TP. Đông Hà",
         "provinceCode": "VN44",
         "provinceName": "Quảng Trị",
@@ -1464,7 +1464,7 @@
       "type": "Feature",
       "properties": {
         "id": "ward_qt_02",
-        "name": "Phường 2",
+        "name": "Thị xã Quảng Trị",
         "district": "Thị xã Quảng Trị",
         "provinceCode": "VN44",
         "provinceName": "Quảng Trị",
@@ -1684,7 +1684,7 @@
       "type": "Feature",
       "properties": {
         "id": "ward_vl_01",
-        "name": "Phường 1",
+        "name": "TP. Vĩnh Long",
         "district": "TP. Vĩnh Long",
         "provinceCode": "VN86",
         "provinceName": "Vĩnh Long",
@@ -3261,6 +3261,7420 @@
         "coordinates": [
           105.57,
           19.92
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_tp_hatinh",
+        "name": "TP. Hà Tĩnh",
+        "district": "TP. Hà Tĩnh",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Phường",
+        "role": "TP. Hà Tĩnh, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.9,
+          18.34
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_ky_anh",
+        "name": "Kỳ Anh",
+        "district": "Huyện Kỳ Anh",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Kỳ Anh, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.29,
+          18.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_tx_ky_anh",
+        "name": "Thị xã Kỳ Anh",
+        "district": "Thị xã Kỳ Anh",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Phường",
+        "role": "Thị xã Kỳ Anh, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.35,
+          18.06
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_vung_ang",
+        "name": "Vũng Áng",
+        "district": "Thị xã Kỳ Anh",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Xã",
+        "role": "Thị xã Kỳ Anh, Hà Tĩnh",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.39,
+          18.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_cam_xuyen",
+        "name": "Cẩm Xuyên",
+        "district": "Huyện Cẩm Xuyên",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Cẩm Xuyên, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.01,
+          18.25
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_thien_cam",
+        "name": "Thiên Cầm",
+        "district": "Huyện Cẩm Xuyên",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Cẩm Xuyên, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.09,
+          18.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_thach_ha",
+        "name": "Thạch Hà",
+        "district": "Huyện Thạch Hà",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Thạch Hà, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.88,
+          18.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_can_loc",
+        "name": "Can Lộc",
+        "district": "Huyện Can Lộc",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Can Lộc, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.74,
+          18.45
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_dong_loc",
+        "name": "Đồng Lộc",
+        "district": "Huyện Can Lộc",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Can Lộc, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.71,
+          18.41
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_duc_tho",
+        "name": "Đức Thọ",
+        "district": "Huyện Đức Thọ",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Đức Thọ, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.58,
+          18.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_huong_son",
+        "name": "Hương Sơn",
+        "district": "Huyện Hương Sơn",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Hương Sơn, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.32,
+          18.48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_huong_khe",
+        "name": "Hương Khê",
+        "district": "Huyện Hương Khê",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Hương Khê, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.71,
+          18.18
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_vu_quang",
+        "name": "Vũ Quang",
+        "district": "Huyện Vũ Quang",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Vũ Quang, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.44,
+          18.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_nghi_xuan",
+        "name": "Nghi Xuân",
+        "district": "Huyện Nghi Xuân",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Nghi Xuân, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.76,
+          18.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_hong_linh",
+        "name": "Hồng Lĩnh",
+        "district": "Thị xã Hồng Lĩnh",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Phường",
+        "role": "Thị xã Hồng Lĩnh, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.71,
+          18.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ht_loc_ha",
+        "name": "Lộc Hà",
+        "district": "Huyện Lộc Hà",
+        "provinceCode": "VN42",
+        "provinceName": "Hà Tĩnh",
+        "type": "Thị trấn",
+        "role": "Huyện Lộc Hà, Hà Tĩnh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.88,
+          18.46
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_dong_hoi",
+        "name": "TP. Đồng Hới",
+        "district": "TP. Đồng Hới",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Phường",
+        "role": "TP. Đồng Hới, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.62,
+          17.48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_ba_don",
+        "name": "Ba Đồn",
+        "district": "Thị xã Ba Đồn",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Phường",
+        "role": "Thị xã Ba Đồn, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.42,
+          17.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_quang_trach",
+        "name": "Quảng Trạch",
+        "district": "Huyện Quảng Trạch",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Xã",
+        "role": "Huyện Quảng Trạch, Quảng Trị",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.48,
+          17.85
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_tuyen_hoa",
+        "name": "Tuyên Hóa",
+        "district": "Huyện Tuyên Hóa",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Tuyên Hóa, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.03,
+          17.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_minh_hoa",
+        "name": "Minh Hóa",
+        "district": "Huyện Minh Hóa",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Minh Hóa, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.95,
+          17.74
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_bo_trach",
+        "name": "Bố Trạch",
+        "district": "Huyện Bố Trạch",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Bố Trạch, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.45,
+          17.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_phong_nha",
+        "name": "Phong Nha",
+        "district": "Huyện Bố Trạch",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Bố Trạch, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.28,
+          17.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_le_thuy",
+        "name": "Lệ Thủy",
+        "district": "Huyện Lệ Thủy",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Lệ Thủy, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.78,
+          17.22
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_quang_ninh_qb",
+        "name": "Quán Hàu",
+        "district": "Huyện Quảng Ninh",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Quảng Ninh, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.64,
+          17.34
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_vinh_linh",
+        "name": "Vĩnh Linh",
+        "district": "Huyện Vĩnh Linh",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Vĩnh Linh, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.01,
+          17.06
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_cua_tung",
+        "name": "Cửa Tùng",
+        "district": "Huyện Vĩnh Linh",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Vĩnh Linh, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.1,
+          17.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_gio_linh",
+        "name": "Gio Linh",
+        "district": "Huyện Gio Linh",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Gio Linh, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.09,
+          16.92
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_cua_viet",
+        "name": "Cửa Việt",
+        "district": "Huyện Gio Linh",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Gio Linh, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.18,
+          16.9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_cam_lo",
+        "name": "Cam Lộ",
+        "district": "Huyện Cam Lộ",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Cam Lộ, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.98,
+          16.81
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_trieu_phong",
+        "name": "Triệu Phong",
+        "district": "Huyện Triệu Phong",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Triệu Phong, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.21,
+          16.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_hai_lang",
+        "name": "Hải Lăng",
+        "district": "Huyện Hải Lăng",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Hải Lăng, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.28,
+          16.69
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_dakrong",
+        "name": "Đakrông",
+        "district": "Huyện Đakrông",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Đakrông, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.79,
+          16.63
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_huong_hoa",
+        "name": "Khe Sanh",
+        "district": "Huyện Hướng Hóa",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Hướng Hóa, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.73,
+          16.61
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qt_lao_bao",
+        "name": "Lao Bảo",
+        "district": "Huyện Hướng Hóa",
+        "provinceCode": "VN44",
+        "provinceName": "Quảng Trị",
+        "type": "Thị trấn",
+        "role": "Huyện Hướng Hóa, Quảng Trị",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.59,
+          16.62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_huong_thuy",
+        "name": "Hương Thủy",
+        "district": "Thị xã Hương Thủy",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Phường",
+        "role": "Thị xã Hương Thủy, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.66,
+          16.4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_huong_tra",
+        "name": "Hương Trà",
+        "district": "Thị xã Hương Trà",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Phường",
+        "role": "Thị xã Hương Trà, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.5,
+          16.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_phong_dien",
+        "name": "Phong Điền",
+        "district": "Huyện Phong Điền",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Thị trấn",
+        "role": "Huyện Phong Điền, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.31,
+          16.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_quang_dien",
+        "name": "Quảng Điền",
+        "district": "Huyện Quảng Điền",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Thị trấn",
+        "role": "Huyện Quảng Điền, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.51,
+          16.61
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_phu_vang",
+        "name": "Phú Vang",
+        "district": "Huyện Phú Vang",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Thị trấn",
+        "role": "Huyện Phú Vang, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.72,
+          16.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_thuan_an",
+        "name": "Thuận An",
+        "district": "TP. Huế",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Phường",
+        "role": "TP. Huế, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.65,
+          16.56
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_phu_loc",
+        "name": "Phú Lộc",
+        "district": "Huyện Phú Lộc",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Thị trấn",
+        "role": "Huyện Phú Lộc, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.88,
+          16.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_lang_co",
+        "name": "Lăng Cô",
+        "district": "Huyện Phú Lộc",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Thị trấn",
+        "role": "Huyện Phú Lộc, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.08,
+          16.22
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_nam_dong",
+        "name": "Nam Đông",
+        "district": "Huyện Nam Đông",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Thị trấn",
+        "role": "Huyện Nam Đông, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.71,
+          16.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hue_a_luoi",
+        "name": "A Lưới",
+        "district": "Huyện A Lưới",
+        "provinceCode": "VN46",
+        "provinceName": "Huế",
+        "type": "Thị trấn",
+        "role": "Huyện A Lưới, Huế",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.28,
+          16.23
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_son_tra",
+        "name": "Sơn Trà",
+        "district": "Quận Sơn Trà",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Phường",
+        "role": "Quận Sơn Trà, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.25,
+          16.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_ngu_hanh_son",
+        "name": "Ngũ Hành Sơn",
+        "district": "Quận Ngũ Hành Sơn",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Phường",
+        "role": "Quận Ngũ Hành Sơn, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.25,
+          16.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_lien_chieu",
+        "name": "Liên Chiểu",
+        "district": "Quận Liên Chiểu",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Phường",
+        "role": "Quận Liên Chiểu, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.14,
+          16.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_cam_le",
+        "name": "Cẩm Lệ",
+        "district": "Quận Cẩm Lệ",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Phường",
+        "role": "Quận Cẩm Lệ, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.2,
+          16.01
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_hoa_vang",
+        "name": "Hòa Vang",
+        "district": "Huyện Hòa Vang",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Xã",
+        "role": "Huyện Hòa Vang, Đà Nẵng",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.12,
+          15.98
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_ba_na",
+        "name": "Bà Nà",
+        "district": "Huyện Hòa Vang",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Xã",
+        "role": "Huyện Hòa Vang, Đà Nẵng",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.99,
+          15.99
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_hoi_an",
+        "name": "Hội An",
+        "district": "TP. Hội An",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Phường",
+        "role": "TP. Hội An, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.33,
+          15.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_dien_ban",
+        "name": "Điện Bàn",
+        "district": "Thị xã Điện Bàn",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Phường",
+        "role": "Thị xã Điện Bàn, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.25,
+          15.89
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_duy_xuyen",
+        "name": "Duy Xuyên",
+        "district": "Huyện Duy Xuyên",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Duy Xuyên, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.24,
+          15.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_dai_loc",
+        "name": "Đại Lộc",
+        "district": "Huyện Đại Lộc",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Đại Lộc, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.06,
+          15.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_thang_binh",
+        "name": "Thăng Bình",
+        "district": "Huyện Thăng Bình",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Thăng Bình, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.34,
+          15.68
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_tam_ky",
+        "name": "Tam Kỳ",
+        "district": "TP. Tam Kỳ",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Phường",
+        "role": "TP. Tam Kỳ, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.48,
+          15.57
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_nui_thanh",
+        "name": "Núi Thành",
+        "district": "Huyện Núi Thành",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Núi Thành, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.65,
+          15.43
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_chu_lai",
+        "name": "Chu Lai",
+        "district": "Huyện Núi Thành",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Xã",
+        "role": "Huyện Núi Thành, Đà Nẵng",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.71,
+          15.42
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_que_son",
+        "name": "Quế Sơn",
+        "district": "Huyện Quế Sơn",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Quế Sơn, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.16,
+          15.65
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_tien_phuoc",
+        "name": "Tiên Phước",
+        "district": "Huyện Tiên Phước",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Tiên Phước, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.31,
+          15.48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_bac_tra_my",
+        "name": "Bắc Trà My",
+        "district": "Huyện Bắc Trà My",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Bắc Trà My, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.23,
+          15.29
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_nam_tra_my",
+        "name": "Nam Trà My",
+        "district": "Huyện Nam Trà My",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Xã",
+        "role": "Huyện Nam Trà My, Đà Nẵng",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.07,
+          15.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_phuoc_son",
+        "name": "Phước Sơn",
+        "district": "Huyện Phước Sơn",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Phước Sơn, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.83,
+          15.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn_nam_giang",
+        "name": "Nam Giang",
+        "district": "Huyện Nam Giang",
+        "provinceCode": "VN48",
+        "provinceName": "Đà Nẵng",
+        "type": "Thị trấn",
+        "role": "Huyện Nam Giang, Đà Nẵng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.65,
+          15.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_binh_son",
+        "name": "Bình Sơn",
+        "district": "Huyện Bình Sơn",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Bình Sơn, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.75,
+          15.3
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_dung_quat",
+        "name": "Dung Quất",
+        "district": "Huyện Bình Sơn",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Xã",
+        "role": "Huyện Bình Sơn, Quảng Ngãi",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.79,
+          15.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_son_tinh",
+        "name": "Sơn Tịnh",
+        "district": "Huyện Sơn Tịnh",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Sơn Tịnh, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.76,
+          15.17
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_tu_nghia",
+        "name": "Tư Nghĩa",
+        "district": "Huyện Tư Nghĩa",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Tư Nghĩa, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.8,
+          15.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_mo_duc",
+        "name": "Mộ Đức",
+        "district": "Huyện Mộ Đức",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Mộ Đức, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.88,
+          14.96
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_duc_pho",
+        "name": "Đức Phổ",
+        "district": "Thị xã Đức Phổ",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Phường",
+        "role": "Thị xã Đức Phổ, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.97,
+          14.81
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_sa_huynh",
+        "name": "Sa Huỳnh",
+        "district": "Thị xã Đức Phổ",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Phường",
+        "role": "Thị xã Đức Phổ, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.06,
+          14.7
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_ba_to",
+        "name": "Ba Tơ",
+        "district": "Huyện Ba Tơ",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Ba Tơ, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.71,
+          14.76
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_tra_bong",
+        "name": "Trà Bồng",
+        "district": "Huyện Trà Bồng",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Trà Bồng, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.45,
+          15.21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_hoai_nhon",
+        "name": "Hoài Nhơn",
+        "district": "Thị xã Hoài Nhơn",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Phường",
+        "role": "Thị xã Hoài Nhơn, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.03,
+          14.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_an_lao",
+        "name": "An Lão",
+        "district": "Huyện An Lão",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện An Lão, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.87,
+          14.56
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_phu_my",
+        "name": "Phù Mỹ",
+        "district": "Huyện Phù Mỹ",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Phù Mỹ, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.05,
+          14.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_phu_cat",
+        "name": "Phù Cát",
+        "district": "Huyện Phù Cát",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Phù Cát, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.08,
+          14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_an_nhon",
+        "name": "An Nhơn",
+        "district": "Thị xã An Nhơn",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Phường",
+        "role": "Thị xã An Nhơn, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.11,
+          13.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_quy_nhon",
+        "name": "TP. Quy Nhơn",
+        "district": "TP. Quy Nhơn",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Phường",
+        "role": "TP. Quy Nhơn, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.22,
+          13.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn_tay_son",
+        "name": "Tây Sơn",
+        "district": "Huyện Tây Sơn",
+        "provinceCode": "VN51",
+        "provinceName": "Quảng Ngãi",
+        "type": "Thị trấn",
+        "role": "Huyện Tây Sơn, Quảng Ngãi",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.9,
+          13.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_tp_kontum",
+        "name": "TP. Kon Tum",
+        "district": "TP. Kon Tum",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Phường",
+        "role": "TP. Kon Tum, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.01,
+          14.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_dak_ha",
+        "name": "Đăk Hà",
+        "district": "Huyện Đăk Hà",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Đăk Hà, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.92,
+          14.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_dak_to",
+        "name": "Đăk Tô",
+        "district": "Huyện Đăk Tô",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Đăk Tô, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.82,
+          14.65
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_ngoc_hoi",
+        "name": "Ngọc Hồi",
+        "district": "Huyện Ngọc Hồi",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Ngọc Hồi, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.63,
+          14.7
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_bo_y",
+        "name": "Bờ Y",
+        "district": "Huyện Ngọc Hồi",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Xã",
+        "role": "Huyện Ngọc Hồi, Gia Lai",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.57,
+          14.73
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_mang_den",
+        "name": "Măng Đen",
+        "district": "Huyện Kon Plông",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Kon Plông, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3,
+          14.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_an_khe",
+        "name": "An Khê",
+        "district": "Thị xã An Khê",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Phường",
+        "role": "Thị xã An Khê, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.65,
+          13.98
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_ayun_pa",
+        "name": "Ayun Pa",
+        "district": "Thị xã Ayun Pa",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Phường",
+        "role": "Thị xã Ayun Pa, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.45,
+          13.39
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_chu_pah",
+        "name": "Chư Păh",
+        "district": "Huyện Chư Păh",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Chư Păh, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.98,
+          14.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_chu_prong",
+        "name": "Chư Prông",
+        "district": "Huyện Chư Prông",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Chư Prông, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.85,
+          13.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_chu_se",
+        "name": "Chư Sê",
+        "district": "Huyện Chư Sê",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Chư Sê, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.15,
+          13.68
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_dak_doa",
+        "name": "Đăk Đoa",
+        "district": "Huyện Đăk Đoa",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Đăk Đoa, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.12,
+          14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_mang_yang",
+        "name": "Mang Yang",
+        "district": "Huyện Mang Yang",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Mang Yang, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.28,
+          13.98
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gl_krong_pa",
+        "name": "Krông Pa",
+        "district": "Huyện Krông Pa",
+        "provinceCode": "VN52",
+        "provinceName": "Gia Lai",
+        "type": "Thị trấn",
+        "role": "Huyện Krông Pa, Gia Lai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.68,
+          13.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_gia_nghia",
+        "name": "TP. Gia Nghĩa",
+        "district": "TP. Gia Nghĩa",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Phường",
+        "role": "TP. Gia Nghĩa, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.69,
+          12
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_tuy_hoa",
+        "name": "TP. Tuy Hòa",
+        "district": "TP. Tuy Hòa",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Phường",
+        "role": "TP. Tuy Hòa, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.3,
+          13.09
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_song_cau",
+        "name": "Sông Cầu",
+        "district": "Thị xã Sông Cầu",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Phường",
+        "role": "Thị xã Sông Cầu, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.22,
+          13.53
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_dong_hoa",
+        "name": "Đông Hòa",
+        "district": "Thị xã Đông Hòa",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Phường",
+        "role": "Thị xã Đông Hòa, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.38,
+          12.96
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_tuy_an",
+        "name": "Tuy An",
+        "district": "Huyện Tuy An",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Tuy An, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.23,
+          13.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_buon_ho",
+        "name": "Buôn Hồ",
+        "district": "Thị xã Buôn Hồ",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Phường",
+        "role": "Thị xã Buôn Hồ, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.26,
+          12.92
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_ea_kar",
+        "name": "Ea Kar",
+        "district": "Huyện Ea Kar",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Ea Kar, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.58,
+          12.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_krong_pac",
+        "name": "Krông Pắc",
+        "district": "Huyện Krông Pắc",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Krông Pắc, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.32,
+          12.68
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_cu_mgar",
+        "name": "Cư M'gar",
+        "district": "Huyện Cư M'gar",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Cư M'gar, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.06,
+          12.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_buon_don",
+        "name": "Buôn Đôn",
+        "district": "Huyện Buôn Đôn",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Xã",
+        "role": "Huyện Buôn Đôn, Đắk Lắk",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.87,
+          12.89
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_ea_hleo",
+        "name": "Ea H'leo",
+        "district": "Huyện Ea H'leo",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Ea H'leo, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.2,
+          13.22
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_krong_ana",
+        "name": "Krông Ana",
+        "district": "Huyện Krông Ana",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Krông Ana, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.1,
+          12.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_dak_mil",
+        "name": "Đắk Mil",
+        "district": "Huyện Đắk Mil",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Đắk Mil, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.62,
+          12.44
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dl_cu_jut",
+        "name": "Cư Jút",
+        "district": "Huyện Cư Jút",
+        "provinceCode": "VN66",
+        "provinceName": "Đắk Lắk",
+        "type": "Thị trấn",
+        "role": "Huyện Cư Jút, Đắk Lắk",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.88,
+          12.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_tp_cam_ranh",
+        "name": "TP. Cam Ranh",
+        "district": "TP. Cam Ranh",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Phường",
+        "role": "TP. Cam Ranh, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.15,
+          11.92
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_cam_lam",
+        "name": "Cam Lâm",
+        "district": "Huyện Cam Lâm",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Thị trấn",
+        "role": "Huyện Cam Lâm, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.14,
+          12.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_ninh_hoa",
+        "name": "Ninh Hòa",
+        "district": "Thị xã Ninh Hòa",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Phường",
+        "role": "Thị xã Ninh Hòa, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.13,
+          12.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_van_ninh",
+        "name": "Vạn Ninh",
+        "district": "Huyện Vạn Ninh",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Thị trấn",
+        "role": "Huyện Vạn Ninh, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.21,
+          12.7
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_dai_lanh",
+        "name": "Đại Lãnh",
+        "district": "Huyện Vạn Ninh",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Xã",
+        "role": "Huyện Vạn Ninh, Khánh Hòa",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.35,
+          12.84
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_dien_khanh",
+        "name": "Diên Khánh",
+        "district": "Huyện Diên Khánh",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Thị trấn",
+        "role": "Huyện Diên Khánh, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.09,
+          12.26
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_phan_rang",
+        "name": "TP. Phan Rang",
+        "district": "TP. Phan Rang - Tháp Chàm",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Phường",
+        "role": "TP. Phan Rang - Tháp Chàm, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.99,
+          11.57
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_ninh_hai",
+        "name": "Ninh Hải",
+        "district": "Huyện Ninh Hải",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Thị trấn",
+        "role": "Huyện Ninh Hải, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.06,
+          11.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_vinh_hy",
+        "name": "Vĩnh Hy",
+        "district": "Huyện Ninh Hải",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Xã",
+        "role": "Huyện Ninh Hải, Khánh Hòa",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          109.18,
+          11.71
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_ca_na",
+        "name": "Cà Ná",
+        "district": "Huyện Thuận Nam",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Xã",
+        "role": "Huyện Thuận Nam, Khánh Hòa",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.87,
+          11.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kh_ninh_son",
+        "name": "Ninh Sơn",
+        "district": "Huyện Ninh Sơn",
+        "provinceCode": "VN56",
+        "provinceName": "Khánh Hòa",
+        "type": "Thị trấn",
+        "role": "Huyện Ninh Sơn, Khánh Hòa",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.8,
+          11.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_tp_bao_loc",
+        "name": "TP. Bảo Lộc",
+        "district": "TP. Bảo Lộc",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Phường",
+        "role": "TP. Bảo Lộc, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.81,
+          11.55
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_don_duong",
+        "name": "Đơn Dương",
+        "district": "Huyện Đơn Dương",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Đơn Dương, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.57,
+          11.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_duc_trong",
+        "name": "Đức Trọng",
+        "district": "Huyện Đức Trọng",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Đức Trọng, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.38,
+          11.73
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_lam_ha",
+        "name": "Lâm Hà",
+        "district": "Huyện Lâm Hà",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Lâm Hà, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.2,
+          11.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_di_linh",
+        "name": "Di Linh",
+        "district": "Huyện Di Linh",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Di Linh, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.06,
+          11.53
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_da_huoai",
+        "name": "Đạ Huoai",
+        "district": "Huyện Đạ Huoai",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Đạ Huoai, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.63,
+          11.37
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_cat_tien",
+        "name": "Cát Tiên",
+        "district": "Huyện Cát Tiên",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Cát Tiên, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.38,
+          11.62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_phan_thiet",
+        "name": "TP. Phan Thiết",
+        "district": "TP. Phan Thiết",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Phường",
+        "role": "TP. Phan Thiết, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.1,
+          10.93
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_mui_ne",
+        "name": "Mũi Né",
+        "district": "TP. Phan Thiết",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Phường",
+        "role": "TP. Phan Thiết, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.28,
+          10.93
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_la_gi",
+        "name": "La Gi",
+        "district": "Thị xã La Gi",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Phường",
+        "role": "Thị xã La Gi, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.77,
+          10.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_tuy_phong",
+        "name": "Tuy Phong",
+        "district": "Huyện Tuy Phong",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Tuy Phong, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.68,
+          11.23
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_bac_binh",
+        "name": "Bắc Bình",
+        "district": "Huyện Bắc Bình",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Bắc Bình, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.38,
+          11.17
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_ham_tan",
+        "name": "Hàm Tân",
+        "district": "Huyện Hàm Tân",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Hàm Tân, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.68,
+          10.72
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ld_duc_linh",
+        "name": "Đức Linh",
+        "district": "Huyện Đức Linh",
+        "provinceCode": "VN68",
+        "provinceName": "Lâm Đồng",
+        "type": "Thị trấn",
+        "role": "Huyện Đức Linh, Lâm Đồng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.53,
+          11.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_long_khanh",
+        "name": "TP. Long Khánh",
+        "district": "TP. Long Khánh",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "TP. Long Khánh, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.24,
+          10.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_long_thanh",
+        "name": "Long Thành",
+        "district": "Huyện Long Thành",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Thị trấn",
+        "role": "Huyện Long Thành, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.96,
+          10.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_trang_bom",
+        "name": "Trảng Bom",
+        "district": "Huyện Trảng Bom",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Thị trấn",
+        "role": "Huyện Trảng Bom, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.99,
+          10.96
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_dinh_quan",
+        "name": "Định Quán",
+        "district": "Huyện Định Quán",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Thị trấn",
+        "role": "Huyện Định Quán, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.2,
+          11.21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_tan_phu",
+        "name": "Tân Phú",
+        "district": "Huyện Tân Phú",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Thị trấn",
+        "role": "Huyện Tân Phú, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.38,
+          11.41
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_thu_dau_mot",
+        "name": "TP. Thủ Dầu Một",
+        "district": "TP. Thủ Dầu Một",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "TP. Thủ Dầu Một, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.65,
+          10.98
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_thuan_an",
+        "name": "TP. Thuận An",
+        "district": "TP. Thuận An",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "TP. Thuận An, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7,
+          10.92
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_di_an",
+        "name": "TP. Dĩ An",
+        "district": "TP. Dĩ An",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "TP. Dĩ An, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.77,
+          10.9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_ben_cat",
+        "name": "TX. Bến Cát",
+        "district": "Thị xã Bến Cát",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "Thị xã Bến Cát, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.61,
+          11.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_dong_xoai",
+        "name": "TP. Đồng Xoài",
+        "district": "TP. Đồng Xoài",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "TP. Đồng Xoài, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.9,
+          11.53
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_phuoc_long",
+        "name": "TX. Phước Long",
+        "district": "Thị xã Phước Long",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "Thị xã Phước Long, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.01,
+          11.83
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_binh_long",
+        "name": "TX. Bình Long",
+        "district": "Thị xã Bình Long",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "Thị xã Bình Long, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6,
+          11.65
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_chon_thanh",
+        "name": "Chơn Thành",
+        "district": "Thị xã Chơn Thành",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Phường",
+        "role": "Thị xã Chơn Thành, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.67,
+          11.48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dn75_bu_dang",
+        "name": "Bù Đăng",
+        "district": "Huyện Bù Đăng",
+        "provinceCode": "VN75",
+        "provinceName": "Đồng Nai",
+        "type": "Thị trấn",
+        "role": "Huyện Bù Đăng, Đồng Nai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.25,
+          11.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_thu_duc",
+        "name": "TP. Thủ Đức",
+        "district": "TP. Thủ Đức",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Phường",
+        "role": "TP. Thủ Đức, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.76,
+          10.85
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_q7",
+        "name": "Phú Mỹ Hưng",
+        "district": "Quận 7",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Phường",
+        "role": "Quận 7, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.72,
+          10.73
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_binh_chanh",
+        "name": "Bình Chánh",
+        "district": "Huyện Bình Chánh",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Thị trấn",
+        "role": "Huyện Bình Chánh, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6,
+          10.7
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_hoc_mon",
+        "name": "Hóc Môn",
+        "district": "Huyện Hóc Môn",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Thị trấn",
+        "role": "Huyện Hóc Môn, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.59,
+          10.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_cu_chi",
+        "name": "Củ Chi",
+        "district": "Huyện Củ Chi",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Thị trấn",
+        "role": "Huyện Củ Chi, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.49,
+          11
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_nha_be",
+        "name": "Nhà Bè",
+        "district": "Huyện Nhà Bè",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Thị trấn",
+        "role": "Huyện Nhà Bè, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.73,
+          10.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_can_gio",
+        "name": "Cần Giờ",
+        "district": "Huyện Cần Giờ",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Thị trấn",
+        "role": "Huyện Cần Giờ, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.86,
+          10.41
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_vung_tau",
+        "name": "TP. Vũng Tàu",
+        "district": "TP. Vũng Tàu",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Phường",
+        "role": "TP. Vũng Tàu, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.08,
+          10.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_ba_ria",
+        "name": "TP. Bà Rịa",
+        "district": "TP. Bà Rịa",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Phường",
+        "role": "TP. Bà Rịa, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.17,
+          10.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_phu_my",
+        "name": "Phú Mỹ",
+        "district": "Thị xã Phú Mỹ",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Phường",
+        "role": "Thị xã Phú Mỹ, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.05,
+          10.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_xuyen_moc",
+        "name": "Xuyên Mộc",
+        "district": "Huyện Xuyên Mộc",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Thị trấn",
+        "role": "Huyện Xuyên Mộc, TP. Hồ Chí Minh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.45,
+          10.55
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hcm_ho_tram",
+        "name": "Hồ Tràm",
+        "district": "Huyện Xuyên Mộc",
+        "provinceCode": "VN79",
+        "provinceName": "TP. Hồ Chí Minh",
+        "type": "Xã",
+        "role": "Huyện Xuyên Mộc, TP. Hồ Chí Minh",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.48,
+          10.47
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_cai_rang",
+        "name": "Cái Răng",
+        "district": "Quận Cái Răng",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "Quận Cái Răng, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.75,
+          9.99
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_binh_thuy",
+        "name": "Bình Thủy",
+        "district": "Quận Bình Thủy",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "Quận Bình Thủy, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.74,
+          10.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_o_mon",
+        "name": "Ô Môn",
+        "district": "Quận Ô Môn",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "Quận Ô Môn, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.63,
+          10.12
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_thot_not",
+        "name": "Thốt Nốt",
+        "district": "Quận Thốt Nốt",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "Quận Thốt Nốt, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.53,
+          10.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_vi_thanh",
+        "name": "TP. Vị Thanh",
+        "district": "TP. Vị Thanh",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "TP. Vị Thanh, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.47,
+          9.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_nga_bay",
+        "name": "TP. Ngã Bảy",
+        "district": "TP. Ngã Bảy",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "TP. Ngã Bảy, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.82,
+          9.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_soc_trang",
+        "name": "TP. Sóc Trăng",
+        "district": "TP. Sóc Trăng",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "TP. Sóc Trăng, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.97,
+          9.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_vinh_chau",
+        "name": "TX. Vĩnh Châu",
+        "district": "Thị xã Vĩnh Châu",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "Thị xã Vĩnh Châu, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.98,
+          9.32
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_nga_nam",
+        "name": "TX. Ngã Năm",
+        "district": "Thị xã Ngã Năm",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Phường",
+        "role": "Thị xã Ngã Năm, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.58,
+          9.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_ke_sach",
+        "name": "Kế Sách",
+        "district": "Huyện Kế Sách",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Thị trấn",
+        "role": "Huyện Kế Sách, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.98,
+          9.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ct_tran_de",
+        "name": "Trần Đề",
+        "district": "Huyện Trần Đề",
+        "provinceCode": "VN92",
+        "provinceName": "Cần Thơ",
+        "type": "Thị trấn",
+        "role": "Huyện Trần Đề, Cần Thơ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.18,
+          9.48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_u_minh",
+        "name": "U Minh",
+        "district": "Huyện U Minh",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện U Minh, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.92,
+          9.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_thoi_binh",
+        "name": "Thới Bình",
+        "district": "Huyện Thới Bình",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Thới Bình, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.15,
+          9.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_tran_van_thoi",
+        "name": "Trần Văn Thời",
+        "district": "Huyện Trần Văn Thời",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Trần Văn Thời, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.96,
+          9.17
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_cai_nuoc",
+        "name": "Cái Nước",
+        "district": "Huyện Cái Nước",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Cái Nước, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.04,
+          9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_dam_doi",
+        "name": "Đầm Dơi",
+        "district": "Huyện Đầm Dơi",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Đầm Dơi, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.22,
+          9.01
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_nam_can",
+        "name": "Năm Căn",
+        "district": "Huyện Năm Căn",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Năm Căn, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.02,
+          8.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_phu_tan",
+        "name": "Phú Tân",
+        "district": "Huyện Phú Tân",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Phú Tân, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.88,
+          8.92
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_bac_lieu",
+        "name": "TP. Bạc Liêu",
+        "district": "TP. Bạc Liêu",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Phường",
+        "role": "TP. Bạc Liêu, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.72,
+          9.29
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_gia_rai",
+        "name": "TX. Giá Rai",
+        "district": "Thị xã Giá Rai",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Phường",
+        "role": "Thị xã Giá Rai, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.34,
+          9.22
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_hong_dan",
+        "name": "Hồng Dân",
+        "district": "Huyện Hồng Dân",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Hồng Dân, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.38,
+          9.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_phuoc_long_bl",
+        "name": "Phước Long",
+        "district": "Huyện Phước Long",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Phước Long, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.42,
+          9.4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cm_dong_hai",
+        "name": "Đông Hải",
+        "district": "Huyện Đông Hải",
+        "provinceCode": "VN96",
+        "provinceName": "Cà Mau",
+        "type": "Thị trấn",
+        "role": "Huyện Đông Hải, Cà Mau",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.28,
+          9.13
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_moc_chau",
+        "name": "Mộc Châu",
+        "district": "Huyện Mộc Châu",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Mộc Châu, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.65,
+          20.85
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_thuan_chau",
+        "name": "Thuận Châu",
+        "district": "Huyện Thuận Châu",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Thuận Châu, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.68,
+          21.44
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_muong_la",
+        "name": "Mường La",
+        "district": "Huyện Mường La",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Mường La, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.01,
+          21.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_quynh_nhai",
+        "name": "Quỳnh Nhai",
+        "district": "Huyện Quỳnh Nhai",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Quỳnh Nhai, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.61,
+          21.84
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_mai_son",
+        "name": "Mai Sơn",
+        "district": "Huyện Mai Sơn",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Mai Sơn, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.03,
+          21.19
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_song_ma",
+        "name": "Sông Mã",
+        "district": "Huyện Sông Mã",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Sông Mã, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.73,
+          21.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_yen_chau",
+        "name": "Yên Châu",
+        "district": "Huyện Yên Châu",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Yên Châu, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.29,
+          21.05
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sl_phu_yen",
+        "name": "Phù Yên",
+        "district": "Huyện Phù Yên",
+        "provinceCode": "VN14",
+        "provinceName": "Sơn La",
+        "type": "Thị trấn",
+        "role": "Huyện Phù Yên, Sơn La",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.65,
+          21.25
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "db_muong_lay",
+        "name": "TX. Mường Lay",
+        "district": "Thị xã Mường Lay",
+        "provinceCode": "VN11",
+        "provinceName": "Điện Biên",
+        "type": "Phường",
+        "role": "Thị xã Mường Lay, Điện Biên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.14,
+          22.06
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "db_muong_cha",
+        "name": "Mường Chà",
+        "district": "Huyện Mường Chà",
+        "provinceCode": "VN11",
+        "provinceName": "Điện Biên",
+        "type": "Thị trấn",
+        "role": "Huyện Mường Chà, Điện Biên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.03,
+          21.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "db_tua_chua",
+        "name": "Tủa Chùa",
+        "district": "Huyện Tủa Chùa",
+        "provinceCode": "VN11",
+        "provinceName": "Điện Biên",
+        "type": "Thị trấn",
+        "role": "Huyện Tủa Chùa, Điện Biên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.35,
+          21.93
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "db_tuan_giao",
+        "name": "Tuần Giáo",
+        "district": "Huyện Tuần Giáo",
+        "provinceCode": "VN11",
+        "provinceName": "Điện Biên",
+        "type": "Thị trấn",
+        "role": "Huyện Tuần Giáo, Điện Biên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.42,
+          21.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "db_muong_ang",
+        "name": "Mường Ảng",
+        "district": "Huyện Mường Ảng",
+        "provinceCode": "VN11",
+        "provinceName": "Điện Biên",
+        "type": "Thị trấn",
+        "role": "Huyện Mường Ảng, Điện Biên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.22,
+          21.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc_tam_duong",
+        "name": "Tam Đường",
+        "district": "Huyện Tam Đường",
+        "provinceCode": "VN12",
+        "provinceName": "Lai Châu",
+        "type": "Thị trấn",
+        "role": "Huyện Tam Đường, Lai Châu",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.58,
+          22.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc_phong_tho",
+        "name": "Phong Thổ",
+        "district": "Huyện Phong Thổ",
+        "provinceCode": "VN12",
+        "provinceName": "Lai Châu",
+        "type": "Thị trấn",
+        "role": "Huyện Phong Thổ, Lai Châu",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.35,
+          22.55
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc_sin_ho",
+        "name": "Sìn Hồ",
+        "district": "Huyện Sìn Hồ",
+        "provinceCode": "VN12",
+        "provinceName": "Lai Châu",
+        "type": "Thị trấn",
+        "role": "Huyện Sìn Hồ, Lai Châu",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.26,
+          22.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc_muong_te",
+        "name": "Mường Tè",
+        "district": "Huyện Mường Tè",
+        "provinceCode": "VN12",
+        "provinceName": "Lai Châu",
+        "type": "Thị trấn",
+        "role": "Huyện Mường Tè, Lai Châu",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          102.78,
+          22.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc_tan_uyen",
+        "name": "Tân Uyên",
+        "district": "Huyện Tân Uyên",
+        "provinceCode": "VN12",
+        "provinceName": "Lai Châu",
+        "type": "Thị trấn",
+        "role": "Huyện Tân Uyên, Lai Châu",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.68,
+          22.12
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc_than_uyen",
+        "name": "Than Uyên",
+        "district": "Huyện Than Uyên",
+        "provinceCode": "VN12",
+        "provinceName": "Lai Châu",
+        "type": "Thị trấn",
+        "role": "Huyện Than Uyên, Lai Châu",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.74,
+          21.96
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_sa_pa",
+        "name": "Sa Pa",
+        "district": "Thị xã Sa Pa",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Phường",
+        "role": "Thị xã Sa Pa, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.84,
+          22.34
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_bat_xat",
+        "name": "Bát Xát",
+        "district": "Huyện Bát Xát",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Thị trấn",
+        "role": "Huyện Bát Xát, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.88,
+          22.55
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_bac_ha",
+        "name": "Bắc Hà",
+        "district": "Huyện Bắc Hà",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Thị trấn",
+        "role": "Huyện Bắc Hà, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.29,
+          22.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_bao_thang",
+        "name": "Bảo Thắng",
+        "district": "Huyện Bảo Thắng",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Thị trấn",
+        "role": "Huyện Bảo Thắng, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.14,
+          22.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_yen_bai",
+        "name": "TP. Yên Bái",
+        "district": "TP. Yên Bái",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Phường",
+        "role": "TP. Yên Bái, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.88,
+          21.72
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_nghia_lo",
+        "name": "TX. Nghĩa Lộ",
+        "district": "Thị xã Nghĩa Lộ",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Phường",
+        "role": "Thị xã Nghĩa Lộ, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.51,
+          21.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_mu_cang_chai",
+        "name": "Mù Cang Chải",
+        "district": "Huyện Mù Cang Chải",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Thị trấn",
+        "role": "Huyện Mù Cang Chải, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.09,
+          21.85
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_yen_binh",
+        "name": "Yên Bình",
+        "district": "Huyện Yên Bình",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Thị trấn",
+        "role": "Huyện Yên Bình, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.02,
+          21.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lc15_luc_yen",
+        "name": "Lục Yên",
+        "district": "Huyện Lục Yên",
+        "provinceCode": "VN15",
+        "provinceName": "Lào Cai",
+        "type": "Thị trấn",
+        "role": "Huyện Lục Yên, Lào Cai",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.72,
+          22.11
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_son_duong",
+        "name": "Sơn Dương",
+        "district": "Huyện Sơn Dương",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Sơn Dương, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.41,
+          21.68
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_ham_yen",
+        "name": "Hàm Yên",
+        "district": "Huyện Hàm Yên",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Hàm Yên, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.02,
+          22.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_chiem_hoa",
+        "name": "Chiêm Hóa",
+        "district": "Huyện Chiêm Hóa",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Chiêm Hóa, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.26,
+          22.18
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_na_hang",
+        "name": "Na Hang",
+        "district": "Huyện Na Hang",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Na Hang, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.38,
+          22.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_ha_giang",
+        "name": "TP. Hà Giang",
+        "district": "TP. Hà Giang",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Phường",
+        "role": "TP. Hà Giang, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.98,
+          22.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_dong_van",
+        "name": "Đồng Văn",
+        "district": "Huyện Đồng Văn",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Đồng Văn, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.32,
+          23.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_meo_vac",
+        "name": "Mèo Vạc",
+        "district": "Huyện Mèo Vạc",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Mèo Vạc, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.41,
+          23.16
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_quan_ba",
+        "name": "Quản Bạ",
+        "district": "Huyện Quản Bạ",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Quản Bạ, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.99,
+          23.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_hoang_su_phi",
+        "name": "Hoàng Su Phì",
+        "district": "Huyện Hoàng Su Phì",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Hoàng Su Phì, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.68,
+          22.72
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tq_bac_quang",
+        "name": "Bắc Quang",
+        "district": "Huyện Bắc Quang",
+        "provinceCode": "VN08",
+        "provinceName": "Tuyên Quang",
+        "type": "Thị trấn",
+        "role": "Huyện Bắc Quang, Tuyên Quang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.88,
+          22.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cb_trung_khanh",
+        "name": "Trùng Khánh",
+        "district": "Huyện Trùng Khánh",
+        "provinceCode": "VN04",
+        "provinceName": "Cao Bằng",
+        "type": "Thị trấn",
+        "role": "Huyện Trùng Khánh, Cao Bằng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.52,
+          22.83
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cb_ha_quang",
+        "name": "Hà Quảng",
+        "district": "Huyện Hà Quảng",
+        "provinceCode": "VN04",
+        "provinceName": "Cao Bằng",
+        "type": "Thị trấn",
+        "role": "Huyện Hà Quảng, Cao Bằng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.13,
+          22.95
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cb_hoa_an",
+        "name": "Hòa An",
+        "district": "Huyện Hòa An",
+        "provinceCode": "VN04",
+        "provinceName": "Cao Bằng",
+        "type": "Thị trấn",
+        "role": "Huyện Hòa An, Cao Bằng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.21,
+          22.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cb_nguyen_binh",
+        "name": "Nguyên Bình",
+        "district": "Huyện Nguyên Bình",
+        "provinceCode": "VN04",
+        "provinceName": "Cao Bằng",
+        "type": "Thị trấn",
+        "role": "Huyện Nguyên Bình, Cao Bằng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.96,
+          22.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cb_bao_lac",
+        "name": "Bảo Lạc",
+        "district": "Huyện Bảo Lạc",
+        "provinceCode": "VN04",
+        "provinceName": "Cao Bằng",
+        "type": "Thị trấn",
+        "role": "Huyện Bảo Lạc, Cao Bằng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.68,
+          22.95
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cb_thach_an",
+        "name": "Thạch An",
+        "district": "Huyện Thạch An",
+        "provinceCode": "VN04",
+        "provinceName": "Cao Bằng",
+        "type": "Thị trấn",
+        "role": "Huyện Thạch An, Cao Bằng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.33,
+          22.47
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ls_huu_lung",
+        "name": "Hữu Lũng",
+        "district": "Huyện Hữu Lũng",
+        "provinceCode": "VN20",
+        "provinceName": "Lạng Sơn",
+        "type": "Thị trấn",
+        "role": "Huyện Hữu Lũng, Lạng Sơn",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.34,
+          21.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ls_chi_lang",
+        "name": "Chi Lăng",
+        "district": "Huyện Chi Lăng",
+        "provinceCode": "VN20",
+        "provinceName": "Lạng Sơn",
+        "type": "Thị trấn",
+        "role": "Huyện Chi Lăng, Lạng Sơn",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.57,
+          21.63
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ls_dong_dang",
+        "name": "Đồng Đăng",
+        "district": "Huyện Cao Lộc",
+        "provinceCode": "VN20",
+        "provinceName": "Lạng Sơn",
+        "type": "Thị trấn",
+        "role": "Huyện Cao Lộc, Lạng Sơn",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.74,
+          21.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ls_loc_binh",
+        "name": "Lộc Bình",
+        "district": "Huyện Lộc Bình",
+        "provinceCode": "VN20",
+        "provinceName": "Lạng Sơn",
+        "type": "Thị trấn",
+        "role": "Huyện Lộc Bình, Lạng Sơn",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.94,
+          21.62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ls_dinh_lap",
+        "name": "Đình Lập",
+        "district": "Huyện Đình Lập",
+        "provinceCode": "VN20",
+        "provinceName": "Lạng Sơn",
+        "type": "Thị trấn",
+        "role": "Huyện Đình Lập, Lạng Sơn",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.12,
+          21.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ls_trang_dinh",
+        "name": "Tràng Định",
+        "district": "Huyện Tràng Định",
+        "provinceCode": "VN20",
+        "provinceName": "Lạng Sơn",
+        "type": "Thị trấn",
+        "role": "Huyện Tràng Định, Lạng Sơn",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.45,
+          22.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ls_bac_son",
+        "name": "Bắc Sơn",
+        "district": "Huyện Bắc Sơn",
+        "provinceCode": "VN20",
+        "provinceName": "Lạng Sơn",
+        "type": "Thị trấn",
+        "role": "Huyện Bắc Sơn, Lạng Sơn",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.32,
+          21.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn_song_cong",
+        "name": "TP. Sông Công",
+        "district": "TP. Sông Công",
+        "provinceCode": "VN19",
+        "provinceName": "Thái Nguyên",
+        "type": "Phường",
+        "role": "TP. Sông Công, Thái Nguyên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.82,
+          21.48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn_pho_yen",
+        "name": "TP. Phổ Yên",
+        "district": "TP. Phổ Yên",
+        "provinceCode": "VN19",
+        "provinceName": "Thái Nguyên",
+        "type": "Phường",
+        "role": "TP. Phổ Yên, Thái Nguyên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.86,
+          21.42
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn_dai_tu",
+        "name": "Đại Từ",
+        "district": "Huyện Đại Từ",
+        "provinceCode": "VN19",
+        "provinceName": "Thái Nguyên",
+        "type": "Thị trấn",
+        "role": "Huyện Đại Từ, Thái Nguyên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.63,
+          21.62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn_dinh_hoa",
+        "name": "Định Hóa",
+        "district": "Huyện Định Hóa",
+        "provinceCode": "VN19",
+        "provinceName": "Thái Nguyên",
+        "type": "Thị trấn",
+        "role": "Huyện Định Hóa, Thái Nguyên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.64,
+          21.9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn_bac_kan",
+        "name": "TP. Bắc Kạn",
+        "district": "TP. Bắc Kạn",
+        "provinceCode": "VN19",
+        "provinceName": "Thái Nguyên",
+        "type": "Phường",
+        "role": "TP. Bắc Kạn, Thái Nguyên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.84,
+          22.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn_ba_be",
+        "name": "Ba Bể",
+        "district": "Huyện Ba Bể",
+        "provinceCode": "VN19",
+        "provinceName": "Thái Nguyên",
+        "type": "Thị trấn",
+        "role": "Huyện Ba Bể, Thái Nguyên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.7,
+          22.42
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn_cho_don",
+        "name": "Chợ Đồn",
+        "district": "Huyện Chợ Đồn",
+        "provinceCode": "VN19",
+        "provinceName": "Thái Nguyên",
+        "type": "Thị trấn",
+        "role": "Huyện Chợ Đồn, Thái Nguyên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.58,
+          22.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_lam_thao",
+        "name": "Lâm Thao",
+        "district": "Huyện Lâm Thao",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Thị trấn",
+        "role": "Huyện Lâm Thao, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.32,
+          21.36
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_doan_hung",
+        "name": "Đoan Hùng",
+        "district": "Huyện Đoan Hùng",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Thị trấn",
+        "role": "Huyện Đoan Hùng, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.18,
+          21.62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_thanh_ba",
+        "name": "Thanh Ba",
+        "district": "Huyện Thanh Ba",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Thị trấn",
+        "role": "Huyện Thanh Ba, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.17,
+          21.45
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_thanh_son",
+        "name": "Thanh Sơn",
+        "district": "Huyện Thanh Sơn",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Thị trấn",
+        "role": "Huyện Thanh Sơn, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.18,
+          21.1
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_vinh_yen",
+        "name": "TP. Vĩnh Yên",
+        "district": "TP. Vĩnh Yên",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Phường",
+        "role": "TP. Vĩnh Yên, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.6,
+          21.31
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_phuc_yen",
+        "name": "TP. Phúc Yên",
+        "district": "TP. Phúc Yên",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Phường",
+        "role": "TP. Phúc Yên, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.7,
+          21.32
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_tam_dao",
+        "name": "Tam Đảo",
+        "district": "Huyện Tam Đảo",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Thị trấn",
+        "role": "Huyện Tam Đảo, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.65,
+          21.45
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_hoa_binh",
+        "name": "TP. Hòa Bình",
+        "district": "TP. Hòa Bình",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Phường",
+        "role": "TP. Hòa Bình, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.34,
+          20.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_luong_son",
+        "name": "Lương Sơn",
+        "district": "Huyện Lương Sơn",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Thị trấn",
+        "role": "Huyện Lương Sơn, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.52,
+          20.87
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pt_mai_chau",
+        "name": "Mai Châu",
+        "district": "Huyện Mai Châu",
+        "provinceCode": "VN25",
+        "provinceName": "Phú Thọ",
+        "type": "Thị trấn",
+        "role": "Huyện Mai Châu, Phú Thọ",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.08,
+          20.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_tu_son",
+        "name": "Từ Sơn",
+        "district": "TP. Từ Sơn",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Phường",
+        "role": "TP. Từ Sơn, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.96,
+          21.12
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_thuan_thanh",
+        "name": "Thuận Thành",
+        "district": "Thị xã Thuận Thành",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Phường",
+        "role": "Thị xã Thuận Thành, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.08,
+          21.05
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_que_vo",
+        "name": "Quế Võ",
+        "district": "Thị xã Quế Võ",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Phường",
+        "role": "Thị xã Quế Võ, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.18,
+          21.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_yen_phong",
+        "name": "Yên Phong",
+        "district": "Huyện Yên Phong",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Yên Phong, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.98,
+          21.21
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_bac_giang",
+        "name": "TP. Bắc Giang",
+        "district": "TP. Bắc Giang",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Phường",
+        "role": "TP. Bắc Giang, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.19,
+          21.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_viet_yen",
+        "name": "TX. Việt Yên",
+        "district": "Thị xã Việt Yên",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Phường",
+        "role": "Thị xã Việt Yên, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.07,
+          21.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_hiep_hoa",
+        "name": "Hiệp Hòa",
+        "district": "Huyện Hiệp Hòa",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Hiệp Hòa, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.98,
+          21.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_luc_ngan",
+        "name": "Lục Ngạn",
+        "district": "Huyện Lục Ngạn",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Lục Ngạn, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6,
+          21.37
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bn_son_dong",
+        "name": "Sơn Động",
+        "district": "Huyện Sơn Động",
+        "provinceCode": "VN24",
+        "provinceName": "Bắc Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Sơn Động, Bắc Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.88,
+          21.31
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_my_hao",
+        "name": "Mỹ Hào",
+        "district": "Thị xã Mỹ Hào",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Phường",
+        "role": "Thị xã Mỹ Hào, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.08,
+          20.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_van_giang",
+        "name": "Văn Giang",
+        "district": "Huyện Văn Giang",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Văn Giang, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.94,
+          20.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_khoai_chau",
+        "name": "Khoái Châu",
+        "district": "Huyện Khoái Châu",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Khoái Châu, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.98,
+          20.83
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_an_thi",
+        "name": "Ân Thi",
+        "district": "Huyện Ân Thi",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Ân Thi, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.1,
+          20.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_thai_binh",
+        "name": "TP. Thái Bình",
+        "district": "TP. Thái Bình",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Phường",
+        "role": "TP. Thái Bình, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.34,
+          20.45
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_hung_ha",
+        "name": "Hưng Hà",
+        "district": "Huyện Hưng Hà",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Hưng Hà, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.22,
+          20.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_dong_hung",
+        "name": "Đông Hưng",
+        "district": "Huyện Đông Hưng",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Đông Hưng, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.33,
+          20.55
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_quynh_phu",
+        "name": "Quỳnh Phụ",
+        "district": "Huyện Quỳnh Phụ",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Quỳnh Phụ, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.36,
+          20.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_thai_thuy",
+        "name": "Thái Thụy",
+        "district": "Huyện Thái Thụy",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Thái Thụy, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.54,
+          20.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hy_tien_hai",
+        "name": "Tiền Hải",
+        "district": "Huyện Tiền Hải",
+        "provinceCode": "VN33",
+        "provinceName": "Hưng Yên",
+        "type": "Thị trấn",
+        "role": "Huyện Tiền Hải, Hưng Yên",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.51,
+          20.4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_tam_diep",
+        "name": "Tam Điệp",
+        "district": "TP. Tam Điệp",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Phường",
+        "role": "TP. Tam Điệp, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.92,
+          20.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_hoa_lu",
+        "name": "Hoa Lư",
+        "district": "Huyện Hoa Lư",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Hoa Lư, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.91,
+          20.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_gia_vien",
+        "name": "Gia Viễn",
+        "district": "Huyện Gia Viễn",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Gia Viễn, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.88,
+          20.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_nho_quan",
+        "name": "Nho Quan",
+        "district": "Huyện Nho Quan",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Nho Quan, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.75,
+          20.32
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_kim_son",
+        "name": "Phát Diệm",
+        "district": "Huyện Kim Sơn",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Kim Sơn, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.08,
+          20.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_nam_dinh",
+        "name": "TP. Nam Định",
+        "district": "TP. Nam Định",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Phường",
+        "role": "TP. Nam Định, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.17,
+          20.43
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_xuan_truong",
+        "name": "Xuân Trường",
+        "district": "Huyện Xuân Trường",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Xuân Trường, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.35,
+          20.29
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_giao_thuy",
+        "name": "Giao Thủy",
+        "district": "Huyện Giao Thủy",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Giao Thủy, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.49,
+          20.24
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_hai_hau",
+        "name": "Hải Hậu",
+        "district": "Huyện Hải Hậu",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Hải Hậu, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.27,
+          20.17
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_phu_ly",
+        "name": "TP. Phủ Lý",
+        "district": "TP. Phủ Lý",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Phường",
+        "role": "TP. Phủ Lý, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.91,
+          20.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nb_tam_chuc",
+        "name": "Tam Chúc",
+        "district": "Huyện Kim Bảng",
+        "provinceCode": "VN37",
+        "provinceName": "Ninh Bình",
+        "type": "Thị trấn",
+        "role": "Huyện Kim Bảng, Ninh Bình",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.83,
+          20.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_trang_bang",
+        "name": "Trảng Bàng",
+        "district": "Thị xã Trảng Bàng",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Phường",
+        "role": "Thị xã Trảng Bàng, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.36,
+          11.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_go_dau",
+        "name": "Gò Dầu",
+        "district": "Huyện Gò Dầu",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Gò Dầu, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.26,
+          11.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_moc_bai",
+        "name": "Mộc Bài",
+        "district": "Huyện Bến Cầu",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Bến Cầu, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.18,
+          11.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_tan_an",
+        "name": "TP. Tân An",
+        "district": "TP. Tân An",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Phường",
+        "role": "TP. Tân An, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.41,
+          10.53
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_ben_luc",
+        "name": "Bến Lức",
+        "district": "Huyện Bến Lức",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Bến Lức, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.49,
+          10.64
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_can_giuoc",
+        "name": "Cần Giuộc",
+        "district": "Huyện Cần Giuộc",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Cần Giuộc, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.66,
+          10.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_duc_hoa",
+        "name": "Đức Hòa",
+        "district": "Huyện Đức Hòa",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Đức Hòa, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.45,
+          10.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tn80_kien_tuong",
+        "name": "TX. Kiến Tường",
+        "district": "Thị xã Kiến Tường",
+        "provinceCode": "VN80",
+        "provinceName": "Tây Ninh",
+        "type": "Phường",
+        "role": "Thị xã Kiến Tường, Tây Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.93,
+          10.79
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dt_sa_dec",
+        "name": "TP. Sa Đéc",
+        "district": "TP. Sa Đéc",
+        "provinceCode": "VN82",
+        "provinceName": "Đồng Tháp",
+        "type": "Phường",
+        "role": "TP. Sa Đéc, Đồng Tháp",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.76,
+          10.29
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dt_hong_ngu",
+        "name": "TP. Hồng Ngự",
+        "district": "TP. Hồng Ngự",
+        "provinceCode": "VN82",
+        "provinceName": "Đồng Tháp",
+        "type": "Phường",
+        "role": "TP. Hồng Ngự, Đồng Tháp",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.28,
+          10.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dt_thap_muoi",
+        "name": "Tháp Mười",
+        "district": "Huyện Tháp Mười",
+        "provinceCode": "VN82",
+        "provinceName": "Đồng Tháp",
+        "type": "Thị trấn",
+        "role": "Huyện Tháp Mười, Đồng Tháp",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.82,
+          10.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dt_my_tho",
+        "name": "TP. Mỹ Tho",
+        "district": "TP. Mỹ Tho",
+        "provinceCode": "VN82",
+        "provinceName": "Đồng Tháp",
+        "type": "Phường",
+        "role": "TP. Mỹ Tho, Đồng Tháp",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.36,
+          10.36
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dt_go_cong",
+        "name": "TX. Gò Công",
+        "district": "Thị xã Gò Công",
+        "provinceCode": "VN82",
+        "provinceName": "Đồng Tháp",
+        "type": "Phường",
+        "role": "Thị xã Gò Công, Đồng Tháp",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.66,
+          10.36
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dt_cai_lay",
+        "name": "Cai Lậy",
+        "district": "Thị xã Cai Lậy",
+        "provinceCode": "VN82",
+        "provinceName": "Đồng Tháp",
+        "type": "Phường",
+        "role": "Thị xã Cai Lậy, Đồng Tháp",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.12,
+          10.41
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dt_cai_be",
+        "name": "Cái Bè",
+        "district": "Huyện Cái Bè",
+        "provinceCode": "VN82",
+        "provinceName": "Đồng Tháp",
+        "type": "Thị trấn",
+        "role": "Huyện Cái Bè, Đồng Tháp",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.92,
+          10.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_ben_tre",
+        "name": "TP. Bến Tre",
+        "district": "TP. Bến Tre",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Phường",
+        "role": "TP. Bến Tre, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.38,
+          10.24
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_cho_lach",
+        "name": "Chợ Lách",
+        "district": "Huyện Chợ Lách",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Thị trấn",
+        "role": "Huyện Chợ Lách, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.14,
+          10.25
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_ba_tri",
+        "name": "Ba Tri",
+        "district": "Huyện Ba Tri",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Thị trấn",
+        "role": "Huyện Ba Tri, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6,
+          10.04
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_binh_dai",
+        "name": "Bình Đại",
+        "district": "Huyện Bình Đại",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Thị trấn",
+        "role": "Huyện Bình Đại, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.69,
+          10.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_tra_vinh",
+        "name": "TP. Trà Vinh",
+        "district": "TP. Trà Vinh",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Phường",
+        "role": "TP. Trà Vinh, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.34,
+          9.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_duyen_hai",
+        "name": "TX. Duyên Hải",
+        "district": "Thị xã Duyên Hải",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Phường",
+        "role": "Thị xã Duyên Hải, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.51,
+          9.64
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_binh_minh",
+        "name": "TX. Bình Minh",
+        "district": "Thị xã Bình Minh",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Phường",
+        "role": "Thị xã Bình Minh, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.82,
+          10.04
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "vl_vung_liem",
+        "name": "Vũng Liêm",
+        "district": "Huyện Vũng Liêm",
+        "provinceCode": "VN86",
+        "provinceName": "Vĩnh Long",
+        "type": "Thị trấn",
+        "role": "Huyện Vũng Liêm, Vĩnh Long",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.19,
+          10.1
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_chau_doc",
+        "name": "TP. Châu Đốc",
+        "district": "TP. Châu Đốc",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Phường",
+        "role": "TP. Châu Đốc, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.12,
+          10.7
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_tan_chau",
+        "name": "TX. Tân Châu",
+        "district": "Thị xã Tân Châu",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Phường",
+        "role": "Thị xã Tân Châu, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.24,
+          10.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_tinh_bien",
+        "name": "Tịnh Biên",
+        "district": "Thị xã Tịnh Biên",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Phường",
+        "role": "Thị xã Tịnh Biên, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.94,
+          10.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_tri_ton",
+        "name": "Tri Tôn",
+        "district": "Huyện Tri Tôn",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Thị trấn",
+        "role": "Huyện Tri Tôn, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.99,
+          10.42
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_rach_gia",
+        "name": "TP. Rạch Giá",
+        "district": "TP. Rạch Giá",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Phường",
+        "role": "TP. Rạch Giá, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.08,
+          10.01
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_ha_tien",
+        "name": "TP. Hà Tiên",
+        "district": "TP. Hà Tiên",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Phường",
+        "role": "TP. Hà Tiên, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.48,
+          10.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_phu_quoc",
+        "name": "TP. Phú Quốc",
+        "district": "TP. Phú Quốc",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Phường",
+        "role": "TP. Phú Quốc, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": true,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.96,
+          10.22
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_an_thoi",
+        "name": "An Thới",
+        "district": "TP. Phú Quốc",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Phường",
+        "role": "TP. Phú Quốc, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.01,
+          10.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ag_kien_luong",
+        "name": "Kiên Lương",
+        "district": "Huyện Kiên Lương",
+        "provinceCode": "VN91",
+        "provinceName": "An Giang",
+        "type": "Thị trấn",
+        "role": "Huyện Kiên Lương, An Giang",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.6,
+          10.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_tay_ho",
+        "name": "Tây Hồ",
+        "district": "Quận Tây Hồ",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Phường",
+        "role": "Quận Tây Hồ, Hà Nội",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.82,
+          21.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_long_bien",
+        "name": "Long Biên",
+        "district": "Quận Long Biên",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Phường",
+        "role": "Quận Long Biên, Hà Nội",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.89,
+          21.04
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_ha_dong",
+        "name": "Hà Đông",
+        "district": "Quận Hà Đông",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Phường",
+        "role": "Quận Hà Đông, Hà Nội",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.77,
+          20.97
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_son_tay",
+        "name": "TX. Sơn Tây",
+        "district": "Thị xã Sơn Tây",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Phường",
+        "role": "Thị xã Sơn Tây, Hà Nội",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.51,
+          21.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_ba_vi",
+        "name": "Ba Vì",
+        "district": "Huyện Ba Vì",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Thị trấn",
+        "role": "Huyện Ba Vì, Hà Nội",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.38,
+          21.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_dong_anh",
+        "name": "Đông Anh",
+        "district": "Huyện Đông Anh",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Thị trấn",
+        "role": "Huyện Đông Anh, Hà Nội",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.84,
+          21.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_soc_son",
+        "name": "Sóc Sơn",
+        "district": "Huyện Sóc Sơn",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Thị trấn",
+        "role": "Huyện Sóc Sơn, Hà Nội",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.85,
+          21.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hn_my_duc",
+        "name": "Chùa Hương",
+        "district": "Huyện Mỹ Đức",
+        "provinceCode": "VN01",
+        "provinceName": "Hà Nội",
+        "type": "Xã",
+        "role": "Huyện Mỹ Đức, Hà Nội",
+        "isUrbanCenter": false,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.72,
+          20.68
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_le_chan",
+        "name": "Lê Chân",
+        "district": "Quận Lê Chân",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Phường",
+        "role": "Quận Lê Chân, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.68,
+          20.84
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_do_son",
+        "name": "Đồ Sơn",
+        "district": "Quận Đồ Sơn",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Phường",
+        "role": "Quận Đồ Sơn, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.79,
+          20.71
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_thuy_nguyen",
+        "name": "Thủy Nguyên",
+        "district": "Huyện Thủy Nguyên",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Thị trấn",
+        "role": "Huyện Thủy Nguyên, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.69,
+          20.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_an_duong",
+        "name": "An Dương",
+        "district": "Huyện An Dương",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Thị trấn",
+        "role": "Huyện An Dương, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6,
+          20.87
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_hai_duong",
+        "name": "TP. Hải Dương",
+        "district": "TP. Hải Dương",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Phường",
+        "role": "TP. Hải Dương, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.32,
+          20.94
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_chi_linh",
+        "name": "TP. Chí Linh",
+        "district": "TP. Chí Linh",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Phường",
+        "role": "TP. Chí Linh, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.39,
+          21.13
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_kinh_mon",
+        "name": "TX. Kinh Môn",
+        "district": "Thị xã Kinh Môn",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Phường",
+        "role": "Thị xã Kinh Môn, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.53,
+          20.99
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hp_thanh_ha",
+        "name": "Thanh Hà",
+        "district": "Huyện Thanh Hà",
+        "provinceCode": "VN31",
+        "provinceName": "Hải Phòng",
+        "type": "Thị trấn",
+        "role": "Huyện Thanh Hà, Hải Phòng",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.41,
+          20.9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_cam_pha",
+        "name": "Cẩm Phả",
+        "district": "TP. Cẩm Phả",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Phường",
+        "role": "TP. Cẩm Phả, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.28,
+          21.01
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_uong_bi",
+        "name": "Uông Bí",
+        "district": "TP. Uông Bí",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Phường",
+        "role": "TP. Uông Bí, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.77,
+          21.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_dong_trieu",
+        "name": "TX. Đông Triều",
+        "district": "Thị xã Đông Triều",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Phường",
+        "role": "Thị xã Đông Triều, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.51,
+          21.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_quang_yen",
+        "name": "TX. Quảng Yên",
+        "district": "Thị xã Quảng Yên",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Phường",
+        "role": "Thị xã Quảng Yên, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.8,
+          20.93
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_van_don",
+        "name": "Vân Đồn",
+        "district": "Huyện Vân Đồn",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Vân Đồn, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.41,
+          21.04
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_co_to",
+        "name": "Đảo Cô Tô",
+        "district": "Huyện Cô Tô",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Cô Tô, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": true,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.76,
+          20.98
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_tien_yen",
+        "name": "Tiên Yên",
+        "district": "Huyện Tiên Yên",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Tiên Yên, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.4,
+          21.32
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qn22_binh_lieu",
+        "name": "Bình Liêu",
+        "district": "Huyện Bình Liêu",
+        "provinceCode": "VN22",
+        "provinceName": "Quảng Ninh",
+        "type": "Thị trấn",
+        "role": "Huyện Bình Liêu, Quảng Ninh",
+        "isUrbanCenter": true,
+        "isIsland": false,
+        "isBorderOrExtreme": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.49,
+          21.52
         ]
       }
     }

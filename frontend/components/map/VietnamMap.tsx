@@ -331,9 +331,9 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       });
     }
 
-    // Spatial collision avoidance: Giữ khoảng cách tối thiểu giữa 2 nhãn trên màn hình (~24-28px)
+    // Spatial collision avoidance: Giữ khoảng cách tối thiểu giữa 2 nhãn trên màn hình (~18-22px)
     const result: WardFeature[] = [];
-    const minDistancePx = selectedProvince ? 22 : 28;
+    const minDistancePx = selectedProvince ? 18 : 22;
     for (const w of candidates) {
       const [lon, lat] = w.geometry.coordinates;
       const [wx, wy] = project(lon, lat);
@@ -955,7 +955,16 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                       paintOrder="stroke fill"
                       className="transition-all duration-150 pointer-events-none select-none"
                     >
-                      {ward.properties.name.replace(/^(Phường|Xã|Thị trấn)\s+/i, "")}
+                      {(() => {
+                        const stripped = ward.properties.name.replace(/^(Phường|Xã|Thị trấn)\s+/i, "").trim();
+                        if (/^\d+$/.test(stripped)) {
+                          if (ward.properties.district) {
+                            return ward.properties.district.replace(/^(Thành phố|Quận|Huyện|Thị xã|TP\.)\s+/i, "").trim();
+                          }
+                          return `P.${stripped}`;
+                        }
+                        return stripped;
+                      })()}
                     </text>
                   </g>
                 );
