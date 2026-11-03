@@ -41,6 +41,50 @@ const KEY_LANDMARKS = [
   { name: "Đ. Phú Quốc", lon: 103.96, lat: 10.22, isCapital: false },
 ];
 
+// 34 Tỉnh thành Việt Nam với tọa độ trung tâm địa lý chuẩn xác (Chuẩn GIS gis.vn)
+const PROVINCE_LABEL_CENTROIDS: Array<{
+  code: string;
+  name: string;
+  lon: number;
+  lat: number;
+  isCapital?: boolean;
+}> = [
+  { code: "VN01", name: "HÀ NỘI", lon: 105.78, lat: 21.03, isCapital: true },
+  { code: "VN04", name: "Cao Bằng", lon: 106.09, lat: 22.74 },
+  { code: "VN08", name: "Tuyên Quang", lon: 105.10, lat: 22.40 },
+  { code: "VN11", name: "Điện Biên", lon: 103.02, lat: 21.71 },
+  { code: "VN12", name: "Lai Châu", lon: 103.19, lat: 22.32 },
+  { code: "VN14", name: "Sơn La", lon: 104.07, lat: 21.19 },
+  { code: "VN15", name: "Lào Cai", lon: 104.25, lat: 22.20 },
+  { code: "VN19", name: "Thái Nguyên", lon: 105.83, lat: 21.80 },
+  { code: "VN20", name: "Lạng Sơn", lon: 106.62, lat: 21.84 },
+  { code: "VN22", name: "Quảng Ninh", lon: 107.24, lat: 21.26 },
+  { code: "VN24", name: "Bắc Ninh", lon: 106.15, lat: 21.18 },
+  { code: "VN25", name: "Phú Thọ", lon: 105.20, lat: 21.25 },
+  { code: "VN31", name: "Hải Phòng", lon: 106.65, lat: 20.86 },
+  { code: "VN33", name: "Hưng Yên", lon: 106.12, lat: 20.65 },
+  { code: "VN37", name: "Ninh Bình", lon: 105.95, lat: 20.25 },
+  { code: "VN38", name: "Thanh Hóa", lon: 105.32, lat: 19.95 },
+  { code: "VN40", name: "Nghệ An", lon: 104.95, lat: 19.24 },
+  { code: "VN42", name: "Hà Tĩnh", lon: 105.74, lat: 18.29 },
+  { code: "VN44", name: "Quảng Trị", lon: 106.60, lat: 17.10 },
+  { code: "VN46", name: "Huế", lon: 107.52, lat: 16.33 },
+  { code: "VN48", name: "Đà Nẵng", lon: 108.15, lat: 15.85 },
+  { code: "VN51", name: "Quảng Ngãi", lon: 108.40, lat: 14.90 },
+  { code: "VN52", name: "Gia Lai", lon: 108.25, lat: 13.89 },
+  { code: "VN56", name: "Khánh Hòa", lon: 109.05, lat: 12.25 },
+  { code: "VN66", name: "Đắk Lắk", lon: 108.35, lat: 12.80 },
+  { code: "VN68", name: "Lâm Đồng", lon: 108.15, lat: 11.67 },
+  { code: "VN75", name: "Đồng Nai", lon: 107.04, lat: 11.20 },
+  { code: "VN79", name: "TP. Hồ Chí Minh", lon: 106.70, lat: 10.78 },
+  { code: "VN80", name: "Tây Ninh", lon: 106.10, lat: 11.25 },
+  { code: "VN82", name: "Đồng Tháp", lon: 105.70, lat: 10.45 },
+  { code: "VN86", name: "Vĩnh Long", lon: 106.10, lat: 10.05 },
+  { code: "VN91", name: "An Giang", lon: 105.15, lat: 10.35 },
+  { code: "VN92", name: "Cần Thơ", lon: 105.70, lat: 9.85 },
+  { code: "VN96", name: "Cà Mau", lon: 105.15, lat: 9.14 },
+];
+
 export const VietnamMap: React.FC<VietnamMapProps> = ({
   mode,
   onModeChange,
@@ -250,59 +294,62 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     });
   }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince, activeRegionCodes]);
 
-  // LOD: Wards & Communes Level of Detail (Chuẩn GIS như gis.vn: Chỉ hiển thị các xã/phường của TỈNH ĐANG CHỌN)
-  // Tuyệt đối không bao giờ hiển thị 78 xã/phường cùng lúc gây chồng đè chi chít
+  // LOD: Wards & Communes Level of Detail (Chuẩn GIS như gis.vn)
+  // Tự động hiển thị khi zoom >= 1.5 hoặc khi đã chọn một tỉnh cụ thể
   const isWardsVisible = Boolean(
-    layers.wards && (selectedProvince !== null || zoom >= 3.2)
+    layers.wards && (selectedProvince !== null || zoom >= 1.5)
   );
 
-  // Filter wards to render: CHỈ HIỂN THỊ CÁC XÃ/PHƯỜNG CỦA 1 TỈNH DUY NHẤT ĐANG XEM
+  // Filter wards to render: Lọc xã/phường theo tỉnh hoặc theo khung nhìn (viewport)
+  // Áp dụng thuật toán spatial collision thinning để các nhãn không bao giờ bị đè lên nhau
   const displayedWards = useMemo(() => {
     if (!wardsData || !isWardsVisible) return [];
 
-    // Nếu đã chọn một tỉnh cụ thể: CHỈ hiển thị đúng các xã/phường của tỉnh đó (tối đa 2-4 điểm, cách xa nhau)
+    let candidates: WardFeature[] = [];
+
+    // Nếu đã chọn một tỉnh cụ thể: Hiển thị các xã/phường thuộc tỉnh đó
     if (selectedProvince) {
-      return wardsData.features.filter(
+      candidates = wardsData.features.filter(
         (w) => w.properties.provinceCode === selectedProvince.properties.provinceCode
       );
-    }
+    } else if (zoom >= 1.5) {
+      // Nếu zoom >= 1.5: Lấy các xã/phường nằm trong vùng hiển thị (viewport)
+      const viewLeft = -pan.x / zoom;
+      const viewRight = (svgWidth - pan.x) / zoom;
+      const viewTop = -pan.y / zoom;
+      const viewBottom = (svgHeight - pan.y) / zoom;
 
-    // Nếu zoom sâu (>= 3.2) mà chưa bấm chọn tỉnh: Xác định duy nhất 1 tỉnh đang nằm ở tâm màn hình
-    if (zoom >= 3.2 && geoData) {
-      const centerSvgX = (500 - pan.x) / zoom;
-      const centerSvgY = (500 - pan.y) / zoom;
-      let closestProvCode: string | null = null;
-      let minDist = Infinity;
-
-      for (const f of geoData.features) {
-        const rawCoords: any = f.geometry.coordinates;
-        let lon = 105;
-        let lat = 16;
-        if (Array.isArray(rawCoords) && rawCoords.length > 0) {
-          const ring = Array.isArray(rawCoords[0]) ? rawCoords[0] : [];
-          const pt = Array.isArray(ring[0]) ? ring[0] : ring;
-          if (typeof pt[0] === "number" && typeof pt[1] === "number") {
-            lon = pt[0];
-            lat = pt[1];
-          }
-        }
-        const [px, py] = project(lon, lat);
-        const dist = (px - centerSvgX) ** 2 + (py - centerSvgY) ** 2;
-        if (dist < minDist) {
-          minDist = dist;
-          closestProvCode = f.properties.provinceCode;
-        }
-      }
-
-      if (closestProvCode) {
-        return wardsData.features.filter(
-          (w) => w.properties.provinceCode === closestProvCode
+      candidates = wardsData.features.filter((w) => {
+        const [lon, lat] = w.geometry.coordinates;
+        const [wx, wy] = project(lon, lat);
+        return (
+          wx >= viewLeft - 30 &&
+          wx <= viewRight + 30 &&
+          wy >= viewTop - 30 &&
+          wy <= viewBottom + 30
         );
+      });
+    }
+
+    // Spatial collision avoidance: Giữ khoảng cách tối thiểu giữa 2 nhãn trên màn hình (~24-28px)
+    const result: WardFeature[] = [];
+    const minDistancePx = selectedProvince ? 22 : 28;
+    for (const w of candidates) {
+      const [lon, lat] = w.geometry.coordinates;
+      const [wx, wy] = project(lon, lat);
+      const isTooClose = result.some((placed) => {
+        const [pLon, pLat] = placed.geometry.coordinates;
+        const [px, py] = project(pLon, pLat);
+        const screenDist = Math.hypot((wx - px) * zoom, (wy - py) * zoom);
+        return screenDist < minDistancePx;
+      });
+      if (!isTooClose) {
+        result.push(w);
       }
     }
 
-    return [];
-  }, [wardsData, isWardsVisible, selectedProvince, zoom, pan, geoData, project]);
+    return result;
+  }, [wardsData, isWardsVisible, selectedProvince, zoom, pan, project, svgWidth, svgHeight]);
 
   // Pan event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -679,45 +726,92 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
             (EAST VIETNAM SEA)
           </text>
 
-          {/* Các Đô thị & Địa danh trọng điểm (Hà Nội, Huế, Đà Nẵng, Pleiku, TP.HCM, Cần Thơ...) */}
-          <g className="pointer-events-none select-none font-sans">
-            {KEY_LANDMARKS.map((lm) => {
-              const [lx, ly] = project(lm.lon, lm.lat);
+          {/* Layer Tên 34 Tỉnh thành Việt Nam (Chuẩn GIS gis.vn - Toàn vẹn 34 tỉnh, sắc nét, chống chồng chéo) */}
+          <g className="province-labels-layer pointer-events-none select-none font-sans">
+            {PROVINCE_LABEL_CENTROIDS.map((p) => {
+              const [px, py] = project(p.lon, p.lat);
+              const isSelected = selectedProvince?.properties.provinceCode === p.code;
+              const isHovered = hoveredProvince?.properties.provinceCode === p.code;
+
               return (
-                <g key={lm.name} transform={`translate(${lx}, ${ly})`}>
-                  {lm.isCapital ? (
+                <g
+                  key={p.code}
+                  transform={`translate(${px}, ${py})`}
+                  className="transition-all duration-150"
+                >
+                  {p.isCapital ? (
                     <>
-                      <circle cx="0" cy="0" r="4.5" fill="#dc2626" stroke="#ffffff" strokeWidth="1.5" />
-                      <circle cx="0" cy="0" r="8" fill="#dc2626" opacity="0.25" className="animate-ping" />
+                      <circle cx="0" cy="0" r={4 / zoom} fill="#dc2626" stroke="#ffffff" strokeWidth={1.5 / zoom} />
+                      <circle cx="0" cy="0" r={8 / zoom} fill="#dc2626" opacity="0.25" className="animate-ping" />
                       <text
-                        x="-10"
-                        y="1"
+                        x={-8 / zoom}
+                        y={3.5 / zoom}
                         textAnchor="end"
-                        fill="#0f172a"
-                        fontSize="11"
-                        fontWeight="bold"
-                        filter="url(#card-shadow)"
+                        fill={isSelected ? "#ca8a04" : "#0f172a"}
+                        fontSize={`${Math.max(12 / zoom, 5.5)}px`}
+                        fontWeight="800"
+                        stroke="#ffffff"
+                        strokeWidth={`${Math.max(3.2 / zoom, 1)}px`}
+                        strokeLinejoin="round"
+                        paintOrder="stroke fill"
                       >
-                        ★ {lm.name}
+                        ★ {p.name}
                       </text>
                     </>
                   ) : (
-                    <>
-                      <circle cx="0" cy="0" r="2.8" fill="#0f766e" stroke="#ffffff" strokeWidth="1" />
-                      <text
-                        x="6"
-                        y="3.5"
-                        fill="#334155"
-                        fontSize="9.5"
-                        fontWeight="600"
-                      >
-                        {lm.name}
-                      </text>
-                    </>
+                    <text
+                      x="0"
+                      y={3.5 / zoom}
+                      textAnchor="middle"
+                      fill={isSelected ? "#ca8a04" : isHovered ? "#0f766e" : "#0f172a"}
+                      fontSize={`${Math.max((isSelected ? 13 : 11) / zoom, isSelected ? 6.5 : 5.5)}px`}
+                      fontWeight={isSelected ? "900" : "700"}
+                      stroke={isSelected ? "#0f172a" : "#ffffff"}
+                      strokeWidth={`${Math.max((isSelected ? 3.5 : 2.8) / zoom, 0.9)}px`}
+                      strokeLinejoin="round"
+                      paintOrder="stroke fill"
+                      letterSpacing="0.2px"
+                    >
+                      {p.name}
+                    </text>
                   )}
                 </g>
               );
             })}
+
+            {/* Thêm nhãn địa danh hải đảo quan trọng Côn Đảo & Đ. Phú Quốc */}
+            <g transform={`translate(${project(106.61, 8.68)[0]}, ${project(106.61, 8.68)[1]})`}>
+              <circle cx="0" cy="0" r={2.5 / zoom} fill="#0f766e" stroke="#ffffff" strokeWidth={0.8 / zoom} />
+              <text
+                x={5 / zoom}
+                y={3 / zoom}
+                fill="#334155"
+                fontSize={`${Math.max(9 / zoom, 4.5)}px`}
+                fontWeight="600"
+                stroke="#ffffff"
+                strokeWidth={`${Math.max(2 / zoom, 0.6)}px`}
+                strokeLinejoin="round"
+                paintOrder="stroke fill"
+              >
+                Côn Đảo
+              </text>
+            </g>
+            <g transform={`translate(${project(103.96, 10.22)[0]}, ${project(103.96, 10.22)[1]})`}>
+              <circle cx="0" cy="0" r={2.5 / zoom} fill="#0f766e" stroke="#ffffff" strokeWidth={0.8 / zoom} />
+              <text
+                x={5 / zoom}
+                y={3 / zoom}
+                fill="#334155"
+                fontSize={`${Math.max(9 / zoom, 4.5)}px`}
+                fontWeight="600"
+                stroke="#ffffff"
+                strokeWidth={`${Math.max(2 / zoom, 0.6)}px`}
+                strokeLinejoin="round"
+                paintOrder="stroke fill"
+              >
+                Đ. Phú Quốc
+              </text>
+            </g>
           </g>
 
           {/* Thẻ định danh chủ quyền Quần đảo Hoàng Sa & Quần đảo Trường Sa (Chuẩn mockup ảnh) */}
@@ -838,23 +932,21 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                       />
                     )}
 
-                    {/* Điểm neo centroid tinh tế (chỉ hiện nhẹ khi rê chuột hoặc với xã hải đảo) */}
-                    {(isIsland || isHovered || isSelectedWard) && (
-                      <circle
-                        r={isHovered || isSelectedWard ? 2.5 / zoom : 2 / zoom}
-                        fill={isIsland ? "#0284c7" : isSelectedWard ? "#f59e0b" : "#475569"}
-                        stroke="#ffffff"
-                        strokeWidth={1 / zoom}
-                        className="transition-all duration-150"
-                      />
-                    )}
+                    {/* Điểm neo centroid tinh tế chuẩn GIS */}
+                    <circle
+                      r={isHovered || isSelectedWard ? 2.8 / zoom : isIsland ? 2.2 / zoom : 1.7 / zoom}
+                      fill={isIsland ? "#0284c7" : isSelectedWard ? "#f59e0b" : isHovered ? "#b45309" : "#334155"}
+                      stroke="#ffffff"
+                      strokeWidth={0.8 / zoom}
+                      className="transition-all duration-150"
+                    />
 
                     {/* Tên Phường/Xã dạng chữ GIS sắc nét gọn gàng (Chuẩn gis.vn: Bỏ tiền tố Xã/Phường, viền trắng mỏng, kích thước đồng nhất, không che khuất) */}
                     <text
                       textAnchor="middle"
-                      y={isIsland ? -4 / zoom : 3.5 / zoom}
+                      y={-3.5 / zoom}
                       fill={isHovered || isSelectedWard ? "#b45309" : "#0f172a"}
-                      fontSize={`${Math.max(11 / zoom, 2.8)}px`}
+                      fontSize={`${Math.max(10 / zoom, 2.8)}px`}
                       fontWeight="600"
                       fontFamily="system-ui, -apple-system, sans-serif"
                       stroke="#ffffff"
