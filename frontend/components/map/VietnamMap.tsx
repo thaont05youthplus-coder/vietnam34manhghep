@@ -1049,6 +1049,34 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     setPan({ x: newPanX, y: newPanY });
   }, [project, zoom, selectedCommuneDockPosition, svgWidth, svgHeight]);
 
+  // Tính toán toạ độ tooltip xã/phường có cơ chế đảo chiều thông minh (Flip Tooltip)
+  // Ngăn chặn triệt để tình trạng thẻ tràn mép phải màn hình làm biến mất số liệu Diện tích & Dân số
+  const updateCommuneTooltipPos = useCallback((clientX: number, clientY: number) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const tooltipWidth = 280;
+    const tooltipHeight = 180;
+    const relX = clientX - rect.left;
+    const relY = clientY - rect.top;
+
+    // Tự động đảo sang bên trái con trỏ nếu không đủ chỗ hiển thị ở bên phải
+    let x = relX + 15;
+    if (x + tooltipWidth > rect.width - 15) {
+      x = relX - tooltipWidth - 15;
+    }
+    x = Math.max(10, Math.min(x, rect.width - tooltipWidth - 10));
+
+    // Tự động đảo lên phía trên con trỏ nếu không đủ chỗ ở bên dưới
+    let y = relY + 15;
+    if (y + tooltipHeight > rect.height - 15) {
+      y = relY - tooltipHeight - 15;
+    }
+    y = Math.max(10, Math.min(y, rect.height - tooltipHeight - 10));
+
+    setCommuneTooltipPos({ x, y });
+  }, []);
+
   // =========================================================================
   // DI CHUYỂN BẢN ĐỒ ĐẾN GÓC ĐÔNG / TÂY / NAM / BẮC (ĐÚNG TÂM ĐỊA LÝ, LƯỚT MƯỢT MÀ)
   // =========================================================================
@@ -1448,29 +1476,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                   onMouseEnter={(e) => {
                     if (isDraggingRef.current) return;
                     setHoveredCommune(feature);
-                    const rect = containerRef.current?.getBoundingClientRect();
-                    if (rect) {
-                      const tooltipWidth = 280;
-                      const tooltipHeight = 180;
-                      const rawX = e.clientX - rect.left + 15;
-                      const rawY = e.clientY - rect.top + 15;
-                      const clampedX = Math.max(10, Math.min(rawX, rect.width - tooltipWidth - 15));
-                      const clampedY = Math.max(10, Math.min(rawY, rect.height - tooltipHeight - 15));
-                      setCommuneTooltipPos({ x: clampedX, y: clampedY });
-                    }
+                    updateCommuneTooltipPos(e.clientX, e.clientY);
                   }}
                   onMouseMove={(e) => {
                     if (isDraggingRef.current) return;
-                    const rect = containerRef.current?.getBoundingClientRect();
-                    if (rect) {
-                      const tooltipWidth = 280;
-                      const tooltipHeight = 180;
-                      const rawX = e.clientX - rect.left + 15;
-                      const rawY = e.clientY - rect.top + 15;
-                      const clampedX = Math.max(10, Math.min(rawX, rect.width - tooltipWidth - 15));
-                      const clampedY = Math.max(10, Math.min(rawY, rect.height - tooltipHeight - 15));
-                      setCommuneTooltipPos({ x: clampedX, y: clampedY });
-                    }
+                    updateCommuneTooltipPos(e.clientX, e.clientY);
                   }}
                   onMouseLeave={() => setHoveredCommune(null)}
                   onClick={(e) => {
@@ -1889,48 +1899,48 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       {/* Commune Polygon Hover Tooltip (Chuẩn gis.vn: Tách từng mảng, hiển thị diện tích, dân số, sáp nhập) */}
       {hoveredCommune && !hoveredWard && !selectedCommune && (
         <div
-          className="absolute z-40 pointer-events-none bg-white/95 border border-sky-300 text-slate-800 rounded-xl p-3 shadow-2xl backdrop-blur max-w-sm text-xs animate-in fade-in duration-150"
+          className="absolute z-40 pointer-events-none bg-white/95 border border-sky-300 text-slate-800 rounded-xl p-3 shadow-2xl backdrop-blur w-72 max-w-[280px] text-xs animate-in fade-in duration-150"
           style={{ left: `${communeTooltipPos.x}px`, top: `${communeTooltipPos.y}px` }}
         >
           <div className="flex items-center justify-between gap-2 border-b border-sky-100 pb-2 mb-2">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
-              <h5 className="font-bold text-slate-900 text-sm">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
+              <h5 className="font-bold text-slate-900 text-sm truncate">
                 {hoveredCommune.properties.type} {hoveredCommune.properties.name}
               </h5>
             </div>
-            <span className="px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-[10px] text-sky-700 font-bold">
+            <span className="px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-[10px] text-sky-700 font-bold shrink-0">
               {hoveredCommune.properties.provinceName}
             </span>
           </div>
 
           <div className="text-xs text-slate-600 flex flex-col gap-1.5">
-            {hoveredCommune.properties.areaKm2 > 0 && (
-              <div className="flex items-center justify-between text-slate-700">
-                <span className="text-slate-500">Diện tích:</span>
-                <span className="font-semibold text-slate-900">
-                  {hoveredCommune.properties.areaKm2.toLocaleString("vi-VN")} km²
-                </span>
-              </div>
-            )}
-            {hoveredCommune.properties.population > 0 && (
-              <div className="flex items-center justify-between text-slate-700">
-                <span className="text-slate-500">Dân số:</span>
-                <span className="font-semibold text-slate-900">
-                  {hoveredCommune.properties.population.toLocaleString("vi-VN")} người
-                </span>
-              </div>
-            )}
+            <div className="flex items-baseline gap-2 text-slate-700">
+              <span className="text-slate-500 text-[11px] shrink-0">Diện tích:</span>
+              <span className="font-bold text-slate-900 text-xs">
+                {hoveredCommune.properties.areaKm2 > 0
+                  ? `${hoveredCommune.properties.areaKm2.toLocaleString("vi-VN")} km²`
+                  : "Đang cập nhật"}
+              </span>
+            </div>
+            <div className="flex items-baseline gap-2 text-slate-700">
+              <span className="text-slate-500 text-[11px] shrink-0">Dân số:</span>
+              <span className="font-bold text-slate-900 text-xs">
+                {hoveredCommune.properties.population > 0
+                  ? `${hoveredCommune.properties.population.toLocaleString("vi-VN")} người`
+                  : "Đang cập nhật"}
+              </span>
+            </div>
             {hoveredCommune.properties.density > 0 && (
-              <div className="flex items-center justify-between text-slate-700">
-                <span className="text-slate-500">Mật độ:</span>
-                <span className="font-semibold text-slate-900">
+              <div className="flex items-baseline gap-2 text-slate-700">
+                <span className="text-slate-500 text-[11px] shrink-0">Mật độ:</span>
+                <span className="font-bold text-slate-900 text-xs">
                   {Math.round(hoveredCommune.properties.density).toLocaleString("vi-VN")} người/km²
                 </span>
               </div>
             )}
             {hoveredCommune.properties.mergedFrom && (
-              <div className="text-[11px] text-slate-600 pt-1 border-t border-slate-100">
+              <div className="text-[11px] text-slate-600 pt-1 border-t border-slate-100 leading-snug">
                 <span className="font-semibold text-sky-800">Sáp nhập: </span>
                 <span>{hoveredCommune.properties.mergedFrom}</span>
               </div>
