@@ -173,6 +173,51 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [communeTooltipPos, setCommuneTooltipPos] = useState({ x: 0, y: 0 });
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  // Vietnam Geographic bounding box including Hoang Sa & Truong Sa
+  const minLon = 101.8;
+  const maxLon = 118.2;
+  const minLat = 6.8;
+  const maxLat = 23.8;
+
+  const svgWidth = 960;
+  const svgHeight = 1050;
+
+  // Chuyển đổi chính xác 100% tọa độ con trỏ chuột sang tọa độ SVG viewBox
+  // (Khắc phục triệt để lỗi lệch tiêu điểm trên màn hình rộng/laptop khiến bản đồ bị tràn/chạy lệch sang tỉnh khác)
+  const getSvgCoordinates = useCallback((clientX: number, clientY: number): [number, number] => {
+    const svgEl = svgRef.current;
+    if (svgEl && svgEl.getScreenCTM) {
+      const ctm = svgEl.getScreenCTM();
+      if (ctm) {
+        const pt = svgEl.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        const p = pt.matrixTransform(ctm.inverse());
+        if (Number.isFinite(p.x) && Number.isFinite(p.y)) {
+          return [p.x, p.y];
+        }
+      }
+    }
+
+    const container = containerRef.current;
+    if (container) {
+      const rect = container.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        const scale = Math.min(rect.width / svgWidth, rect.height / svgHeight);
+        const renderedW = svgWidth * scale;
+        const renderedH = svgHeight * scale;
+        const offsetX = (rect.width - renderedW) / 2;
+        const offsetY = (rect.height - renderedH) / 2;
+        const x = (clientX - rect.left - offsetX) / scale;
+        const y = (clientY - rect.top - offsetY) / scale;
+        return [x, y];
+      }
+    }
+
+    return [svgWidth / 2, svgHeight / 2];
+  }, [svgWidth, svgHeight]);
 
   // Sync external selectedWardId
   useEffect(() => {
@@ -213,15 +258,6 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       isMounted = false;
     };
   }, []);
-
-  // Vietnam Geographic bounding box including Hoang Sa & Truong Sa
-  const minLon = 101.8;
-  const maxLon = 118.2;
-  const minLat = 6.8;
-  const maxLat = 23.8;
-
-  const svgWidth = 960;
-  const svgHeight = 1050;
 
   // WGS-84 Geographic projection to SVG coordinate system
   const project = useMemo(() => {
@@ -309,20 +345,21 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       const width = maxX - minX;
       const height = maxY - minY;
 
-      // Trừ diện tích bảng thông tin ProvinceDetailPanel bên phải (khoảng 28% chiều ngang)
-      const availWidth = svgWidth * 0.70;
-      const targetCenterX = availWidth * 0.50; // Tâm vùng trống bên trái
-      const availHeight = svgHeight - 120;
-      const targetCenterY = 60 + availHeight * 0.50;
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
 
-      // Chừa khoảng đệm 22% để ranh giới không bao giờ bị cắt
+      // Phóng vừa địa phương với khoảng đệm an toàn rộng để ranh giới không bao giờ bị cắt/tràn
       const targetZoom = Math.min(
-        Math.max(Math.min((availWidth * 0.78) / width, (availHeight * 0.78) / height), 1.5),
-        4.0
+        Math.max(Math.min((svgWidth * 0.58) / width, (svgHeight * 0.58) / height), 1.2),
+        2.8
       );
 
-      const targetPanX = targetCenterX - ((minX + maxX) / 2) * targetZoom;
-      const targetPanY = targetCenterY - ((minY + maxY) / 2) * targetZoom;
+      // Tâm căn giữa nhẹ sang trái (46%) để chừa khoảng nhìn thoáng cho panel thông tin bên phải
+      const targetCenterX = svgWidth * 0.46;
+      const targetCenterY = svgHeight * 0.50;
+
+      const targetPanX = targetCenterX - centerX * targetZoom;
+      const targetPanY = targetCenterY - centerY * targetZoom;
 
       setIsAnimating(true);
       setZoom(targetZoom);
@@ -361,21 +398,22 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       const width = maxX - minX;
       const height = maxY - minY;
 
-      const availWidth = svgWidth * 0.74;
-      const targetCenterX = availWidth * 0.50;
-      const availHeight = svgHeight - 110;
-      const targetCenterY = 55 + availHeight * 0.50;
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
 
       const targetZoom = Math.min(
-        Math.max(Math.min((availWidth * 0.82) / width, (availHeight * 0.82) / height), 1.15),
-        2.8
+        Math.max(Math.min((svgWidth * 0.62) / width, (svgHeight * 0.62) / height), 1.1),
+        2.4
       );
+
+      const targetCenterX = svgWidth * 0.46;
+      const targetCenterY = svgHeight * 0.50;
 
       setIsAnimating(true);
       setZoom(targetZoom);
       setPan({
-        x: targetCenterX - ((minX + maxX) / 2) * targetZoom,
-        y: targetCenterY - ((minY + maxY) / 2) * targetZoom,
+        x: targetCenterX - centerX * targetZoom,
+        y: targetCenterY - centerY * targetZoom,
       });
     }
   }, [selectedRegionId, selectedProvince, geoData, mode, project, svgWidth, svgHeight]);
@@ -690,10 +728,15 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     setIsAnimating(false);
     isDraggingRef.current = true;
     setIsDragging(true);
+    const svgEl = svgRef.current;
+    const scale = svgEl?.getScreenCTM()?.a || 1;
     dragStartRef.current = {
-      x: e.clientX - panRef.current.x,
-      y: e.clientY - panRef.current.y,
-    };
+      x: e.clientX,
+      y: e.clientY,
+      panX: panRef.current.x,
+      panY: panRef.current.y,
+      scale,
+    } as any;
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     } catch {}
@@ -701,8 +744,10 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDraggingRef.current) return;
-    const nextX = e.clientX - dragStartRef.current.x;
-    const nextY = e.clientY - dragStartRef.current.y;
+    const ds = dragStartRef.current as any;
+    const scale = ds.scale || 1;
+    const nextX = ds.panX + (e.clientX - ds.x) / scale;
+    const nextY = ds.panY + (e.clientY - ds.y) / scale;
 
     if (!rafIdRef.current) {
       rafIdRef.current = requestAnimationFrame(() => {
@@ -731,14 +776,23 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     setIsAnimating(false);
     isDraggingRef.current = true;
     setIsDragging(true);
-    dragStartRef.current = { x: e.clientX - panRef.current.x, y: e.clientY - panRef.current.y };
-    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    const svgEl = svgRef.current;
+    const scale = svgEl?.getScreenCTM()?.a || 1;
+    dragStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      panX: panRef.current.x,
+      panY: panRef.current.y,
+      scale,
+    } as any;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isDraggingRef.current || isDragging) {
-      const nextX = e.clientX - dragStartRef.current.x;
-      const nextY = e.clientY - dragStartRef.current.y;
+      const ds = dragStartRef.current as any;
+      const scale = ds.scale || 1;
+      const nextX = ds.panX + (e.clientX - ds.x) / scale;
+      const nextY = ds.panY + (e.clientY - ds.y) / scale;
       if (!rafIdRef.current) {
         rafIdRef.current = requestAnimationFrame(() => {
           setPan({ x: nextX, y: nextY });
@@ -769,20 +823,15 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 8);
     if (newZoom === currentZ) return;
 
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (rect && rect.width > 0 && rect.height > 0) {
-      const mouseX = (e.clientX - rect.left) * (svgWidth / rect.width);
-      const mouseY = (e.clientY - rect.top) * (svgHeight / rect.height);
-      const ratio = newZoom / currentZ;
-      const currentP = panRef.current;
-      const newPanX = mouseX - (mouseX - currentP.x) * ratio;
-      const newPanY = mouseY - (mouseY - currentP.y) * ratio;
+    // Tiêu điểm zoom hướng tâm chuẩn xác 100% theo con trỏ chuột (Khắc phục lỗi chạy lệch bản đồ)
+    const [svgMouseX, svgMouseY] = getSvgCoordinates(e.clientX, e.clientY);
+    const ratio = newZoom / currentZ;
+    const currentP = panRef.current;
+    const newPanX = svgMouseX - (svgMouseX - currentP.x) * ratio;
+    const newPanY = svgMouseY - (svgMouseY - currentP.y) * ratio;
 
-      setZoom(newZoom);
-      setPan({ x: newPanX, y: newPanY });
-    } else {
-      setZoom(newZoom);
-    }
+    setZoom(newZoom);
+    setPan({ x: newPanX, y: newPanY });
   };
 
   // Active wheel listener with passive: false to eliminate browser wheel hitching
@@ -802,27 +851,21 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 8);
       if (newZoom === currentZ) return;
 
-      const rect = el.getBoundingClientRect();
-      if (rect && rect.width > 0 && rect.height > 0) {
-        const mouseX = (e.clientX - rect.left) * (svgWidth / rect.width);
-        const mouseY = (e.clientY - rect.top) * (svgHeight / rect.height);
-        const ratio = newZoom / currentZ;
-        const currentP = panRef.current;
-        const newPanX = mouseX - (mouseX - currentP.x) * ratio;
-        const newPanY = mouseY - (mouseY - currentP.y) * ratio;
+      const [svgMouseX, svgMouseY] = getSvgCoordinates(e.clientX, e.clientY);
+      const ratio = newZoom / currentZ;
+      const currentP = panRef.current;
+      const newPanX = svgMouseX - (svgMouseX - currentP.x) * ratio;
+      const newPanY = svgMouseY - (svgMouseY - currentP.y) * ratio;
 
-        setZoom(newZoom);
-        setPan({ x: newPanX, y: newPanY });
-      } else {
-        setZoom(newZoom);
-      }
+      setZoom(newZoom);
+      setPan({ x: newPanX, y: newPanY });
     };
 
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       el.removeEventListener("wheel", onWheel);
     };
-  }, [svgWidth, svgHeight]);
+  }, [getSvgCoordinates]);
 
   // Zoom in/out giữ nguyên tâm giữa màn hình (Center Focal Zoom)
   const handleZoomIn = () => {
@@ -1166,6 +1209,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
       {/* Main Vector SVG Map (Lướt mượt mà không xoay, không giật lag) */}
       <svg
+        ref={svgRef}
         className={`w-full h-full ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
       >
