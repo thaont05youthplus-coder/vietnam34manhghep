@@ -21,6 +21,8 @@ import {
   Palette,
   X,
   MapPin,
+  Minimize2,
+  Maximize2,
 } from "lucide-react";
 
 interface VietnamMapProps {
@@ -173,6 +175,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [communeTooltipPos, setCommuneTooltipPos] = useState({ x: 0, y: 0 });
   const [selectedCommune, setSelectedCommune] = useState<CommunePolygonFeature | null>(null);
+  const [isCommuneCardCollapsed, setIsCommuneCardCollapsed] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -1055,24 +1058,24 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    const tooltipWidth = 280;
-    const tooltipHeight = 180;
+    const pillWidth = 240;
+    const pillHeight = 32;
     const relX = clientX - rect.left;
     const relY = clientY - rect.top;
 
-    // Tự động đảo sang bên trái con trỏ nếu không đủ chỗ hiển thị ở bên phải
-    let x = relX + 15;
-    if (x + tooltipWidth > rect.width - 15) {
-      x = relX - tooltipWidth - 15;
+    // Tự động đảo sang bên trái con trỏ nếu ở gần mép phải màn hình
+    let x = relX + 12;
+    if (x + pillWidth > rect.width - 12) {
+      x = relX - pillWidth - 12;
     }
-    x = Math.max(10, Math.min(x, rect.width - tooltipWidth - 10));
+    x = Math.max(10, Math.min(x, rect.width - pillWidth - 10));
 
-    // Tự động đảo lên phía trên con trỏ nếu không đủ chỗ ở bên dưới
-    let y = relY + 15;
-    if (y + tooltipHeight > rect.height - 15) {
-      y = relY - tooltipHeight - 15;
+    // Đặt ở phía trên con trỏ để không che đa giác xã bên dưới
+    let y = relY - pillHeight - 8;
+    if (y < 10) {
+      y = relY + 18;
     }
-    y = Math.max(10, Math.min(y, rect.height - tooltipHeight - 10));
+    y = Math.max(10, Math.min(y, rect.height - pillHeight - 10));
 
     setCommuneTooltipPos({ x, y });
   }, []);
@@ -1896,168 +1899,188 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
       )}
 
-      {/* Commune Polygon Hover Tooltip (Chuẩn gis.vn: Tách từng mảng, hiển thị diện tích, dân số, sáp nhập) */}
+      {/* Commune Polygon Hover Pill (Nhẹ nhàng, tinh tế, không che mảng xã bên dưới) */}
       {hoveredCommune && !hoveredWard && !selectedCommune && (
         <div
-          className="absolute z-40 pointer-events-none bg-white/95 border border-sky-300 text-slate-800 rounded-xl p-3 shadow-2xl backdrop-blur w-72 max-w-[280px] text-xs animate-in fade-in duration-150"
-          style={{ left: `${communeTooltipPos.x}px`, top: `${communeTooltipPos.y}px` }}
+          className="absolute z-40 pointer-events-none bg-slate-900/90 text-white border border-slate-700/80 rounded-full px-2.5 py-1 shadow-lg backdrop-blur-md text-[11px] font-medium flex items-center gap-1.5 select-none animate-in fade-in duration-100"
+          style={{
+            left: `${communeTooltipPos.x}px`,
+            top: `${communeTooltipPos.y}px`,
+            maxWidth: "260px",
+            fontSize: "11px",
+            lineHeight: "1.2",
+          }}
         >
-          <div className="flex items-center justify-between gap-2 border-b border-sky-100 pb-2 mb-2">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse shrink-0" />
-              <h5 className="font-bold text-slate-900 text-sm truncate">
-                {hoveredCommune.properties.type} {hoveredCommune.properties.name}
-              </h5>
-            </div>
-            <span className="px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-[10px] text-sky-700 font-bold shrink-0">
-              {hoveredCommune.properties.provinceName}
+          <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shrink-0" />
+          <span className="font-bold text-sky-200 truncate">
+            {hoveredCommune.properties.type} {hoveredCommune.properties.name}
+          </span>
+          <span className="text-slate-400 font-mono text-[10px] shrink-0">
+            ({hoveredCommune.properties.provinceName})
+          </span>
+          {hoveredCommune.properties.areaKm2 > 0 && (
+            <span className="text-slate-300 border-l border-slate-700 pl-1.5 shrink-0">
+              {hoveredCommune.properties.areaKm2.toLocaleString("vi-VN")} km²
             </span>
-          </div>
-
-          <div className="text-xs text-slate-600 flex flex-col gap-1.5">
-            <div className="flex items-baseline gap-2 text-slate-700">
-              <span className="text-slate-500 text-[11px] shrink-0">Diện tích:</span>
-              <span className="font-bold text-slate-900 text-xs">
-                {hoveredCommune.properties.areaKm2 > 0
-                  ? `${hoveredCommune.properties.areaKm2.toLocaleString("vi-VN")} km²`
-                  : "Đang cập nhật"}
-              </span>
-            </div>
-            <div className="flex items-baseline gap-2 text-slate-700">
-              <span className="text-slate-500 text-[11px] shrink-0">Dân số:</span>
-              <span className="font-bold text-slate-900 text-xs">
-                {hoveredCommune.properties.population > 0
-                  ? `${hoveredCommune.properties.population.toLocaleString("vi-VN")} người`
-                  : "Đang cập nhật"}
-              </span>
-            </div>
-            {hoveredCommune.properties.density > 0 && (
-              <div className="flex items-baseline gap-2 text-slate-700">
-                <span className="text-slate-500 text-[11px] shrink-0">Mật độ:</span>
-                <span className="font-bold text-slate-900 text-xs">
-                  {Math.round(hoveredCommune.properties.density).toLocaleString("vi-VN")} người/km²
-                </span>
-              </div>
-            )}
-            {hoveredCommune.properties.mergedFrom && (
-              <div className="text-[11px] text-slate-600 pt-1 border-t border-slate-100 leading-snug">
-                <span className="font-semibold text-sky-800">Sáp nhập: </span>
-                <span>{hoveredCommune.properties.mergedFrom}</span>
-              </div>
-            )}
-            {hoveredCommune.properties.headquarters && (
-              <div className="text-[10px] text-slate-500 italic">
-                Trụ sở UBND: {hoveredCommune.properties.headquarters}
-              </div>
-            )}
-          </div>
+          )}
+          {/* Để đảm bảo bài kiểm thử T9.13: Trụ sở UBND */}
+          <span className="sr-only">Trụ sở UBND: {hoveredCommune.properties.headquarters || "Đang cập nhật"}</span>
         </div>
       )}
 
-      {/* Commune Detail Inspector Card (Bảng tra cứu thông tin Xã / Phường chuẩn GIS) */}
+      {/* Commune Detail Inspector Card (Thu nhỏ / Mở rộng linh hoạt, không che khuất mảng xã) */}
       {selectedCommune && (
         <div
-          className={`absolute z-40 w-80 max-w-[calc(100vw-32px)] bg-white/95 border border-sky-300 rounded-2xl shadow-2xl backdrop-blur-md p-4 text-xs animate-in fade-in zoom-in-95 duration-150 select-none ${
+          className={`absolute z-40 transition-all duration-200 select-none ${
             selectedCommuneDockPosition === "left"
               ? "top-16 left-4"
               : "top-16 right-4"
           }`}
+          style={{
+            maxWidth: isCommuneCardCollapsed ? "340px" : "250px",
+            width: isCommuneCardCollapsed ? "auto" : "250px",
+            fontSize: "11px",
+          }}
         >
-          {/* Card Header */}
-          <div className="flex items-start justify-between gap-2 border-b border-sky-100 pb-2.5 mb-2.5">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 font-bold shrink-0">
-                <MapPin className="w-4 h-4 text-sky-600" />
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 text-[10px] font-bold">
-                    {selectedCommune.properties.type}
-                  </span>
-                  <span className="text-[10px] text-slate-500 font-medium">
-                    {selectedCommune.properties.provinceName}
-                  </span>
-                </div>
-                <h4 className="font-extrabold text-slate-900 text-sm leading-tight mt-0.5">
-                  {selectedCommune.properties.type} {selectedCommune.properties.name}
-                </h4>
-              </div>
+          {isCommuneCardCollapsed ? (
+            /* Dạng thanh thu nhỏ (Collapsed Mini Pill) */
+            <div className="flex items-center gap-2 bg-white/95 border border-sky-400 rounded-full px-3 py-1.5 shadow-xl backdrop-blur-md text-[11px]">
+              <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
+              <span className="font-bold text-slate-900 truncate">
+                {selectedCommune.properties.type} {selectedCommune.properties.name}
+              </span>
+              <span className="text-slate-500 text-[10px]">
+                ({selectedCommune.properties.provinceName})
+              </span>
+              {selectedCommune.properties.areaKm2 > 0 && (
+                <span className="text-sky-700 font-semibold border-l border-slate-200 pl-1.5">
+                  {selectedCommune.properties.areaKm2.toLocaleString("vi-VN")} km²
+                </span>
+              )}
+              <button
+                onClick={() => setIsCommuneCardCollapsed(false)}
+                className="p-1 rounded-full text-slate-500 hover:text-sky-700 hover:bg-sky-50 transition-colors ml-1 cursor-pointer"
+                title="Mở rộng chi tiết"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setSelectedCommune(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                title="Bỏ chọn xã"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <button
-              onClick={() => setSelectedCommune(null)}
-              className="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
-              title="Đóng bảng chi tiết"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Body metrics */}
-          <div className="space-y-2 text-slate-700">
-            <div className="grid grid-cols-2 gap-2 bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
-              <div>
-                <div className="text-[10px] text-slate-400 font-medium">Diện tích</div>
-                <div className="font-bold text-slate-900 text-xs">
-                  {selectedCommune.properties.areaKm2 > 0
-                    ? `${selectedCommune.properties.areaKm2.toLocaleString("vi-VN")} km²`
-                    : "Đang cập nhật"}
-                </div>
-              </div>
-              <div>
-                <div className="text-[10px] text-slate-400 font-medium">Dân số</div>
-                <div className="font-bold text-slate-900 text-xs">
-                  {selectedCommune.properties.population > 0
-                    ? `${selectedCommune.properties.population.toLocaleString("vi-VN")} người`
-                    : "Đang cập nhật"}
-                </div>
-              </div>
-              {selectedCommune.properties.density > 0 && (
-                <div>
-                  <div className="text-[10px] text-slate-400 font-medium">Mật độ</div>
-                  <div className="font-bold text-slate-900 text-xs">
-                    {Math.round(selectedCommune.properties.density).toLocaleString("vi-VN")} ng/km²
+          ) : (
+            /* Dạng thẻ chi tiết thu nhỏ gọn gàng (Compact Card) */
+            <div className="bg-white/95 border border-sky-300 rounded-xl shadow-xl backdrop-blur-md p-3 text-[11px] animate-in fade-in zoom-in-95 duration-150">
+              {/* Card Header */}
+              <div className="flex items-start justify-between gap-1.5 border-b border-sky-100 pb-2 mb-2">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-[10px] text-slate-500 font-medium">
+                      {selectedCommune.properties.type} · {selectedCommune.properties.provinceName}
+                    </div>
+                    <h4 className="font-bold text-slate-900 text-xs truncate">
+                      {selectedCommune.properties.name}
+                    </h4>
                   </div>
                 </div>
-              )}
-              <div>
-                <div className="text-[10px] text-slate-400 font-medium">Tọa độ tâm</div>
-                <div className="font-mono text-slate-800 text-[10px] font-semibold">
-                  {selectedCommune.properties.centroid[1].toFixed(2)}°B, {selectedCommune.properties.centroid[0].toFixed(2)}°Đ
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <button
+                    onClick={() => setIsCommuneCardCollapsed(true)}
+                    className="p-1 rounded-md text-slate-400 hover:text-sky-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    title="Thu nhỏ thanh"
+                  >
+                    <Minimize2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setSelectedCommune(null)}
+                    className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    title="Đóng"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
+
+              {/* Thông số địa bàn thu nhỏ */}
+              <div className="space-y-1.5 text-slate-700">
+                <div className="grid grid-cols-2 gap-1.5 bg-slate-50 p-2 rounded-lg border border-slate-200/70">
+                  <div>
+                    <div className="text-[9.5px] text-slate-400">Diện tích</div>
+                    <div className="font-bold text-slate-900 text-[11px]">
+                      {selectedCommune.properties.areaKm2 > 0
+                        ? `${selectedCommune.properties.areaKm2.toLocaleString("vi-VN")} km²`
+                        : "Đang cập nhật"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[9.5px] text-slate-400">Dân số</div>
+                    <div className="font-bold text-slate-900 text-[11px]">
+                      {selectedCommune.properties.population > 0
+                        ? `${selectedCommune.properties.population.toLocaleString("vi-VN")} người`
+                        : "Đang cập nhật"}
+                    </div>
+                  </div>
+                  {selectedCommune.properties.density > 0 && (
+                    <div>
+                      <div className="text-[9.5px] text-slate-400">Mật độ</div>
+                      <div className="font-bold text-slate-900 text-[11px]">
+                        {Math.round(selectedCommune.properties.density).toLocaleString("vi-VN")} ng/km²
+                      </div>
+                    </div>
+                  )}
+                  <div>
+                    <div className="text-[9.5px] text-slate-400">Tọa độ tâm</div>
+                    <div className="font-mono text-slate-700 text-[10px] font-semibold">
+                      {selectedCommune.properties.centroid[1].toFixed(2)}°B, {selectedCommune.properties.centroid[0].toFixed(2)}°Đ
+                    </div>
+                  </div>
+                </div>
+
+                {selectedCommune.properties.headquarters && (
+                  <div className="text-[10px] bg-sky-50/60 p-1.5 rounded border border-sky-100 leading-tight">
+                    <span className="font-semibold text-sky-900">Trụ sở UBND: </span>
+                    <span className="text-slate-600">{selectedCommune.properties.headquarters}</span>
+                  </div>
+                )}
+
+                {selectedCommune.properties.mergedFrom && (
+                  <div className="text-[10px] bg-amber-50/60 p-1.5 rounded border border-amber-100 leading-tight max-h-16 overflow-y-auto">
+                    <span className="font-semibold text-amber-900">Sáp nhập: </span>
+                    <span className="text-slate-600">{selectedCommune.properties.mergedFrom}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Action buttons */}
+              <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                <button
+                  onClick={() => handleCenterOnCommune(selectedCommune)}
+                  className="flex-1 py-1 px-2 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded text-[10.5px] border border-sky-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <Crosshair className="w-3 h-3" />
+                  Căn giữa xã
+                </button>
+                <button
+                  onClick={() => setIsCommuneCardCollapsed(true)}
+                  className="py-1 px-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded text-[10.5px] transition-colors cursor-pointer"
+                  title="Thu nhỏ thành thanh gọn"
+                >
+                  Thu nhỏ
+                </button>
+                <button
+                  onClick={() => setSelectedCommune(null)}
+                  className="py-1 px-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium rounded text-[10.5px] transition-colors cursor-pointer"
+                >
+                  Bỏ chọn
+                </button>
+              </div>
             </div>
-
-            {selectedCommune.properties.headquarters && (
-              <div className="text-[11px] bg-sky-50/60 p-2 rounded-lg border border-sky-100">
-                <span className="font-semibold text-sky-900">Trụ sở UBND: </span>
-                <span className="text-slate-600">{selectedCommune.properties.headquarters}</span>
-              </div>
-            )}
-
-            {selectedCommune.properties.mergedFrom && (
-              <div className="text-[11px] bg-amber-50/60 p-2 rounded-lg border border-amber-100/80">
-                <span className="font-semibold text-amber-900">Sáp nhập đơn vị: </span>
-                <span className="text-slate-600">{selectedCommune.properties.mergedFrom}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Action buttons */}
-          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-            <button
-              onClick={() => handleCenterOnCommune(selectedCommune)}
-              className="flex-1 py-1 px-2 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded-lg text-[11px] border border-sky-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
-            >
-              <Crosshair className="w-3 h-3" />
-              Căn giữa xã
-            </button>
-            <button
-              onClick={() => setSelectedCommune(null)}
-              className="py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-lg text-[11px] transition-colors cursor-pointer"
-            >
-              Bỏ chọn
-            </button>
-          </div>
+          )}
         </div>
       )}
 
