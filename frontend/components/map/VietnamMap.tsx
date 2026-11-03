@@ -268,7 +268,83 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     };
   }, [minLon, maxLon, minLat, maxLat, svgWidth, svgHeight]);
 
-  // Tự động nạp vector ranh giới xã/phường (Commune Polygons) chuẩn gis.vn khi chọn tỉnh hoặc zoom sâu (được debounce nhẹ để không nghẽn luồng thao tác chuột)
+  // Bounding box của 34 tỉnh trong hệ tọa độ SVG để xác định chính xác 100% tỉnh nào đang hiển thị trên màn hình
+  const provinceBBoxes = useMemo(() => {
+    if (!geoData) return {};
+    const map: Record<string, { minX: number; minY: number; maxX: number; maxY: number }> = {};
+    for (const feat of geoData.features) {
+      const code = feat.properties.provinceCode;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      function walk(c: any) {
+        if (typeof c[0] === "number") {
+          if (code === "VN48" && c[0] > 109.2) return;
+          if (code === "VN56" && c[0] > 110.0) return;
+          const [x, y] = project(c[0], c[1]);
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        } else {
+          c.forEach(walk);
+        }
+      }
+      walk(feat.geometry.coordinates);
+      map[code] = { minX, minY, maxX, maxY };
+    }
+    return map;
+  }, [geoData, project]);
+
+  // Tự động tải trước dữ liệu xã/phường 34 tỉnh trong background lúc nhàn rỗi
+  // để khi người dùng zoom vào bất kỳ tỉnh nào (Thanh Hóa, Ninh Bình, Nghệ An, Hà Nội...)
+  // tất cả các xã/phường lập tức hiển thị đồng bộ, xóa bỏ hoàn toàn tình trạng "chỗ hiện chỗ không"
+  useEffect(() => {
+    if (!geoData) return;
+
+    let isCancelled = false;
+    const allCodes = geoData.features.map((f) => f.properties.provinceCode);
+
+    let index = 0;
+    const loadBatch = () => {
+      if (isCancelled || index >= allCodes.length) return;
+      const batch = allCodes.slice(index, index + 6);
+      index += 6;
+
+      Promise.all(
+        batch.map((code) => {
+          if (communePolygonsByProvince[code] || loadedProvinceCodesRef.current.has(code)) {
+            return Promise.resolve(null);
+          }
+          loadedProvinceCodesRef.current.add(code);
+          return fetch(`/data/wards/${code}.json`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data: CommunePolygonCollection | null) => ({ code, data }))
+            .catch(() => null);
+        })
+      ).then((results) => {
+        if (isCancelled) return;
+        const newEntries: Record<string, CommunePolygonCollection> = {};
+        for (const item of results) {
+          if (item && item.data && item.data.features) {
+            newEntries[item.code] = item.data;
+          }
+        }
+        if (Object.keys(newEntries).length > 0) {
+          setCommunePolygonsByProvince((prev) => ({ ...prev, ...newEntries }));
+        }
+
+        setTimeout(loadBatch, 80);
+      });
+    };
+
+    const timer = setTimeout(loadBatch, 60);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timer);
+    };
+  }, [geoData]);
+
+  // Nạp ưu tiên các tỉnh nằm trong khung nhìn viewport khi zoom hoặc chọn tỉnh
   useEffect(() => {
     const codesToLoad: string[] = [];
 
@@ -277,18 +353,27 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       if (!loadedProvinceCodesRef.current.has(code) && !communePolygonsByProvince[code]) {
         codesToLoad.push(code);
       }
-    } else if (zoom >= 1.5) {
-      // Tìm các tỉnh đang nằm trong khung nhìn viewport
+    }
+
+    if (zoom >= 1.5 && geoData) {
       const viewLeft = -pan.x / zoom;
       const viewRight = (svgWidth - pan.x) / zoom;
       const viewTop = -pan.y / zoom;
       const viewBottom = (svgHeight - pan.y) / zoom;
 
-      for (const p of PROVINCE_LABEL_CENTROIDS) {
-        if (loadedProvinceCodesRef.current.has(p.code) || communePolygonsByProvince[p.code]) continue;
-        const [px, py] = project(p.lon, p.lat);
-        if (px >= viewLeft - 80 && px <= viewRight + 80 && py >= viewTop - 80 && py <= viewBottom + 80) {
-          codesToLoad.push(p.code);
+      for (const feat of geoData.features) {
+        const code = feat.properties.provinceCode;
+        if (loadedProvinceCodesRef.current.has(code) || communePolygonsByProvince[code]) continue;
+        const box = provinceBBoxes[code];
+        if (!box) continue;
+
+        if (
+          box.maxX >= viewLeft - 60 &&
+          box.minX <= viewRight + 60 &&
+          box.maxY >= viewTop - 60 &&
+          box.minY <= viewBottom + 60
+        ) {
+          codesToLoad.push(code);
         }
       }
     }
@@ -313,10 +398,10 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           })
           .catch(() => {});
       });
-    }, 200);
+    }, 80);
 
     return () => clearTimeout(timer);
-  }, [selectedProvince?.properties.provinceCode, zoom >= 1.5, Math.round(pan.x / 50), Math.round(pan.y / 50), project, svgWidth, svgHeight]);
+  }, [selectedProvince?.properties.provinceCode, zoom >= 1.5, Math.round(pan.x / 40), Math.round(pan.y / 40), geoData, provinceBBoxes, svgWidth, svgHeight]);
 
   // Tự động căn giữa và phóng vừa địa phương vào phần màn hình còn trống (tính cả bảng thông tin bên phải 360px và chừa khoảng đệm)
   useEffect(() => {
@@ -533,14 +618,14 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   }, [geoData, project, getProvinceColor, selectedProvince, hoveredProvince, activeRegionCodes]);
 
   // Phân cấp chi tiết (LOD Esri / ArcGIS Pro):
-  // 1. Chỉ hiện ranh giới xã khi đã chọn một tỉnh cụ thể, hoặc khi người dùng zoom sâu (zoom >= 2.6). Ở mức toàn quốc / vùng: ẩn đường biên xã.
+  // 1. Chỉ hiện ranh giới xã khi đã chọn một tỉnh cụ thể, hoặc khi người dùng zoom sâu (zoom >= 1.5). Ở mức toàn quốc / vùng: ẩn đường biên xã.
   const isCommunePolygonsVisible = Boolean(
-    layers.wards && (selectedProvince !== null || zoom >= 2.6)
+    layers.wards && (selectedProvince !== null || zoom >= 1.5)
   );
 
-  // 2. Chỉ hiện tên xã khi zoom sâu và có đủ không gian (zoom >= 1.8 khi chọn tỉnh, zoom >= 3.2 khi toàn cảnh). Ở mức toàn quốc: ưu tiên tên tỉnh.
+  // 2. Chỉ hiện tên xã khi zoom sâu và có đủ không gian (zoom >= 1.8). Ở mức toàn quốc: ưu tiên tên tỉnh.
   const isCommuneLabelsVisible = Boolean(
-    layers.wards && ((selectedProvince !== null && zoom >= 1.8) || zoom >= 3.2)
+    layers.wards && ((selectedProvince !== null && zoom >= 1.8) || zoom >= 1.8)
   );
 
   // Giữ biến isWardsVisible tương thích kiểm thử
@@ -551,11 +636,25 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const projectedCommunes = useMemo(() => {
     if (!isWardsVisible) return [];
 
-    const targetProvinceCodes = selectedProvince
-      ? [selectedProvince.properties.provinceCode]
-      : zoom >= 1.5
-      ? Object.keys(communePolygonsByProvince)
-      : [];
+    const viewLeft = -pan.x / zoom;
+    const viewRight = (svgWidth - pan.x) / zoom;
+    const viewTop = -pan.y / zoom;
+    const viewBottom = (svgHeight - pan.y) / zoom;
+
+    // Xác định tất cả các tỉnh nằm trong khung nhìn viewport cần hiển thị xã/phường
+    // KHÔNG BAO GIỜ bị giới hạn bởi 1 tỉnh duy nhất khi phóng to, đảm bảo mọi tỉnh trong tầm nhìn đều có xã/phường đồng bộ
+    const targetProvinceCodes = Object.keys(communePolygonsByProvince).filter((code) => {
+      if (selectedProvince && selectedProvince.properties.provinceCode === code) return true;
+      if (zoom < 1.5) return false;
+      const box = provinceBBoxes[code];
+      if (!box) return true;
+      return (
+        box.maxX >= viewLeft - 50 &&
+        box.minX <= viewRight + 50 &&
+        box.maxY >= viewTop - 50 &&
+        box.minY <= viewBottom + 50
+      );
+    });
 
     if (targetProvinceCodes.length === 0) return [];
 
@@ -640,7 +739,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
 
     return items;
-  }, [isWardsVisible, selectedProvince?.properties.provinceCode, zoom, communePolygonsByProvince, hoveredCommune?.id, project]);
+  }, [isWardsVisible, selectedProvince?.properties.provinceCode, zoom, Math.round(pan.x / 40), Math.round(pan.y / 40), communePolygonsByProvince, provinceBBoxes, hoveredCommune?.id, project, svgWidth, svgHeight]);
 
   // Thuật toán lọc nhãn xã/phường: Phân bố thưa thoáng, tránh tuyệt đối đè lên tên tỉnh (như "Hà Tĩnh", "Nghệ An")
   const visibleCommuneLabels = useMemo(() => {
