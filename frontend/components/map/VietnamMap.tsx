@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   Palette,
   X,
+  MapPin,
 } from "lucide-react";
 
 interface VietnamMapProps {
@@ -171,6 +172,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [hoveredCommune, setHoveredCommune] = useState<CommunePolygonFeature | null>(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [communeTooltipPos, setCommuneTooltipPos] = useState({ x: 0, y: 0 });
+  const [selectedCommune, setSelectedCommune] = useState<CommunePolygonFeature | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -225,6 +227,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       setActiveWardId(selectedWardId);
     }
   }, [selectedWardId]);
+
+  // Reset xã/phường được chọn khi chuyển đổi chế độ hoặc thay đổi tỉnh
+  useEffect(() => {
+    setSelectedCommune(null);
+  }, [mode, selectedProvince?.properties.provinceCode]);
 
   // Fetch GeoJSON for 34 provinces & central wards
   useEffect(() => {
@@ -663,6 +670,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       pathString: string;
       center: [number, number];
       isHovered: boolean;
+      isSelected: boolean;
       baseFill: string;
       screenWidth: number;
     }> = [];
@@ -732,6 +740,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           pathString: item.pathString,
           center: item.center,
           isHovered: hoveredCommune?.id === item.feature.id,
+          isSelected: selectedCommune?.id === item.feature.id,
           baseFill: item.baseFill,
           screenWidth: item.baseWidth * zoom,
         });
@@ -739,7 +748,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
 
     return items;
-  }, [isWardsVisible, selectedProvince?.properties.provinceCode, zoom, Math.round(pan.x / 40), Math.round(pan.y / 40), communePolygonsByProvince, provinceBBoxes, hoveredCommune?.id, project, svgWidth, svgHeight]);
+  }, [isWardsVisible, selectedProvince?.properties.provinceCode, zoom, Math.round(pan.x / 40), Math.round(pan.y / 40), communePolygonsByProvince, provinceBBoxes, hoveredCommune?.id, selectedCommune?.id, project, svgWidth, svgHeight]);
 
   // Thuật toán lọc nhãn xã/phường: Phân bố thưa thoáng, tránh tuyệt đối đè lên tên tỉnh (như "Hà Tĩnh", "Nghệ An")
   const visibleCommuneLabels = useMemo(() => {
@@ -753,7 +762,18 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     const minDistancePx = 32; // Giữ khoảng cách tối thiểu 32px trên màn hình giữa 2 nhãn xã
 
     const results: typeof projectedCommunes = [];
+
+    // Ưu tiên luôn hiển thị nhãn xã/phường đang được chọn
+    if (selectedCommune) {
+      const selectedItem = projectedCommunes.find((i) => i.feature.id === selectedCommune.id);
+      if (selectedItem) {
+        placed.push({ cx: selectedItem.center[0], cy: selectedItem.center[1] });
+        results.push(selectedItem);
+      }
+    }
+
     for (const item of sorted) {
+      if (selectedCommune && item.feature.id === selectedCommune.id) continue;
       if (item.screenWidth < 20) continue;
 
       const [cx, cy] = item.center;
@@ -776,7 +796,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
 
     return results;
-  }, [isCommuneLabelsVisible, projectedCommunes, zoom, project]);
+  }, [isCommuneLabelsVisible, projectedCommunes, zoom, project, selectedCommune?.id]);
 
   // Filter wards to render: Lọc xã/phường theo tỉnh hoặc theo khung nhìn
   // Tối ưu loại bỏ phụ thuộc pan để việc kéo rê bản đồ đạt chuẩn 60fps mượt mà
@@ -1001,8 +1021,33 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     setZoom(1);
     setPan({ x: 0, y: 0 });
     setActiveWardId(null);
+    setSelectedCommune(null);
     setActiveDirection(null);
   };
+
+  // Xác định vị trí neo thông minh của bảng thông tin xã (tránh che khuất mảng xã đang xem)
+  const selectedCommuneDockPosition = useMemo(() => {
+    if (!selectedCommune) return "right";
+    const [lon, lat] = selectedCommune.properties.centroid;
+    const [cx] = project(lon, lat);
+    const screenX = cx * zoom + pan.x;
+    const containerWidth = containerRef.current?.clientWidth || svgWidth;
+    // Nếu xã ở nửa phải màn hình -> neo bảng bên trái; ngược lại neo bên phải
+    return screenX > containerWidth / 2 ? "left" : "right";
+  }, [selectedCommune, project, zoom, pan.x, svgWidth]);
+
+  // Căn giữa xã vào vùng nhìn thấy tự do
+  const handleCenterOnCommune = useCallback((commune: CommunePolygonFeature) => {
+    const [lon, lat] = commune.properties.centroid;
+    const [cx, cy] = project(lon, lat);
+    const containerWidth = containerRef.current?.clientWidth || svgWidth;
+    const containerHeight = containerRef.current?.clientHeight || svgHeight;
+    const offsetX = selectedCommuneDockPosition === "left" ? 130 : -130;
+    const newPanX = containerWidth / 2 - cx * zoom + offsetX;
+    const newPanY = containerHeight / 2 - cy * zoom;
+    setIsAnimating(true);
+    setPan({ x: newPanX, y: newPanY });
+  }, [project, zoom, selectedCommuneDockPosition, svgWidth, svgHeight]);
 
   // =========================================================================
   // DI CHUYỂN BẢN ĐỒ ĐẾN GÓC ĐÔNG / TÂY / NAM / BẮC (ĐÚNG TÂM ĐỊA LÝ, LƯỚT MƯỢT MÀ)
@@ -1376,42 +1421,62 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           {/* Lớp Ranh giới từng xã/phường: Kẻ mảnh 0.5px xám xanh nhạt không phình to khi zoom, phẳng tinh tế */}
           {isCommunePolygonsVisible && projectedCommunes.length > 0 && (
             <g className="commune-polygons-layer">
-              {projectedCommunes.map(({ feature, pathString, isHovered, baseFill }) => (
+              {projectedCommunes.map(({ feature, pathString, isHovered, isSelected, baseFill }) => (
                 <path
                   key={feature.id}
                   d={pathString}
-                  fill={isHovered ? "rgba(56, 189, 248, 0.25)" : baseFill}
+                  fill={
+                    isSelected
+                      ? "rgba(14, 165, 233, 0.22)"
+                      : isHovered
+                      ? "rgba(56, 189, 248, 0.2)"
+                      : baseFill
+                  }
                   // Chuẩn Esri: nét mảnh xám xanh nhạt (rgba(148, 163, 184, 0.4)), tương thích kiểm thử: rgba(255, 255, 255, 0.85)
-                  stroke={isHovered ? "#0284c7" : "rgba(148, 163, 184, 0.4)"}
-                  strokeWidth="0.35"
+                  stroke={
+                    isSelected
+                      ? "#0284c7"
+                      : isHovered
+                      ? "#0284c7"
+                      : "rgba(148, 163, 184, 0.4)"
+                  }
+                  strokeWidth={isSelected ? "1.2" : "0.35"}
                   vectorEffect="non-scaling-stroke"
                   strokeLinejoin="round"
                   strokeLinecap="round"
-                  className="cursor-pointer"
+                  className="cursor-pointer transition-colors duration-100"
                   onMouseEnter={(e) => {
                     if (isDraggingRef.current) return;
                     setHoveredCommune(feature);
                     const rect = containerRef.current?.getBoundingClientRect();
                     if (rect) {
-                      setCommuneTooltipPos({
-                        x: e.clientX - rect.left + 15,
-                        y: e.clientY - rect.top + 15,
-                      });
+                      const tooltipWidth = 280;
+                      const tooltipHeight = 180;
+                      const rawX = e.clientX - rect.left + 15;
+                      const rawY = e.clientY - rect.top + 15;
+                      const clampedX = Math.max(10, Math.min(rawX, rect.width - tooltipWidth - 15));
+                      const clampedY = Math.max(10, Math.min(rawY, rect.height - tooltipHeight - 15));
+                      setCommuneTooltipPos({ x: clampedX, y: clampedY });
                     }
                   }}
                   onMouseMove={(e) => {
                     if (isDraggingRef.current) return;
                     const rect = containerRef.current?.getBoundingClientRect();
                     if (rect) {
-                      setCommuneTooltipPos({
-                        x: e.clientX - rect.left + 15,
-                        y: e.clientY - rect.top + 15,
-                      });
+                      const tooltipWidth = 280;
+                      const tooltipHeight = 180;
+                      const rawX = e.clientX - rect.left + 15;
+                      const rawY = e.clientY - rect.top + 15;
+                      const clampedX = Math.max(10, Math.min(rawX, rect.width - tooltipWidth - 15));
+                      const clampedY = Math.max(10, Math.min(rawY, rect.height - tooltipHeight - 15));
+                      setCommuneTooltipPos({ x: clampedX, y: clampedY });
                     }
                   }}
                   onMouseLeave={() => setHoveredCommune(null)}
                   onClick={(e) => {
                     e.stopPropagation();
+                    setSelectedCommune((prev) => (prev?.id === feature.id ? null : feature));
+                    setActiveWardId(feature.properties.id);
                     if (onSelectWard) {
                       onSelectWard({
                         type: "Feature",
@@ -1439,11 +1504,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
           {/* Lớp Nhãn Tên Xã/Phường: Kích thước cố định 10px trên màn hình, viền quầng mỏng, phẳng sạch đẹp */}
           {isCommuneLabelsVisible && visibleCommuneLabels.length > 0 && (
             <g className="commune-labels-layer pointer-events-none select-none font-sans">
-              {visibleCommuneLabels.map(({ feature, center, isHovered }) => {
+              {visibleCommuneLabels.map(({ feature, center, isHovered, isSelected }) => {
                 const name = feature.properties.name.replace(/^(Xã|Phường|Thị trấn)\s+/i, "");
                 // Scale-based symbol sizing (ArcGIS): Cố định 10px trên màn hình ở mọi mức zoom
-                const fontSize = 10 / zoom;
-                const strokeWidth = 0.8 / zoom;
+                const fontSize = (isSelected ? 11 : 10) / zoom;
+                const strokeWidth = (isSelected ? 1.5 : 0.8) / zoom;
 
                 return (
                   <text
@@ -1452,9 +1517,9 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                     y={center[1]}
                     textAnchor="middle"
                     dominantBaseline="central"
-                    fill={isHovered ? "#0284c7" : "#334155"}
+                    fill={isSelected ? "#0369a1" : isHovered ? "#0284c7" : "#334155"}
                     fontSize={`${fontSize}px`}
-                    fontWeight={isHovered ? "700" : "600"}
+                    fontWeight={isSelected ? "800" : isHovered ? "700" : "600"}
                     stroke="#ffffff"
                     strokeWidth={`${strokeWidth}px`}
                     strokeLinejoin="round"
@@ -1822,7 +1887,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       )}
 
       {/* Commune Polygon Hover Tooltip (Chuẩn gis.vn: Tách từng mảng, hiển thị diện tích, dân số, sáp nhập) */}
-      {hoveredCommune && !hoveredWard && (
+      {hoveredCommune && !hoveredWard && !selectedCommune && (
         <div
           className="absolute z-40 pointer-events-none bg-white/95 border border-sky-300 text-slate-800 rounded-xl p-3 shadow-2xl backdrop-blur max-w-sm text-xs animate-in fade-in duration-150"
           style={{ left: `${communeTooltipPos.x}px`, top: `${communeTooltipPos.y}px` }}
@@ -1875,6 +1940,113 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                 Trụ sở UBND: {hoveredCommune.properties.headquarters}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Commune Detail Inspector Card (Bảng tra cứu thông tin Xã / Phường chuẩn GIS) */}
+      {selectedCommune && (
+        <div
+          className={`absolute z-40 w-80 max-w-[calc(100vw-32px)] bg-white/95 border border-sky-300 rounded-2xl shadow-2xl backdrop-blur-md p-4 text-xs animate-in fade-in zoom-in-95 duration-150 select-none ${
+            selectedCommuneDockPosition === "left"
+              ? "top-16 left-4"
+              : "top-16 right-4"
+          }`}
+        >
+          {/* Card Header */}
+          <div className="flex items-start justify-between gap-2 border-b border-sky-100 pb-2.5 mb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 font-bold shrink-0">
+                <MapPin className="w-4 h-4 text-sky-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 text-[10px] font-bold">
+                    {selectedCommune.properties.type}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-medium">
+                    {selectedCommune.properties.provinceName}
+                  </span>
+                </div>
+                <h4 className="font-extrabold text-slate-900 text-sm leading-tight mt-0.5">
+                  {selectedCommune.properties.type} {selectedCommune.properties.name}
+                </h4>
+              </div>
+            </div>
+            <button
+              onClick={() => setSelectedCommune(null)}
+              className="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+              title="Đóng bảng chi tiết"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Body metrics */}
+          <div className="space-y-2 text-slate-700">
+            <div className="grid grid-cols-2 gap-2 bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
+              <div>
+                <div className="text-[10px] text-slate-400 font-medium">Diện tích</div>
+                <div className="font-bold text-slate-900 text-xs">
+                  {selectedCommune.properties.areaKm2 > 0
+                    ? `${selectedCommune.properties.areaKm2.toLocaleString("vi-VN")} km²`
+                    : "Đang cập nhật"}
+                </div>
+              </div>
+              <div>
+                <div className="text-[10px] text-slate-400 font-medium">Dân số</div>
+                <div className="font-bold text-slate-900 text-xs">
+                  {selectedCommune.properties.population > 0
+                    ? `${selectedCommune.properties.population.toLocaleString("vi-VN")} người`
+                    : "Đang cập nhật"}
+                </div>
+              </div>
+              {selectedCommune.properties.density > 0 && (
+                <div>
+                  <div className="text-[10px] text-slate-400 font-medium">Mật độ</div>
+                  <div className="font-bold text-slate-900 text-xs">
+                    {Math.round(selectedCommune.properties.density).toLocaleString("vi-VN")} ng/km²
+                  </div>
+                </div>
+              )}
+              <div>
+                <div className="text-[10px] text-slate-400 font-medium">Tọa độ tâm</div>
+                <div className="font-mono text-slate-800 text-[10px] font-semibold">
+                  {selectedCommune.properties.centroid[1].toFixed(2)}°B, {selectedCommune.properties.centroid[0].toFixed(2)}°Đ
+                </div>
+              </div>
+            </div>
+
+            {selectedCommune.properties.headquarters && (
+              <div className="text-[11px] bg-sky-50/60 p-2 rounded-lg border border-sky-100">
+                <span className="font-semibold text-sky-900">Trụ sở UBND: </span>
+                <span className="text-slate-600">{selectedCommune.properties.headquarters}</span>
+              </div>
+            )}
+
+            {selectedCommune.properties.mergedFrom && (
+              <div className="text-[11px] bg-amber-50/60 p-2 rounded-lg border border-amber-100/80">
+                <span className="font-semibold text-amber-900">Sáp nhập đơn vị: </span>
+                <span className="text-slate-600">{selectedCommune.properties.mergedFrom}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Action buttons */}
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
+            <button
+              onClick={() => handleCenterOnCommune(selectedCommune)}
+              className="flex-1 py-1 px-2 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded-lg text-[11px] border border-sky-200 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <Crosshair className="w-3 h-3" />
+              Căn giữa xã
+            </button>
+            <button
+              onClick={() => setSelectedCommune(null)}
+              className="py-1 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-lg text-[11px] transition-colors cursor-pointer"
+            >
+              Bỏ chọn
+            </button>
           </div>
         </div>
       )}
