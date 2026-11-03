@@ -7,6 +7,8 @@ import {
   MapMode,
   WardFeatureCollection,
   WardFeature,
+  CommunePolygonFeature,
+  CommunePolygonCollection,
 } from "@/types/geo";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS, PROVINCE_PALETTE, ADMIN_PROVINCE_COLORS } from "@/lib/regions";
 import { LayerSettings } from "@/components/layout/SubHeader";
@@ -129,6 +131,11 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [hoveredWard, setHoveredWard] = useState<WardFeature | null>(null);
   const [wardTooltipPos, setWardTooltipPos] = useState({ x: 0, y: 0 });
 
+  // Commune polygon territorial layers ("Tách từng mảng rõ như gis.vn")
+  const [communePolygonsByProvince, setCommunePolygonsByProvince] = useState<Record<string, CommunePolygonCollection>>({});
+  const [hoveredCommune, setHoveredCommune] = useState<CommunePolygonFeature | null>(null);
+  const [communeTooltipPos, setCommuneTooltipPos] = useState({ x: 0, y: 0 });
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Sync external selectedWardId
@@ -188,6 +195,48 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       return [x, y];
     };
   }, [minLon, maxLon, minLat, maxLat, svgWidth, svgHeight]);
+
+  // Tự động nạp vector ranh giới xã/phường (Commune Polygons) chuẩn gis.vn khi chọn tỉnh hoặc zoom sâu
+  useEffect(() => {
+    const codesToLoad: string[] = [];
+
+    if (selectedProvince) {
+      const code = selectedProvince.properties.provinceCode;
+      if (!communePolygonsByProvince[code]) {
+        codesToLoad.push(code);
+      }
+    } else if (zoom >= 1.5) {
+      // Tìm các tỉnh đang nằm trong khung nhìn viewport
+      const viewLeft = -pan.x / zoom;
+      const viewRight = (svgWidth - pan.x) / zoom;
+      const viewTop = -pan.y / zoom;
+      const viewBottom = (svgHeight - pan.y) / zoom;
+
+      for (const p of PROVINCE_LABEL_CENTROIDS) {
+        if (communePolygonsByProvince[p.code]) continue;
+        const [px, py] = project(p.lon, p.lat);
+        if (px >= viewLeft - 80 && px <= viewRight + 80 && py >= viewTop - 80 && py <= viewBottom + 80) {
+          codesToLoad.push(p.code);
+        }
+      }
+    }
+
+    if (codesToLoad.length === 0) return;
+
+    codesToLoad.forEach((pCode) => {
+      fetch(`/data/wards/${pCode}.json`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data: CommunePolygonCollection | null) => {
+          if (data && data.features) {
+            setCommunePolygonsByProvince((prev) => {
+              if (prev[pCode]) return prev;
+              return { ...prev, [pCode]: data };
+            });
+          }
+        })
+        .catch(() => {});
+    });
+  }, [selectedProvince, zoom, pan, project, communePolygonsByProvince, svgWidth, svgHeight]);
 
   // Active region codes
   const activeRegionCodes = useMemo(() => {
@@ -299,6 +348,89 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const isWardsVisible = Boolean(
     layers.wards && (selectedProvince !== null || zoom >= 1.5)
   );
+
+  // Vector đa giác ranh giới từng xã/phường ("Tách từng mảng rõ ràng chuẩn gis.vn")
+  const projectedCommunes = useMemo(() => {
+    if (!isWardsVisible) return [];
+
+    const targetProvinceCodes = selectedProvince
+      ? [selectedProvince.properties.provinceCode]
+      : zoom >= 1.5
+      ? Object.keys(communePolygonsByProvince)
+      : [];
+
+    if (targetProvinceCodes.length === 0) return [];
+
+    const items: Array<{
+      feature: CommunePolygonFeature;
+      pathString: string;
+      center: [number, number];
+      isHovered: boolean;
+      baseFill: string;
+      screenWidth: number;
+    }> = [];
+
+    for (const pCode of targetProvinceCodes) {
+      const coll = communePolygonsByProvince[pCode];
+      if (!coll || !coll.features) continue;
+
+      for (const feat of coll.features) {
+        let pathString = "";
+        const coords = feat.geometry.coordinates;
+
+        if (feat.geometry.type === "Polygon") {
+          coords.forEach((ring: any) => {
+            ring.forEach(([lon, lat]: [number, number], i: number) => {
+              const [x, y] = project(lon, lat);
+              pathString += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+            });
+            pathString += " Z ";
+          });
+        } else if (feat.geometry.type === "MultiPolygon") {
+          coords.forEach((polygon: any) => {
+            polygon.forEach((ring: any) => {
+              ring.forEach(([lon, lat]: [number, number], i: number) => {
+                const [x, y] = project(lon, lat);
+                pathString += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+              });
+              pathString += " Z ";
+            });
+          });
+        }
+
+        const center = project(feat.properties.centroid[0], feat.properties.centroid[1]);
+        const isHovered = hoveredCommune?.id === feat.id;
+
+        // Tính bề rộng ước lượng trên màn hình để kiểm soát hiển thị nhãn
+        const bbox = feat.properties.bbox;
+        const pMin = project(bbox[0], bbox[1]);
+        const pMax = project(bbox[2], bbox[3]);
+        const screenWidth = Math.abs(pMax[0] - pMin[0]) * zoom;
+
+        // Bảng sắc thái tinh tế giữa các xã lân cận trong tỉnh chuẩn gis.vn
+        const codeNum = parseInt(feat.properties.code.slice(-3), 10) || 0;
+        const shade = codeNum % 4;
+        const baseFill = shade === 0
+          ? "rgba(255, 255, 255, 0.05)"
+          : shade === 1
+          ? "rgba(255, 255, 255, 0.14)"
+          : shade === 2
+          ? "rgba(255, 255, 255, 0.22)"
+          : "rgba(255, 255, 255, 0.09)";
+
+        items.push({
+          feature: feat,
+          pathString,
+          center,
+          isHovered,
+          baseFill,
+          screenWidth,
+        });
+      }
+    }
+
+    return items;
+  }, [isWardsVisible, selectedProvince, zoom, communePolygonsByProvince, hoveredCommune, project]);
 
   // Filter wards to render: Lọc xã/phường theo tỉnh hoặc theo khung nhìn (viewport)
   // Áp dụng thuật toán spatial collision thinning để các nhãn không bao giờ bị đè lên nhau
@@ -704,6 +836,103 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
             />
           ))}
 
+          {/* Lớp Ranh giới từng xã/phường dạng Đa giác khép kín ("Tách từng mảng rõ như gis.vn") */}
+          {isWardsVisible && projectedCommunes.length > 0 && (
+            <g className="commune-polygons-layer">
+              {projectedCommunes.map(({ feature, pathString, isHovered, baseFill }) => (
+                <path
+                  key={feature.id}
+                  d={pathString}
+                  fill={isHovered ? "rgba(56, 189, 248, 0.38)" : baseFill}
+                  stroke={isHovered ? "#0284c7" : "rgba(255, 255, 255, 0.85)"}
+                  strokeWidth={isHovered ? Math.max(1.3 / zoom, 0.5) : Math.max(0.65 / zoom, 0.25)}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  className="transition-colors duration-100 cursor-pointer"
+                  onMouseEnter={(e) => {
+                    setHoveredCommune(feature);
+                    const rect = containerRef.current?.getBoundingClientRect();
+                    if (rect) {
+                      setCommuneTooltipPos({
+                        x: e.clientX - rect.left + 15,
+                        y: e.clientY - rect.top + 15,
+                      });
+                    }
+                  }}
+                  onMouseMove={(e) => {
+                    const rect = containerRef.current?.getBoundingClientRect();
+                    if (rect) {
+                      setCommuneTooltipPos({
+                        x: e.clientX - rect.left + 15,
+                        y: e.clientY - rect.top + 15,
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredCommune(null)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onSelectWard) {
+                      onSelectWard({
+                        type: "Feature",
+                        properties: {
+                          id: feature.properties.id,
+                          name: feature.properties.name,
+                          district: feature.properties.provinceName,
+                          provinceCode: feature.properties.provinceCode,
+                          provinceName: feature.properties.provinceName,
+                          type: feature.properties.type,
+                          role: feature.properties.mergedFrom || "Đơn vị hành chính cấp xã sau sáp nhập",
+                        },
+                        geometry: {
+                          type: "Point",
+                          coordinates: feature.properties.centroid,
+                        },
+                      });
+                    }
+                  }}
+                />
+              ))}
+            </g>
+          )}
+
+          {/* Lớp Nhãn Tên Xã/Phường đặt ngay tâm từng mảng (Chuẩn GIS gis.vn - Chữ sắc nét, halo trắng, không nhăng nhít) */}
+          {isWardsVisible && projectedCommunes.length > 0 && (
+            <g className="commune-labels-layer pointer-events-none select-none font-sans">
+              {projectedCommunes
+                .filter(({ screenWidth }) => screenWidth >= (selectedProvince ? 16 : 24))
+                .map(({ feature, center, isHovered }) => {
+                  let name = feature.properties.name;
+                  if (name.length > 14 && zoom < 2.5) {
+                    name = name.replace(/^(Xã|Phường|Thị trấn)s+/i, "");
+                  }
+                  const fontSize = Math.max(
+                    (selectedProvince ? 10.5 : 9.5) / zoom,
+                    selectedProvince ? 4.8 : 3.8
+                  );
+
+                  return (
+                    <text
+                      key={`lbl-${feature.id}`}
+                      x={center[0]}
+                      y={center[1]}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      fill={isHovered ? "#0369a1" : "#0f172a"}
+                      fontSize={`${fontSize}px`}
+                      fontWeight={isHovered ? "800" : "600"}
+                      stroke="#ffffff"
+                      strokeWidth={`${Math.max(fontSize * 0.32, 0.7 / zoom)}px`}
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      paintOrder="stroke fill"
+                    >
+                      {name}
+                    </text>
+                  );
+                })}
+            </g>
+          )}
+
           {/* Biển Đông Watermark Text */}
           <text
             x="640"
@@ -1052,6 +1281,64 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                 {hoveredWard.geometry.coordinates[0].toFixed(4)}°Đ
               </span>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Commune Polygon Hover Tooltip (Chuẩn gis.vn: Tách từng mảng, hiển thị diện tích, dân số, sáp nhập) */}
+      {hoveredCommune && !hoveredWard && (
+        <div
+          className="absolute z-40 pointer-events-none bg-white/95 border border-sky-300 text-slate-800 rounded-xl p-3 shadow-2xl backdrop-blur max-w-sm text-xs animate-in fade-in duration-150"
+          style={{ left: `${communeTooltipPos.x}px`, top: `${communeTooltipPos.y}px` }}
+        >
+          <div className="flex items-center justify-between gap-2 border-b border-sky-100 pb-2 mb-2">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
+              <h5 className="font-bold text-slate-900 text-sm">
+                {hoveredCommune.properties.type} {hoveredCommune.properties.name}
+              </h5>
+            </div>
+            <span className="px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-[10px] text-sky-700 font-bold">
+              {hoveredCommune.properties.provinceName}
+            </span>
+          </div>
+
+          <div className="text-xs text-slate-600 flex flex-col gap-1.5">
+            {hoveredCommune.properties.areaKm2 > 0 && (
+              <div className="flex items-center justify-between text-slate-700">
+                <span className="text-slate-500">Diện tích:</span>
+                <span className="font-semibold text-slate-900">
+                  {hoveredCommune.properties.areaKm2.toLocaleString("vi-VN")} km²
+                </span>
+              </div>
+            )}
+            {hoveredCommune.properties.population > 0 && (
+              <div className="flex items-center justify-between text-slate-700">
+                <span className="text-slate-500">Dân số:</span>
+                <span className="font-semibold text-slate-900">
+                  {hoveredCommune.properties.population.toLocaleString("vi-VN")} người
+                </span>
+              </div>
+            )}
+            {hoveredCommune.properties.density > 0 && (
+              <div className="flex items-center justify-between text-slate-700">
+                <span className="text-slate-500">Mật độ:</span>
+                <span className="font-semibold text-slate-900">
+                  {Math.round(hoveredCommune.properties.density).toLocaleString("vi-VN")} người/km²
+                </span>
+              </div>
+            )}
+            {hoveredCommune.properties.mergedFrom && (
+              <div className="text-[11px] text-slate-600 pt-1 border-t border-slate-100">
+                <span className="font-semibold text-sky-800">Sáp nhập: </span>
+                <span>{hoveredCommune.properties.mergedFrom}</span>
+              </div>
+            )}
+            {hoveredCommune.properties.headquarters && (
+              <div className="text-[10px] text-slate-500 italic">
+                Trụ sở UBND: {hoveredCommune.properties.headquarters}
+              </div>
+            )}
           </div>
         </div>
       )}

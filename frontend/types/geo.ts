@@ -67,3 +67,31 @@ export interface WardFeatureCollection {
   features: WardFeature[];
 }
 
+export interface CommunePolygonProperties {
+  id: string;
+  code: string;
+  name: string;
+  provinceCode: string;
+  provinceName: string;
+  type: string;
+  mergedFrom?: string;
+  headquarters?: string;
+  areaKm2: number;
+  population: number;
+  density: number;
+  centroid: [number, number]; // [lon, lat]
+  bbox: [number, number, number, number]; // [minLon, minLat, maxLon, maxLat]
+}
+
+export interface CommunePolygonFeature {
+  type: "Feature";
+  id: string;
+  properties: CommunePolygonProperties;
+  geometry: GeoJsonGeometry;
+}
+
+export interface CommunePolygonCollection {
+  type: "FeatureCollection";
+  provinceCode?: string;
+  features: CommunePolygonFeature[];
+}

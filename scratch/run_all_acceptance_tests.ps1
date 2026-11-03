@@ -36,9 +36,16 @@ if ($LASTEXITCODE -ne 0) {
     $hasErrors = $true
 }
 
+Write-Host "`n>>> RUNNING: node scratch/run_phase9_commune_polygons_tests.js" -ForegroundColor Yellow
+& "C:\Program Files\nodejs\node.exe" scratch/run_phase9_commune_polygons_tests.js
+if ($LASTEXITCODE -ne 0) {
+    $hasErrors = $true
+}
+
+
 Write-Host "`n================================================================================" -ForegroundColor Cyan
 if (-not $hasErrors) {
-    Write-Host "   >>> ALL 7 TEST SUITES (134/134 TESTS) PASSED SUCCESSFULLY (100%)! <<<" -ForegroundColor Green
+    Write-Host "   >>> ALL 8 TEST SUITES (147/147 TESTS) PASSED SUCCESSFULLY (100%)! <<<" -ForegroundColor Green
 } else {
     Write-Host "   >>> SOME TESTS FAILED! <<<" -ForegroundColor Red
 }
