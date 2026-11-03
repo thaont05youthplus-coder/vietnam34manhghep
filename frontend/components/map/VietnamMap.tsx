@@ -412,33 +412,33 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         ? activeRegionCodes.has(feature.properties.provinceCode)
         : null;
 
-      // Phân cấp ranh giới rõ ràng chuẩn GIS: ranh giới vùng nổi bật nhất (1.8px), ranh giới tỉnh mảnh hơn (1.0px)
+      // Quy chuẩn Phụ lục C & Atlas Việt Nam: Đường địa giới hành chính màu đen K:100 (#000000), nét siêu mảnh 0.5px sắc nét tinh tế
       let fillOpacity = 0.96;
       let strokeColor = "#000000";
-      let strokeWidth = 1.0;
+      let strokeWidth = 0.5;
 
       if (isInActiveRegion !== null) {
         if (isInActiveRegion) {
           fillOpacity = 1.0;
-          strokeColor = "#0f172a"; // Ranh giới vùng nổi bật nhất: 1.8px
-          strokeWidth = 1.8;
+          strokeColor = "#000000";
+          strokeWidth = 0.6;
         } else {
-          fillOpacity = 0.28; // Làm mờ nhẹ các vùng khác không gây xao nhãng
-          strokeColor = "#cbd5e1";
-          strokeWidth = 0.4;
+          fillOpacity = 0.32; // Làm mờ nhẹ các vùng khác không gây xao nhãng
+          strokeColor = "#94a3b8";
+          strokeWidth = 0.35;
         }
       }
 
       if (isHovered) {
         fillOpacity = 1.0;
         strokeColor = "#0284c7";
-        strokeWidth = 1.4;
+        strokeWidth = 1.0;
       }
 
       if (isSelected) {
         fillOpacity = 1.0;
-        strokeColor = "#eab308"; // Ranh giới tỉnh được chọn màu vàng kim sắc nét: 2.0px
-        strokeWidth = 2.0;
+        strokeColor = "#d97706"; // Viền vàng hổ phách tinh tế, không dày cộm
+        strokeWidth = 1.1;
       }
 
       return {
@@ -1093,9 +1093,9 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                   key={feature.id}
                   d={pathString}
                   fill={isHovered ? "rgba(56, 189, 248, 0.25)" : baseFill}
-                  // Chuẩn Esri: nét mảnh xám xanh nhạt (rgba(148, 163, 184, 0.45)), tương thích kiểm thử: rgba(255, 255, 255, 0.85)
-                  stroke={isHovered ? "#0284c7" : "rgba(148, 163, 184, 0.45)"}
-                  strokeWidth="0.5"
+                  // Chuẩn Esri: nét mảnh xám xanh nhạt (rgba(148, 163, 184, 0.4)), tương thích kiểm thử: rgba(255, 255, 255, 0.85)
+                  stroke={isHovered ? "#0284c7" : "rgba(148, 163, 184, 0.4)"}
+                  strokeWidth="0.35"
                   vectorEffect="non-scaling-stroke"
                   strokeLinejoin="round"
                   strokeLinecap="round"
