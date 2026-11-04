@@ -20,6 +20,8 @@ interface SidebarProps {
   activeTools: Record<ToolId, boolean>;
   onToggleTool: (toolId: ToolId) => void;
   onResetLayout: () => void;
+  onOpenFeedback?: () => void;
+  onOpenSettings?: () => void;
 }
 
 interface ToolItem {
@@ -72,6 +74,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeTools,
   onToggleTool,
   onResetLayout,
+  onOpenFeedback,
+  onOpenSettings,
 }) => {
   const isAnyToolActive = Object.values(activeTools).some(Boolean);
 
@@ -156,25 +160,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-2 border-t border-slate-200 flex flex-col gap-1.5">
         {/* Nút Phản hồi */}
         <button
-          onClick={() => alert("Hòm thư góp ý & phản hồi dự án Việt Nam 34 Mảnh Ghép.")}
-          className={`flex items-center rounded-xl p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors ${
+          onClick={() => {
+            if (onOpenFeedback) onOpenFeedback();
+          }}
+          className={`flex items-center rounded-xl p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer ${
             isOpen ? "gap-2.5 px-3" : "justify-center"
           }`}
-          title="Góp ý &amp; Phản hồi"
+          title="Hòm thư góp ý &amp; Phản hồi dự án"
         >
-          <MessageCircle className="w-4 h-4" />
-          {isOpen && <span className="text-xs font-medium">Góp ý</span>}
+          <MessageCircle className="w-4 h-4 text-teal-700" />
+          {isOpen && <span className="text-xs font-semibold text-slate-700">Góp ý</span>}
         </button>
 
         {/* Nút Cài đặt */}
         <button
-          onClick={() => alert("Cài đặt hiển thị & dữ liệu bản đồ.")}
-          className={`flex items-center rounded-xl p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors ${
+          onClick={() => {
+            if (onOpenSettings) onOpenSettings();
+          }}
+          className={`flex items-center rounded-xl p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer ${
             isOpen ? "gap-2.5 px-3" : "justify-center"
           }`}
-          title="Cài đặt hệ thống"
+          title="Cài đặt hệ thống &amp; Bản đồ"
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-4 h-4 text-slate-600" />
           {isOpen && <span className="text-xs font-medium">Cài đặt</span>}
         </button>
 

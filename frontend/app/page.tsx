@@ -9,6 +9,8 @@ import { VietnamMap } from "@/components/map/VietnamMap";
 import { RegionCardsStrip } from "@/components/map/RegionCardsStrip";
 import { ProvinceDetailPanel } from "@/components/panels/ProvinceDetailPanel";
 import { KeyboardShortcutsModal } from "@/components/workspace/KeyboardShortcutsModal";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { SettingsModal } from "@/components/settings/SettingsModal";
 import { ProvinceFeature, ProvinceFeatureCollection, MapMode, RegionDefinition, CommunePolygonFeature } from "@/types/geo";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS } from "@/lib/regions";
 import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
@@ -42,6 +44,8 @@ export default function HomePage() {
 
   // Trạng thái Sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Z-index cao nhất hiện tại cho các cửa sổ
   const [maxZIndex, setMaxZIndex] = useState(40);
@@ -437,6 +441,8 @@ export default function HomePage() {
           activeTools={activeTools}
           onToggleTool={handleToggleTool}
           onResetLayout={handleResetLayout}
+          onOpenFeedback={() => setIsFeedbackOpen(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
 
         {/* Vùng bản đồ cốt lõi & Panel vùng */}
@@ -517,6 +523,23 @@ export default function HomePage() {
       <KeyboardShortcutsModal
         isOpen={isShortcutsOpen}
         onClose={() => setIsShortcutsOpen(false)}
+      />
+
+      {/* Hòm thư góp ý & Phản hồi dự án VN34MG */}
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        provinces={provinces}
+        defaultProvinceName={selectedProvince?.properties.name}
+      />
+
+      {/* Modal Cài đặt hệ thống & Bản đồ */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        layers={layers}
+        onToggleLayer={handleToggleLayer}
+        onResetLayout={handleResetLayout}
       />
     </main>
   );
