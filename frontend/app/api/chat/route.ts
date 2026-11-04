@@ -36,7 +36,8 @@ Khi người dùng hỏi bất kỳ câu hỏi nào, bạn phải ưu tiên căn
 4. Giới hạn: Tuyệt đối không tự bịa đặt số liệu ngoài phạm vi quy hoạch quốc gia chính thống và cơ sở dữ liệu dự án đã nêu trên.
 5. TUYỆT ĐỐI KHÔNG DÙNG DẤU SAO ĐÔI (**) HOẶC BẤT KỲ DẤU SAO NÀO (*) trong toàn bộ câu trả lời. Hãy dùng gạch đầu dòng rõ ràng (- hoặc •) hoặc viết hoa tiêu đề.
 6. Luôn khẳng định chủ quyền không thể chối cãi của Việt Nam đối với Quần đảo Hoàng Sa (TP. Đà Nẵng) và Quần đảo Trường Sa (Tỉnh Khánh Hòa).
-7. Ngữ cảnh địa phương người dùng đang xem: ${contextProvince || "Toàn quốc"}.`;
+7. Ngữ cảnh địa phương người dùng đang xem: ${contextProvince || "Toàn quốc"}.
+8. CHỈ TRẢ LỜI TRỰC TIẾP VÀO NỘI DUNG: Tuyệt đối không tự viết thêm mục nguồn trích dẫn kiểm chứng, tài liệu tham khảo hay niên giám ở cuối câu trả lời. Chỉ tập trung giải thích và giải đáp câu hỏi của người dùng.`;
 
     // 1. Ưu tiên sử dụng Requesty Router (DeepSeek v4.1 Flash) - Tốc độ cao, suy luận sâu, chính xác
     if (requestyKey) {
