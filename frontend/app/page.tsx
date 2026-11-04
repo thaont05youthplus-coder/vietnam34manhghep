@@ -9,7 +9,7 @@ import { VietnamMap } from "@/components/map/VietnamMap";
 import { RegionCardsStrip } from "@/components/map/RegionCardsStrip";
 import { ProvinceDetailPanel } from "@/components/panels/ProvinceDetailPanel";
 import { KeyboardShortcutsModal } from "@/components/workspace/KeyboardShortcutsModal";
-import { ProvinceFeature, ProvinceFeatureCollection, MapMode, RegionDefinition } from "@/types/geo";
+import { ProvinceFeature, ProvinceFeatureCollection, MapMode, RegionDefinition, CommunePolygonFeature } from "@/types/geo";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS } from "@/lib/regions";
 import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
 import { GeoQuestion } from "@/components/question-bank/QuestionBankModal";
@@ -17,6 +17,7 @@ import { GeoQuestion } from "@/components/question-bank/QuestionBankModal";
 export default function HomePage() {
   const [provinces, setProvinces] = useState<ProvinceFeature[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<ProvinceFeature | null>(null);
+  const [selectedCommune, setSelectedCommune] = useState<CommunePolygonFeature | null>(null);
   const [mode, setMode] = useState<MapMode>("hanh_chinh");
 
   // Bộ chọn góc nhìn: Tỉnh/thành | Vùng
@@ -343,6 +344,7 @@ export default function HomePage() {
   // Nút "Đặt lại bố cục" (Reset Layout) - Bảo toàn tối thiểu 40% diện tích bản đồ
   const handleResetLayout = useCallback(() => {
     setSelectedProvince(null);
+    setSelectedCommune(null);
     setSelectedRegionId(null);
     setHoveredRegionId(null);
     setIsSidebarOpen(false);
@@ -450,6 +452,8 @@ export default function HomePage() {
               selectedRegionId={selectedRegionId}
               hoveredRegionId={hoveredRegionId}
               onSelectRegion={setSelectedRegionId}
+              selectedCommune={selectedCommune}
+              onSelectCommune={setSelectedCommune}
               layers={layers}
             />
 
@@ -460,6 +464,8 @@ export default function HomePage() {
                 onClose={() => setSelectedProvince(null)}
                 onOpenAiChat={() => handleToggleTool("chat")}
                 onOpenNotes={() => handleToggleTool("notes")}
+                selectedCommune={selectedCommune}
+                onSelectCommune={setSelectedCommune}
               />
             )}
 

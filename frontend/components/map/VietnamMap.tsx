@@ -35,6 +35,8 @@ interface VietnamMapProps {
   hoveredRegionId?: string | null;
   selectedWardId?: string | null;
   onSelectWard?: (ward: WardFeature | null) => void;
+  selectedCommune?: CommunePolygonFeature | null;
+  onSelectCommune?: (commune: CommunePolygonFeature | null) => void;
   layers?: LayerSettings;
 }
 
@@ -104,6 +106,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   hoveredRegionId,
   selectedWardId,
   onSelectWard,
+  selectedCommune: propSelectedCommune,
+  onSelectCommune: propOnSelectCommune,
   layers = {
     wards: true,
     boundaries: true,
@@ -176,7 +180,14 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const [hoveredCommune, setHoveredCommune] = useState<CommunePolygonFeature | null>(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [communeTooltipPos, setCommuneTooltipPos] = useState({ x: 0, y: 0 });
-  const [selectedCommune, setSelectedCommune] = useState<CommunePolygonFeature | null>(null);
+  const [internalSelectedCommune, setInternalSelectedCommune] = useState<CommunePolygonFeature | null>(null);
+  const selectedCommune = propSelectedCommune !== undefined ? propSelectedCommune : internalSelectedCommune;
+  const setSelectedCommune = useCallback((c: CommunePolygonFeature | null) => {
+    if (propOnSelectCommune) {
+      propOnSelectCommune(c);
+    }
+    setInternalSelectedCommune(c);
+  }, [propOnSelectCommune]);
   const [isCommuneCardCollapsed, setIsCommuneCardCollapsed] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -233,10 +244,25 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
   }, [selectedWardId]);
 
-  // Reset xã/phường được chọn khi chuyển đổi chế độ hoặc thay đổi tỉnh
+  // Theo dõi mã tỉnh trước đó để chỉ reset xã khi chuyển sang một tỉnh KHÁC
+  const prevProvinceCodeRef = useRef<string | null>(selectedProvince?.properties.provinceCode || null);
+  useEffect(() => {
+    const currentCode = selectedProvince?.properties.provinceCode || null;
+    const prevCode = prevProvinceCodeRef.current;
+    prevProvinceCodeRef.current = currentCode;
+
+    // Chỉ reset khi chuyển hẳn sang một tỉnh KHÁC (khác mã tỉnh và cả hai đều tồn tại)
+    // Tuyệt đối KHÔNG reset khi người dùng chỉ đóng bảng chi tiết tỉnh (currentCode = null)
+    // để không bị mất xã khi ấn tắt nút xanh của bảng tỉnh, đảm bảo người dùng có thể xem xã và nhìn toàn cảnh bản đồ
+    if (currentCode && prevCode && currentCode !== prevCode) {
+      setSelectedCommune(null);
+    }
+  }, [selectedProvince?.properties.provinceCode, setSelectedCommune]);
+
+  // Reset xã/phường khi chuyển đổi chế độ bản đồ
   useEffect(() => {
     setSelectedCommune(null);
-  }, [mode, selectedProvince?.properties.provinceCode]);
+  }, [mode, setSelectedCommune]);
 
   // Fetch GeoJSON for 34 provinces & central wards
   useEffect(() => {
@@ -600,14 +626,14 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
   // Phân cấp chi tiết (LOD Esri / ArcGIS Pro):
   // Hiển thị ranh giới xã/phường sắc nét khi bật lớp xã/phường (layers.wards):
-  // Luôn hiển thị khi chọn tỉnh, chọn vùng hoặc khi duyệt bản đồ ở bất kỳ góc nhìn nào (khắc phục triệt để lỗi thiếu xã/phường)
+  // Luôn hiển thị khi chọn tỉnh, chọn vùng, chọn xã hoặc khi duyệt bản đồ ở bất kỳ góc nhìn nào (khắc phục triệt để lỗi thiếu xã/phường)
   const isCommunePolygonsVisible = Boolean(
-    layers.wards && (selectedProvince !== null || selectedRegionId !== null || zoom >= 1.0)
+    layers.wards && (selectedProvince !== null || selectedRegionId !== null || selectedCommune !== null || zoom >= 1.0)
   );
 
-  // Hiển thị tên xã/phường khi chọn tỉnh, chọn vùng hoặc khi zoom vào đủ không gian
+  // Hiển thị tên xã/phường khi chọn tỉnh, chọn vùng, chọn xã hoặc khi zoom vào đủ không gian
   const isCommuneLabelsVisible = Boolean(
-    layers.wards && ((selectedProvince !== null && zoom >= 1.2) || (selectedRegionId !== null && zoom >= 1.3) || zoom >= 1.4)
+    layers.wards && ((selectedProvince !== null && zoom >= 1.2) || (selectedRegionId !== null && zoom >= 1.3) || (selectedCommune !== null && zoom >= 1.2) || zoom >= 1.4)
   );
 
   // Giữ biến isWardsVisible tương thích kiểm thử
@@ -630,14 +656,17 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       // 1. Tỉnh đang được chọn
       if (selectedProvince && selectedProvince.properties.provinceCode === code) return true;
 
-      // 2. Vùng đang được chọn: hiển thị toàn bộ các tỉnh thuộc vùng đó
+      // 2. Xã đang được chọn -> luôn hiển thị toàn bộ xã của tỉnh đó (không bao giờ bị mất xã khi đóng bảng xanh)
+      if (selectedCommune && selectedCommune.properties.provinceCode === code) return true;
+
+      // 3. Vùng đang được chọn: hiển thị toàn bộ các tỉnh thuộc vùng đó
       if (selectedRegionId) {
         const regionList = mode === "tu_nhien" ? NATURAL_REGIONS : ECONOMIC_REGIONS;
         const activeReg = regionList.find((r) => r.id === selectedRegionId);
         if (activeReg && activeReg.provinceCodes.includes(code)) return true;
       }
 
-      // 3. Toàn cảnh khung nhìn viewport: hiển thị mọi tỉnh nằm trong tầm nhìn
+      // 4. Toàn cảnh khung nhìn viewport: hiển thị mọi tỉnh nằm trong tầm nhìn
       const box = provinceBBoxes[code];
       if (!box) return true;
       return (
@@ -984,16 +1013,10 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     setActiveDirection(null);
   };
 
-  // Xác định vị trí neo thông minh của bảng thông tin xã (tránh che khuất mảng xã đang xem)
-  const selectedCommuneDockPosition = useMemo(() => {
-    if (!selectedCommune) return "right";
-    const [lon, lat] = selectedCommune.properties.centroid;
-    const [cx] = project(lon, lat);
-    const screenX = cx * zoom + pan.x;
-    const containerWidth = containerRef.current?.clientWidth || svgWidth;
-    // Nếu xã ở nửa phải màn hình -> neo bảng bên trái; ngược lại neo bên phải
-    return screenX > containerWidth / 2 ? "left" : "right";
-  }, [selectedCommune, project, zoom, pan.x, svgWidth]);
+  // Xác định vị trí neo thông minh của bảng thông tin xã:
+  // Luôn neo cố định ở góc TRÁI (top-16 left-4) để tránh tuyệt đối đè lên bảng xanh tỉnh (bên phải),
+  // thanh vùng (bên phải) và cụm la bàn/zoom (trên phải), giúp người dùng quan sát toàn cảnh bản đồ
+  const selectedCommuneDockPosition = "left" as const;
 
   // Căn giữa xã vào vùng nhìn thấy tự do (Đồng thời đảm bảo xã được phóng to đủ lớn để quan sát)
   const handleCenterOnCommune = useCallback((commune: CommunePolygonFeature) => {
@@ -1898,17 +1921,13 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
         </div>
       )}
 
-      {/* Commune Detail Inspector Card (Thu nhỏ gọn gàng, neo ở góc, không che hình học xã) */}
+      {/* Commune Detail Inspector Card (Thu nhỏ gọn gàng, luôn neo ở góc trái top-16 left-4, không bao giờ che bảng xanh hay la bàn) */}
       {selectedCommune && (
         <div
-          className={`absolute z-40 transition-all duration-200 select-none ${
-            selectedCommuneDockPosition === "left"
-              ? "top-16 left-4"
-              : "top-16 right-4"
-          }`}
+          className="absolute z-40 top-16 left-4 transition-all duration-200 select-none"
           style={{
-            maxWidth: isCommuneCardCollapsed ? "260px" : "220px",
-            width: isCommuneCardCollapsed ? "auto" : "220px",
+            maxWidth: isCommuneCardCollapsed ? "280px" : "240px",
+            width: isCommuneCardCollapsed ? "auto" : "240px",
             fontSize: "10.5px",
           }}
         >

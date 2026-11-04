@@ -17,8 +17,9 @@ import {
   Compass,
   Building2,
   FileText,
+  Crosshair,
 } from "lucide-react";
-import { ProvinceFeature, WardFeature, WardFeatureCollection } from "@/types/geo";
+import { ProvinceFeature, WardFeature, WardFeatureCollection, CommunePolygonFeature } from "@/types/geo";
 import { CompleteProvinceDetail } from "@/types/province-details";
 import { getCompleteProvinceDetail } from "@/data/provinces-detail-data";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS } from "@/lib/regions";
@@ -28,6 +29,8 @@ interface ProvinceDetailPanelProps {
   onClose: () => void;
   onOpenAiChat: (provinceName: string) => void;
   onOpenNotes: (provinceName: string) => void;
+  selectedCommune?: CommunePolygonFeature | null;
+  onSelectCommune?: (commune: CommunePolygonFeature | null) => void;
 }
 
 type TabType = "overview" | "nature" | "economy" | "images" | "sources";
@@ -37,6 +40,8 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
   onClose,
   onOpenAiChat,
   onOpenNotes,
+  selectedCommune,
+  onSelectCommune,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [allWards, setAllWards] = useState<WardFeature[]>([]);
@@ -167,6 +172,81 @@ export const ProvinceDetailPanel: React.FC<ProvinceDetailPanelProps> = ({
                   <span>CHỦ QUYỀN BIỂN ĐẢO THIÊNG LIÊNG</span>
                 </div>
                 <p>{detail.overview.sovereigntyNote}</p>
+              </div>
+            )}
+
+            {/* THÔNG TIN CHI TIẾT XÃ/PHƯỜNG ĐANG CHỌN (Gộp trực tiếp vào bảng xanh theo yêu cầu) */}
+            {selectedCommune && (
+              <div className="p-3 bg-gradient-to-br from-sky-950/90 to-blue-950/80 border border-sky-400/60 rounded-xl text-xs space-y-2 shadow-lg animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-start justify-between border-b border-sky-700/50 pb-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse shrink-0" />
+                    <div className="min-w-0">
+                      <div className="text-[10px] text-sky-300 font-bold uppercase tracking-wider">
+                        {selectedCommune.properties.type || "Xã/Phường"} đang xem
+                      </div>
+                      <h4 className="text-sm font-black text-white truncate">
+                        {selectedCommune.properties.name}
+                      </h4>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => onSelectCommune?.(null)}
+                      className="p-1 rounded text-sky-300 hover:text-white hover:bg-sky-800/50 transition-colors cursor-pointer"
+                      title="Bỏ chọn xã này"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                  <div className="bg-slate-900/60 p-2 rounded-lg border border-sky-900/40">
+                    <div className="text-[9.5px] text-slate-400">Diện tích</div>
+                    <div className="font-bold text-amber-300 text-xs">
+                      {selectedCommune.properties.areaKm2 > 0
+                        ? `${selectedCommune.properties.areaKm2.toLocaleString("vi-VN")} km²`
+                        : "Đang cập nhật"}
+                    </div>
+                  </div>
+                  <div className="bg-slate-900/60 p-2 rounded-lg border border-sky-900/40">
+                    <div className="text-[9.5px] text-slate-400">Dân số</div>
+                    <div className="font-bold text-sky-200 text-xs">
+                      {selectedCommune.properties.population > 0
+                        ? `${selectedCommune.properties.population.toLocaleString("vi-VN")} người`
+                        : "Đang cập nhật"}
+                    </div>
+                  </div>
+                  {selectedCommune.properties.density > 0 && (
+                    <div className="bg-slate-900/60 p-2 rounded-lg border border-sky-900/40">
+                      <div className="text-[9.5px] text-slate-400">Mật độ</div>
+                      <div className="font-semibold text-slate-100 text-xs">
+                        {Math.round(selectedCommune.properties.density).toLocaleString("vi-VN")} ng/km²
+                      </div>
+                    </div>
+                  )}
+                  <div className="bg-slate-900/60 p-2 rounded-lg border border-sky-900/40">
+                    <div className="text-[9.5px] text-slate-400">Tọa độ tâm</div>
+                    <div className="font-mono text-slate-300 text-[10px] font-semibold">
+                      {selectedCommune.properties.centroid[1].toFixed(2)}°B, {selectedCommune.properties.centroid[0].toFixed(2)}°Đ
+                    </div>
+                  </div>
+                </div>
+
+                {selectedCommune.properties.headquarters && (
+                  <div className="text-[11px] text-slate-200 bg-slate-900/50 p-2 rounded-lg border border-sky-900/30 leading-snug">
+                    <span className="text-sky-300 font-bold">Trụ sở UBND: </span>
+                    <span>{selectedCommune.properties.headquarters}</span>
+                  </div>
+                )}
+
+                {selectedCommune.properties.mergedFrom && (
+                  <div className="text-[10.5px] text-amber-200 bg-amber-950/40 p-2 rounded-lg border border-amber-800/40 leading-snug max-h-16 overflow-y-auto">
+                    <span className="text-amber-300 font-bold">Sáp nhập: </span>
+                    <span>{selectedCommune.properties.mergedFrom}</span>
+                  </div>
+                )}
               </div>
             )}
 
