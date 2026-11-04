@@ -219,15 +219,11 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => setShowKeyModal(true)}
-            className={`text-[11px] px-2 py-0.5 rounded-full border transition-all flex items-center gap-1 ${
-              userApiKey
-                ? "bg-emerald-950/70 border-emerald-600/80 text-emerald-300"
-                : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
-            }`}
-            title="Cấu hình Google Gemini API Key"
+            className="text-[11px] px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 flex items-center gap-1.5 hover:bg-emerald-950/60 transition-all cursor-pointer"
+            title="Trạng thái kết nối Trợ lí AI (Bấm để xem chi tiết)"
           >
-            <Sparkles className="w-3 h-3 text-emerald-400" />
-            <span>{userApiKey ? "Gemini Live: Bật" : "Gemini AI"}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-semibold">{userApiKey ? "AI: Key riêng" : "AI: Trực tuyến"}</span>
           </button>
 
           <button
@@ -358,85 +354,120 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
         </div>
       </div>
 
-      {/* Modal Cấu hình Google Gemini API Key */}
+      {/* Modal Thông tin Trạng thái Trợ lí AI */}
       {showKeyModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-700 rounded-2xl p-5 max-w-md w-full shadow-2xl animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-emerald-400" />
-                <h4 className="font-bold text-sm text-slate-100">Cấu hình Google Gemini AI</h4>
+                <h4 className="font-bold text-sm text-slate-100">Trạng thái Trợ lí AI Địa lí</h4>
               </div>
               <button
                 onClick={() => setShowKeyModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+                title="Đóng"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-slate-300 mt-3 leading-relaxed">
-              Mặc định VN34MG đã tích hợp sẵn <strong>Bộ tri thức Địa lí chuyên sâu</strong> chuẩn SGK (hoạt động không cần Key). 
-              Nếu bạn muốn kích hoạt thêm mô hình trực tiếp <strong>Gemini 1.5 Flash Live</strong> từ Google, hãy dán API Key của bạn vào bên dưới:
-            </p>
-
-            <div className="mt-3">
-              <input
-                type="password"
-                placeholder="AIzaSy..."
-                value={tempApiKey}
-                onChange={(e) => setTempApiKey(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-              />
+            {/* Trạng thái hoạt động */}
+            <div className="mt-3.5 p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex items-start gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0 mt-1" />
+              <div>
+                <p className="text-xs font-semibold text-emerald-300">
+                  {userApiKey ? "Đang sử dụng API Key cá nhân" : "Đang hoạt động: Trực tuyến (Sẵn sàng 100%)"}
+                </p>
+                <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                  Trợ lí AI đã được tích hợp sẵn hoàn toàn trên máy chủ của dự án. Bạn có thể gõ câu hỏi bất kỳ lúc nào để nhận câu trả lời phân tích chuyên sâu mà <strong>không cần phải cấu hình hay nhập mã API</strong> nào.
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-800 text-xs">
-              {userApiKey ? (
-                <button
-                  onClick={() => {
-                    setUserApiKey("");
-                    setTempApiKey("");
-                    localStorage.removeItem("vn34_gemini_api_key");
-                    setShowKeyModal(false);
-                  }}
-                  className="text-red-400 hover:text-red-300"
-                >
-                  Xóa Key đã lưu
-                </button>
-              ) : (
-                <a
-                  href="https://aistudio.google.com/app/apikey"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:underline flex items-center gap-1"
-                >
-                  <span>Lấy key miễn phí</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              )}
-
-              <div className="flex items-center gap-2 ml-auto">
-                <button
-                  onClick={() => setShowKeyModal(false)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700"
-                >
-                  Đóng
-                </button>
-                <button
-                  onClick={() => {
-                    setUserApiKey(tempApiKey.trim());
-                    if (tempApiKey.trim()) {
-                      localStorage.setItem("vn34_gemini_api_key", tempApiKey.trim());
-                    } else {
-                      localStorage.removeItem("vn34_gemini_api_key");
-                    }
-                    setShowKeyModal(false);
-                  }}
-                  className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium"
-                >
-                  Lưu & Áp dụng
-                </button>
+            {/* Thông tin mô hình & tri thức */}
+            <div className="mt-3 space-y-2 text-xs text-slate-300">
+              <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Nguồn tri thức:</span>
+                  <span className="font-medium text-slate-200">SGK GDPT 2018 & NQ 306/NQ-CP</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Động cơ xử lí:</span>
+                  <span className="font-medium text-emerald-400">AI Deep Cloud + Local Engine</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Quyền truy cập:</span>
+                  <span className="font-medium text-blue-300">Miễn phí cho mọi người dùng</span>
+                </div>
               </div>
+            </div>
+
+            {/* Tùy chọn nâng cao nhập API Key riêng (dành cho lập trình viên nếu muốn) */}
+            <details className="mt-3 group border border-slate-800 rounded-xl p-2.5 bg-slate-950/60">
+              <summary className="text-[11px] text-slate-400 hover:text-slate-200 cursor-pointer font-medium list-none flex items-center justify-between">
+                <span>Tùy chọn nâng cao: Dùng Google Gemini API Key riêng</span>
+                <span className="text-xs text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="mt-2.5 pt-2 border-t border-slate-800/80">
+                <p className="text-[11px] text-slate-400 mb-2">
+                  Dành cho nhà phát triển muốn thử nghiệm quota riêng từ Google AI Studio (tùy chọn, không bắt buộc):
+                </p>
+                <input
+                  type="password"
+                  placeholder="AIzaSy... (Để trống nếu dùng mặc định của hệ thống)"
+                  value={tempApiKey}
+                  onChange={(e) => setTempApiKey(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                />
+                <div className="flex items-center justify-between mt-2 text-[11px]">
+                  {userApiKey ? (
+                    <button
+                      onClick={() => {
+                        setUserApiKey("");
+                        setTempApiKey("");
+                        localStorage.removeItem("vn34_gemini_api_key");
+                      }}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      Xóa Key cá nhân
+                    </button>
+                  ) : (
+                    <a
+                      href="https://aistudio.google.com/app/apikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline flex items-center gap-1"
+                    >
+                      <span>Lấy key Google AI</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                  <button
+                    onClick={() => {
+                      setUserApiKey(tempApiKey.trim());
+                      if (tempApiKey.trim()) {
+                        localStorage.setItem("vn34_gemini_api_key", tempApiKey.trim());
+                      } else {
+                        localStorage.removeItem("vn34_gemini_api_key");
+                      }
+                      setShowKeyModal(false);
+                    }}
+                    className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200"
+                  >
+                    Lưu key
+                  </button>
+                </div>
+              </div>
+            </details>
+
+            <div className="mt-4 pt-3 border-t border-slate-800 flex justify-end">
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs shadow hover:bg-emerald-500 transition-colors"
+              >
+                Đã hiểu & Bắt đầu hỏi đáp
+              </button>
             </div>
           </div>
         </div>
