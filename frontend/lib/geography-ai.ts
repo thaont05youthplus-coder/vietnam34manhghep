@@ -81,6 +81,62 @@ export const PROVINCES_MAP = [
 export function generateGeographyAnswer(query: string, contextProvince?: string | null): GeoAnswer {
   const norm = removeAccents(query);
 
+  // 0. Trọng tâm chiến lược: Nghị quyết số 306/NQ-CP của Chính phủ về Quy hoạch tổng thể quốc gia & Định hướng 6 vùng kinh tế
+  if (
+    norm.includes("306") ||
+    norm.includes("306/nq-cp") ||
+    norm.includes("nghi quyet 306") ||
+    (norm.includes("quy hoach") && (norm.includes("tong the") || norm.includes("quoc gia"))) ||
+    norm.includes("vung dong luc") ||
+    norm.includes("hanh lang kinh te") ||
+    (norm.includes("dinh huong") && (norm.includes("vung") || norm.includes("kinh te"))) ||
+    (norm.includes("6 vung") && norm.includes("kinh te"))
+  ) {
+    return {
+      text: `Định hướng Quy hoạch tổng thể quốc gia thời kỳ 2021 - 2030, tầm nhìn đến năm 2050 (Theo Nghị quyết số 306/NQ-CP ngày 05/10/2025 của Chính phủ):
+
+1. Mục tiêu chiến lược phát triển:
+• Tốc độ tăng trưởng GDP bình quân cả nước đạt trên 8,0%/năm trong giai đoạn 2021 - 2030.
+• Đến năm 2030: GDP bình quân đầu người đạt khoảng 8.500 USD; tỷ trọng kinh tế số đạt khoảng 30% GDP.
+
+2. Hệ thống 2 Vùng động lực quốc gia & Cực tăng trưởng mới:
+• Vùng động lực phía Bắc: Tam giác tăng trưởng Hà Nội - Hải Phòng - Quảng Ninh, đi đầu về chuyển đổi số, đổi mới sáng tạo và công nghệ cao.
+• Vùng động lực phía Nam: Tứ giác kinh tế trọng điểm TP. Hồ Chí Minh - Bình Dương - Đồng Nai - Bà Rịa Vũng Tàu, trung tâm tài chính quốc tế, công nghệ bán dẫn và dịch vụ logistics hiện đại.
+• Cực tăng trưởng miền Trung: Đà Nẵng - Quảng Ngãi và hình thành vùng động lực mới tại Khánh Hòa - Lâm Đồng (liên kết biển đảo với Tây Nguyên).
+• Vùng động lực Đồng bằng sông Cửu Long: Cực tăng trưởng Thành phố Cần Thơ.
+
+3. Các hành lang kinh tế chủ đạo:
+• Hành lang kinh tế Bắc - Nam (trục xương sống kết nối theo cao tốc Bắc - Nam và Quốc lộ 1).
+• Hành lang Lào Cai - Hà Nội - Hải Phòng - Quảng Ninh (kết nối liên vận quốc tế với Tây Nam Trung Quốc).
+• Hành lang Mộc Bài - TP. Hồ Chí Minh - Cảng Cái Mép Thị Vải.
+• Hành lang kinh tế Đông - Tây (trục Lao Bảo - Đông Hà - Đà Nẵng).
+• Hành lang kinh tế kết nối Tây Nguyên với Duyên hải miền Trung (Quốc lộ 19, 26, 27).
+
+4. Định hướng phát triển 6 Vùng Kinh tế - Xã hội:
+• Trung du và Miền núi Bắc Bộ: Kinh tế xanh, lâm nghiệp bền vững, chế biến khoáng sản - nông sản và kinh tế cửa khẩu.
+• Đồng bằng sông Hồng: Đầu tàu khoa học công nghệ, công nghiệp phụ trợ, giáo dục đào tạo và y tế chuyên sâu.
+• Bắc Trung Bộ & Duyên hải miền Trung: Kinh tế biển, chuỗi cảng nước sâu, năng lượng sạch, du lịch biển đảo chất lượng cao.
+• Tây Nguyên: Trung tâm cây công nghiệp chủ lực (cà phê, hồ tiêu, sầu riêng), nông nghiệp công nghệ cao, an ninh nguồn nước.
+• Đông Nam Bộ: Động lực tăng trưởng kinh tế lớn nhất cả nước, dẫn đầu công nghiệp công nghệ cao, vi mạch bán dẫn.
+• Đồng bằng sông Cửu Long: An ninh lương thực quốc gia, trung tâm nông - thủy sản xuất khẩu toàn cầu, kinh tế tuần hoàn thích ứng biến đổi khí hậu.`,
+      citations: [
+        {
+          id: "cit_nq306_cp",
+          title: "Nghị quyết số 306/NQ-CP về điều chỉnh Quy hoạch tổng thể quốc gia 2021 - 2030, tầm nhìn 2050",
+          publisher: "Chính phủ CHXHCN Việt Nam",
+          year: 2025,
+          url: "https://luatvietnam.vn/xay-dung/nghi-quyet-306-nq-cp-cua-chinh-phu-ve-viec-dieu-chinh-quy-hoach-tong-the-quoc-gia-thoi-ky-2021-2030-tam-nhin-den-nam-2050-413739-d1.html",
+        },
+        {
+          id: "cit_luat_quy_hoach",
+          title: "Luật Quy hoạch và Chiến lược phát triển kinh tế - xã hội 10 năm 2021 - 2030",
+          publisher: "Quốc hội Nước CHXHCN Việt Nam",
+          year: 2023,
+        },
+      ],
+    };
+  }
+
   // 1. Câu hỏi nâng cao: Tại sao bão ít vào Nam Bộ?
   if (
     (norm.includes("bao") && (norm.includes("nam bo") || norm.includes("mien nam") || norm.includes("it vao"))) ||

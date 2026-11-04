@@ -239,19 +239,19 @@ export function getCompleteProvinceDetail(
         east: naturalRegionName?.includes("Nam Trung Bộ") || naturalRegionName?.includes("Bắc Trung Bộ") ? "Biển Đông" : "Tỉnh tiếp giáp phía Đông",
         west: "Tỉnh tiếp giáp phía Tây hoặc đường biên giới quốc gia",
       },
-      mergerNote: `Thuộc ${economicRegionName || "Vùng quy hoạch kinh tế quốc gia"} theo phương án sắp xếp 34 đơn vị hành chính cấp tỉnh.`,
+      mergerNote: `Định hướng Quy hoạch theo Nghị quyết số 306/NQ-CP của Chính phủ về điều chỉnh Quy hoạch tổng thể quốc gia thời kỳ 2021-2030, tầm nhìn đến năm 2050: Thuộc ${economicRegionName || "Vùng kinh tế trọng điểm"}, phát triển gắn với các hành lang kinh tế và vùng động lực quốc gia, đóng góp vào mục tiêu tăng trưởng GDP cả nước trên 8,0%/năm.`,
     },
     nature: {
-      terrain: `Đặc trưng địa hình thuộc ${naturalRegionName || "khu vực địa lí tự nhiên Việt Nam"}, phân bố độ cao hài hòa giữa vùng trung tâm và phụ cận.`,
-      climate: "Nhiệt đới gió mùa ẩm, phân hóa hai mùa mưa - khô rõ rệt, nguồn nhiệt ẩm dồi dào tạo thuận lợi cho sản xuất và đời sống.",
-      hydrology: "Hệ thống sông ngòi tự nhiên phong phú bồi đắp phù sa và phục vụ giao thông thủy cũng như thủy điện.",
-      minerals: "Vật liệu xây dựng, khoáng sản công nghiệp và tài nguyên nước ngầm trữ lượng tốt.",
-      conservation: [`Khu bảo tồn sinh thái ${name}`, "Rừng phòng hộ đầu nguồn"],
+      terrain: `Đặc trưng địa hình thuộc ${naturalRegionName || "khu vực địa lí tự nhiên Việt Nam"}, phân bố độ cao hài hòa giữa vùng trung tâm và phụ cận, giàu tiềm năng sinh thái.`,
+      climate: "Nhiệt đới gió mùa ẩm, phân hóa hai mùa mưa - khô rõ rệt, nguồn nhiệt ẩm dồi dào tạo thuận lợi cho sản xuất nông - lâm - thủy sản và đời sống.",
+      hydrology: "Hệ thống sông ngòi tự nhiên phong phú bồi đắp phù sa và phục vụ giao thông thủy, thủy lợi cũng như các công trình hạ tầng xanh.",
+      minerals: "Vật liệu xây dựng, khoáng sản công nghiệp và tài nguyên nước ngầm trữ lượng tốt theo quy hoạch tài nguyên quốc gia.",
+      conservation: [`Khu bảo tồn sinh thái ${name}`, "Rừng phòng hộ đầu nguồn và vườn quốc gia liên vùng"],
     },
     economy: {
       grdpTotal: `${Math.round(areaSqKm * 15 + 40000).toLocaleString("vi-VN")} tỉ VNĐ`,
       grdpPerCapita: `${Math.round(55 + (areaSqKm % 40))} triệu VNĐ/người/năm`,
-      growthRate: "7.2%",
+      growthRate: "8.2%",
       structure: {
         agriculture: isCity ? 5.2 : 24.5,
         industry: isCity ? 38.3 : 36.5,
@@ -259,12 +259,12 @@ export function getCompleteProvinceDetail(
         taxes: 7.0,
       },
       keyIndustries: isCity
-        ? ["Thương mại - Dịch vụ - Tài chính", "Công nghiệp công nghệ cao", "Đô thị thông minh"]
-        : ["Nông nghiệp công nghệ cao", "Chế biến nông lâm thủy sản", "Tiểu thủ công nghiệp & Du lịch sinh thái"],
+        ? ["Thương mại - Dịch vụ - Tài chính", "Công nghiệp công nghệ cao & Chuyển đổi số", "Đô thị thông minh & Kinh tế số"]
+        : ["Nông nghiệp công nghệ cao", "Chế biến nông lâm thủy sản", "Tiểu thủ công nghiệp, Năng lượng sạch & Du lịch sinh thái"],
       infrastructure: {
-        airports: isCity ? ["Sân bay kết nối liên vùng"] : ["Liên kết cảng hàng không khu vực lân cận"],
-        seaports: ["Cảng nội địa & Cảng biển liên kết vùng"],
-        highways: ["Trục Quốc lộ huyết mạch", "Cao tốc kết nối hành lang kinh tế"],
+        airports: isCity ? ["Sân bay kết nối liên vùng & quốc tế"] : ["Liên kết cảng hàng không khu vực lân cận"],
+        seaports: ["Cảng nội địa & Cảng biển liên kết vùng logistics"],
+        highways: ["Trục Quốc lộ huyết mạch", "Cao tốc kết nối hành lang kinh tế trọng điểm quốc gia"],
       },
     },
     images: [
@@ -286,6 +286,15 @@ export function getCompleteProvinceDetail(
     sources: [
       {
         id: `src_${code}_1`,
+        title: "Nghị quyết số 306/NQ-CP về điều chỉnh Quy hoạch tổng thể quốc gia thời kỳ 2021-2030, tầm nhìn 2050",
+        organization: "Chính phủ nước CHXHCN Việt Nam",
+        year: 2025,
+        type: "legal",
+        documentNumber: "Nghị quyết 306/NQ-CP",
+        isVerified: true,
+      },
+      {
+        id: `src_${code}_2`,
         title: `Niên giám Thống kê ${name} 2024`,
         organization: "Tổng cục Thống kê Việt Nam",
         year: 2024,
@@ -293,10 +302,10 @@ export function getCompleteProvinceDetail(
         isVerified: true,
       },
       {
-        id: `src_${code}_2`,
+        id: `src_${code}_3`,
         title: `Quy hoạch tỉnh ${name} thời kỳ 2021-2030, tầm nhìn đến năm 2050`,
         organization: "Thủ tướng Chính phủ",
-        year: 2023,
+        year: 2024,
         type: "legal",
         isVerified: true,
       },

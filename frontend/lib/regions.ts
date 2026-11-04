@@ -1,11 +1,14 @@
 import { RegionDefinition } from "@/types/geo";
 
-// 6 Vùng Kinh tế - Xã hội theo Nghị quyết và Spec VN34MG
+// 6 Vùng Kinh tế - Xã hội theo Nghị quyết số 306/NQ-CP của Chính phủ về Quy hoạch tổng thể quốc gia
 export const ECONOMIC_REGIONS: RegionDefinition[] = [
   {
     id: "kt_trung_du_mien_nui_phia_bac",
     name: "Trung du & Miền núi Bắc Bộ",
-    subtitle: "Địa hình cao nguyên & khoáng sản",
+    subtitle: "Vùng sinh thái xanh, liên kết giao thương quốc tế & kinh tế cửa khẩu",
+    description: "Theo Nghị quyết 306/NQ-CP: Tập trung phát triển xanh, bền vững và toàn diện; là trung tâm kết nối giao thương giữa ASEAN với Trung Quốc và châu Âu; phát triển mạnh kinh tế cửa khẩu, du lịch sinh thái - văn hóa và công nghiệp chế biến khoáng sản, nông lâm sản.",
+    dynamicZone: "Hành lang kinh tế Lào Cai - Hà Nội - Hải Phòng - Quảng Ninh",
+    growthCorridors: ["Hành lang kinh tế Bắc - Nam", "Hành lang kinh tế Lào Cai - Hà Nội - Hải Phòng - Quảng Ninh"],
     imageUrl: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=400&q=80",
     color: "#059669", // Xanh ngọc lục bảo
     type: "economic",
@@ -14,7 +17,10 @@ export const ECONOMIC_REGIONS: RegionDefinition[] = [
   {
     id: "kt_dong_bang_song_hong",
     name: "Đồng bằng sông Hồng",
-    subtitle: "Cội nguồn văn minh châu thổ",
+    subtitle: "Đầu tàu chuyển đổi số, đổi mới sáng tạo, công nghệ cao & dịch vụ hiện đại",
+    description: "Theo Nghị quyết 306/NQ-CP: Vùng động lực phía Bắc với tam giác tăng trưởng Hà Nội - Hải Phòng - Quảng Ninh; đi đầu trong chuyển đổi số, đổi mới sáng tạo, công nghiệp công nghệ cao, dịch vụ chất lượng cao, giáo dục - đào tạo và y tế chuyên sâu.",
+    dynamicZone: "Tam giác tăng trưởng Hà Nội - Hải Phòng - Quảng Ninh (Vùng động lực phía Bắc)",
+    growthCorridors: ["Hành lang kinh tế Bắc - Nam", "Hành lang kinh tế ven biển vịnh Bắc Bộ"],
     imageUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=400&q=80",
     color: "#2563eb", // Xanh dương
     type: "economic",
@@ -23,7 +29,10 @@ export const ECONOMIC_REGIONS: RegionDefinition[] = [
   {
     id: "kt_bac_trung_bo_duyen_hai_mien_trung",
     name: "Bắc Trung Bộ & Duyên hải",
-    subtitle: "Dải đất ven biển & cảng biển",
+    subtitle: "Dải kinh tế biển, cảng nước sâu, năng lượng sạch & cực tăng trưởng mới",
+    description: "Theo Nghị quyết 306/NQ-CP: Phát triển mạnh kinh tế biển (hệ thống cảng biển, logistics, du lịch biển đảo, nuôi trồng chế biến hải sản), năng lượng tái tạo, đô thị - công nghiệp ven biển; phát triển cực tăng trưởng Đà Nẵng - Quảng Nam - Quảng Ngãi và hình thành vùng động lực mới tại Khánh Hòa - Lâm Đồng.",
+    dynamicZone: "Cực tăng trưởng Đà Nẵng - Quảng Ngãi & Vùng động lực mới Khánh Hòa - Lâm Đồng",
+    growthCorridors: ["Hành lang kinh tế Bắc - Nam", "Hành lang kinh tế Đông - Tây (Lao Bảo - Đà Nẵng)"],
     imageUrl: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=400&q=80",
     color: "#d97706", // Cam hổ phách
     type: "economic",
@@ -32,7 +41,10 @@ export const ECONOMIC_REGIONS: RegionDefinition[] = [
   {
     id: "kt_tay_nguyen",
     name: "Tây Nguyên",
-    subtitle: "Đất đỏ badan & cây công nghiệp",
+    subtitle: "Vùng nông nghiệp công nghệ cao, lâm nghiệp bền vững & năng lượng tái tạo",
+    description: "Theo Nghị quyết 306/NQ-CP: Phát triển kinh tế xanh, bảo vệ an ninh nguồn nước và hệ sinh thái rừng; trung tâm sản xuất cây công nghiệp chủ lực, chế biến nông - lâm sản công nghệ cao, du lịch văn hóa cồng chiêng; liên kết chặt chẽ với duyên hải miền Trung qua trục Khánh Hòa - Lâm Đồng.",
+    dynamicZone: "Vùng động lực liên kết Khánh Hòa - Lâm Đồng và phụ cận",
+    growthCorridors: ["Hành lang kinh tế Tây Nguyên - Duyên hải miền Trung (Quốc lộ 19, 26, 27)"],
     imageUrl: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80",
     color: "#7c3aed", // Tím
     type: "economic",
@@ -41,7 +53,10 @@ export const ECONOMIC_REGIONS: RegionDefinition[] = [
   {
     id: "kt_dong_nam_bo",
     name: "Đông Nam Bộ",
-    subtitle: "Động lực kinh tế & đô thị hóa",
+    subtitle: "Trung tâm kinh tế, tài chính quốc tế, công nghệ cao & bán dẫn",
+    description: "Theo Nghị quyết 306/NQ-CP: Vùng động lực kinh tế lớn nhất cả nước; cực tăng trưởng TP. Hồ Chí Minh; đi đầu trong chuyển đổi mô hình tăng trưởng, kinh tế số, kinh tế tuần hoàn, công nghệ cao, vi mạch bán dẫn và trung tâm tài chính quốc tế.",
+    dynamicZone: "Vùng động lực phía Nam (TP. Hồ Chí Minh - Bình Dương - Đồng Nai - Bà Rịa Vũng Tàu)",
+    growthCorridors: ["Hành lang kinh tế Bắc - Nam", "Hành lang Mộc Bài - TP. Hồ Chí Minh - Vũng Tàu"],
     imageUrl: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=400&q=80",
     color: "#ea580c", // Cam đất ấm áp (Terracotta), không gây cảm giác cảnh báo
     type: "economic",
@@ -50,7 +65,10 @@ export const ECONOMIC_REGIONS: RegionDefinition[] = [
   {
     id: "kt_dong_bang_song_cuu_long",
     name: "Đồng bằng sông Cửu Long",
-    subtitle: "Vựa lúa miền Tây & thủy sản",
+    subtitle: "Trung tâm sản xuất, xuất khẩu nông thủy sản & chủ động thích ứng BĐKH",
+    description: "Theo Nghị quyết 306/NQ-CP: Trung tâm sản xuất nông nghiệp, thủy sản bảo đảm an ninh lương thực quốc gia và xuất khẩu toàn cầu; kinh tế biển, hành lang kinh tế ven biển, logistics nông nghiệp; chủ động thích ứng biến đổi khí hậu và nước biển dâng.",
+    dynamicZone: "Cực tăng trưởng Cần Thơ và vùng đô thị sông nước sinh thái",
+    growthCorridors: ["Hành lang kinh tế Bắc - Nam (trục Cần Thơ - Cà Mau)", "Hành lang kinh tế ven biển Tây Nam"],
     imageUrl: "https://images.unsplash.com/photo-1579618218290-25a2e5d1e7c5?auto=format&fit=crop&w=400&q=80",
     color: "#0d9488", // Xanh lam mòng két
     type: "economic",

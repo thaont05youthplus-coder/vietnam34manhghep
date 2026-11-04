@@ -126,6 +126,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const isDraggingRef = useRef(false);
+  const isPointerDownRef = useRef(false);
+  const dragDistRef = useRef(0);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const panRef = useRef(pan);
   const zoomRef = useRef(zoom);
@@ -307,111 +309,38 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   // Tự động tải trước dữ liệu xã/phường 34 tỉnh trong background lúc nhàn rỗi
   // để khi người dùng zoom vào bất kỳ tỉnh nào (Thanh Hóa, Ninh Bình, Nghệ An, Hà Nội...)
   // tất cả các xã/phường lập tức hiển thị đồng bộ, xóa bỏ hoàn toàn tình trạng "chỗ hiện chỗ không"
+  // Tải đồng bộ toàn bộ 34 file xã/phường cho cả nước, đảm bảo không bao giờ bỏ sót bất kỳ tỉnh nào (Điện Biên, Lai Châu, Nghệ An...)
   useEffect(() => {
     if (!geoData) return;
 
-    let isCancelled = false;
+    let isMounted = true;
     const allCodes = geoData.features.map((f) => f.properties.provinceCode);
 
-    let index = 0;
-    const loadBatch = () => {
-      if (isCancelled || index >= allCodes.length) return;
-      const batch = allCodes.slice(index, index + 6);
-      index += 6;
-
-      Promise.all(
-        batch.map((code) => {
-          if (communePolygonsByProvince[code] || loadedProvinceCodesRef.current.has(code)) {
-            return Promise.resolve(null);
-          }
-          loadedProvinceCodesRef.current.add(code);
-          return fetch(`/data/wards/${code}.json`)
-            .then((res) => (res.ok ? res.json() : null))
-            .then((data: CommunePolygonCollection | null) => ({ code, data }))
-            .catch(() => null);
-        })
-      ).then((results) => {
-        if (isCancelled) return;
-        const newEntries: Record<string, CommunePolygonCollection> = {};
-        for (const item of results) {
-          if (item && item.data && item.data.features) {
-            newEntries[item.code] = item.data;
-          }
-        }
-        if (Object.keys(newEntries).length > 0) {
-          setCommunePolygonsByProvince((prev) => ({ ...prev, ...newEntries }));
-        }
-
-        setTimeout(loadBatch, 80);
-      });
-    };
-
-    const timer = setTimeout(loadBatch, 60);
-
-    return () => {
-      isCancelled = true;
-      clearTimeout(timer);
-    };
-  }, [geoData]);
-
-  // Nạp ưu tiên các tỉnh nằm trong khung nhìn viewport khi zoom hoặc chọn tỉnh
-  useEffect(() => {
-    const codesToLoad: string[] = [];
-
-    if (selectedProvince) {
-      const code = selectedProvince.properties.provinceCode;
-      if (!loadedProvinceCodesRef.current.has(code) && !communePolygonsByProvince[code]) {
-        codesToLoad.push(code);
-      }
-    }
-
-    if (zoom >= 1.5 && geoData) {
-      const viewLeft = -pan.x / zoom;
-      const viewRight = (svgWidth - pan.x) / zoom;
-      const viewTop = -pan.y / zoom;
-      const viewBottom = (svgHeight - pan.y) / zoom;
-
-      for (const feat of geoData.features) {
-        const code = feat.properties.provinceCode;
-        if (loadedProvinceCodesRef.current.has(code) || communePolygonsByProvince[code]) continue;
-        const box = provinceBBoxes[code];
-        if (!box) continue;
-
-        if (
-          box.maxX >= viewLeft - 60 &&
-          box.minX <= viewRight + 60 &&
-          box.maxY >= viewTop - 60 &&
-          box.minY <= viewBottom + 60
-        ) {
-          codesToLoad.push(code);
+    Promise.all(
+      allCodes.map((code) => {
+        if (communePolygonsByProvince[code]) return Promise.resolve(null);
+        return fetch(`/data/wards/${code}.json`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data: CommunePolygonCollection | null) => (data && data.features ? { code, data } : null))
+          .catch(() => null);
+      })
+    ).then((results) => {
+      if (!isMounted) return;
+      const entries: Record<string, CommunePolygonCollection> = {};
+      for (const item of results) {
+        if (item && item.data) {
+          entries[item.code] = item.data;
         }
       }
-    }
-
-    if (codesToLoad.length === 0) return;
-
-    codesToLoad.forEach((pCode) => {
-      loadedProvinceCodesRef.current.add(pCode);
+      if (Object.keys(entries).length > 0) {
+        setCommunePolygonsByProvince((prev) => ({ ...prev, ...entries }));
+      }
     });
 
-    const timer = setTimeout(() => {
-      codesToLoad.forEach((pCode) => {
-        fetch(`/data/wards/${pCode}.json`)
-          .then((res) => (res.ok ? res.json() : null))
-          .then((data: CommunePolygonCollection | null) => {
-            if (data && data.features) {
-              setCommunePolygonsByProvince((prev) => {
-                if (prev[pCode]) return prev;
-                return { ...prev, [pCode]: data };
-              });
-            }
-          })
-          .catch(() => {});
-      });
-    }, 80);
-
-    return () => clearTimeout(timer);
-  }, [selectedProvince?.properties.provinceCode, zoom >= 1.5, Math.round(pan.x / 40), Math.round(pan.y / 40), geoData, provinceBBoxes, svgWidth, svgHeight]);
+    return () => {
+      isMounted = false;
+    };
+  }, [geoData]);
 
   // Tự động căn giữa và phóng vừa địa phương vào phần màn hình còn trống (tính cả bảng thông tin bên phải 360px và chừa khoảng đệm)
   useEffect(() => {
@@ -702,17 +631,18 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     const viewBottom = (svgHeight - pan.y) / zoom;
 
     // Xác định tất cả các tỉnh nằm trong khung nhìn viewport cần hiển thị xã/phường
-    // KHÔNG BAO GIỜ bị giới hạn bởi 1 tỉnh duy nhất khi phóng to, đảm bảo mọi tỉnh trong tầm nhìn đều có xã/phường đồng bộ
+    // Đệm an toàn tăng cường theo mức zoom để zoom 10+ không bao giờ bị cắt ranh giới xã/phường
+    const pad = Math.max(160 / zoom, 50);
     const targetProvinceCodes = Object.keys(communePolygonsByProvince).filter((code) => {
       if (selectedProvince && selectedProvince.properties.provinceCode === code) return true;
       if (zoom < 1.5) return false;
       const box = provinceBBoxes[code];
       if (!box) return true;
       return (
-        box.maxX >= viewLeft - 50 &&
-        box.minX <= viewRight + 50 &&
-        box.maxY >= viewTop - 50 &&
-        box.minY <= viewBottom + 50
+        box.maxX >= viewLeft - pad &&
+        box.minX <= viewRight + pad &&
+        box.maxY >= viewTop - pad &&
+        box.minY <= viewBottom + pad
       );
     });
 
@@ -894,12 +824,13 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     return result;
   }, [wardsData, isWardsVisible, selectedProvince, zoom, project, projectedCommunes.length]);
 
-  // Pan & Drag event handlers (Thao tác tức thời mượt mà 60fps qua requestAnimationFrame và Pointer Capture)
+  // Pan & Drag event handlers (Thao tác tức thời mượt mà 60fps qua requestAnimationFrame, phân biệt rõ Click và Drag)
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
     setIsAnimating(false);
-    isDraggingRef.current = true;
-    setIsDragging(true);
+    isPointerDownRef.current = true;
+    isDraggingRef.current = false;
+    dragDistRef.current = 0;
     const svgEl = svgRef.current;
     const scale = svgEl?.getScreenCTM()?.a || 1;
     dragStartRef.current = {
@@ -909,62 +840,26 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       panY: panRef.current.y,
       scale,
     } as any;
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch {}
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
+    if (!isPointerDownRef.current) return;
     const ds = dragStartRef.current as any;
-    const scale = ds.scale || 1;
-    const nextX = ds.panX + (e.clientX - ds.x) / scale;
-    const nextY = ds.panY + (e.clientY - ds.y) / scale;
+    const dx = e.clientX - ds.x;
+    const dy = e.clientY - ds.y;
+    const dist = Math.hypot(dx, dy);
+    dragDistRef.current = dist;
 
-    if (!rafIdRef.current) {
-      rafIdRef.current = requestAnimationFrame(() => {
-        setPan({ x: nextX, y: nextY });
-        rafIdRef.current = null;
-      });
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (isDraggingRef.current) {
-      isDraggingRef.current = false;
-      setIsDragging(false);
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current);
-        rafIdRef.current = null;
+    // Ngưỡng phân biệt click và drag (5px) để click mở thẻ thông tin tỉnh/xã 100% nhạy bén
+    if (dist > 5) {
+      if (!isDraggingRef.current) {
+        isDraggingRef.current = true;
+        setIsDragging(true);
       }
-      try {
-        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-      } catch {}
-    }
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return;
-    setIsAnimating(false);
-    isDraggingRef.current = true;
-    setIsDragging(true);
-    const svgEl = svgRef.current;
-    const scale = svgEl?.getScreenCTM()?.a || 1;
-    dragStartRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      panX: panRef.current.x,
-      panY: panRef.current.y,
-      scale,
-    } as any;
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDraggingRef.current || isDragging) {
-      const ds = dragStartRef.current as any;
       const scale = ds.scale || 1;
-      const nextX = ds.panX + (e.clientX - ds.x) / scale;
-      const nextY = ds.panY + (e.clientY - ds.y) / scale;
+      const nextX = ds.panX + dx / scale;
+      const nextY = ds.panY + dy / scale;
+
       if (!rafIdRef.current) {
         rafIdRef.current = requestAnimationFrame(() => {
           setPan({ x: nextX, y: nextY });
@@ -974,12 +869,20 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
     }
   };
 
-  const handleMouseUp = () => {
-    isDraggingRef.current = false;
-    setIsDragging(false);
+  const handlePointerUp = () => {
+    isPointerDownRef.current = false;
     if (rafIdRef.current) {
       cancelAnimationFrame(rafIdRef.current);
       rafIdRef.current = null;
+    }
+    if (isDraggingRef.current) {
+      setTimeout(() => {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+      }, 50);
+    } else {
+      isDraggingRef.current = false;
+      setIsDragging(false);
     }
   };
 
@@ -992,7 +895,8 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
     const factor = e.deltaY < 0 ? 1.15 : 0.87;
     const currentZ = zoomRef.current;
-    const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 8);
+    // Hỗ trợ dải zoom mở rộng đến 12 (đáp ứng trọn vẹn mức Max 10+)
+    const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 12);
     if (newZoom === currentZ) return;
 
     // Tiêu điểm zoom hướng tâm chuẩn xác 100% theo con trỏ chuột (Khắc phục lỗi chạy lệch bản đồ)
@@ -1020,7 +924,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
 
       const factor = e.deltaY < 0 ? 1.15 : 0.87;
       const currentZ = zoomRef.current;
-      const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 8);
+      const newZoom = Math.min(Math.max(currentZ * factor, 0.6), 12);
       if (newZoom === currentZ) return;
 
       const [svgMouseX, svgMouseY] = getSvgCoordinates(e.clientX, e.clientY);
@@ -1042,7 +946,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
   // Zoom in/out giữ nguyên tâm giữa màn hình (Center Focal Zoom)
   const handleZoomIn = () => {
     setIsAnimating(true);
-    const newZoom = Math.min(zoom * 1.3, 8);
+    const newZoom = Math.min(zoom * 1.3, 12);
     if (newZoom === zoom) return;
     const ratio = newZoom / zoom;
     const cx = svgWidth / 2;
@@ -1157,10 +1061,6 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
     >
       {/* Khung lưới tọa độ GIS VN-2000 phẳng, sạch đẹp, không dùng chấm xanh trang trí */}
@@ -1503,6 +1403,7 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
               onMouseLeave={() => setHoveredProvince(null)}
               onClick={(e) => {
                 e.stopPropagation();
+                if (dragDistRef.current > 5) return;
                 onSelectProvince(item.feature);
               }}
             />
@@ -1547,17 +1448,18 @@ export const VietnamMap: React.FC<VietnamMapProps> = ({
                   onMouseLeave={() => setHoveredCommune(null)}
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (dragDistRef.current > 5) return;
+                    const parentProv = geoData?.features.find(
+                      (p) => p.properties.provinceCode === feature.properties.provinceCode
+                    );
+                    if (parentProv) {
+                      onSelectProvince(parentProv);
+                    }
                     const willSelect = selectedCommune?.id !== feature.id;
                     setSelectedCommune(willSelect ? feature : null);
                     setHoveredCommune(null);
                     setActiveWardId(willSelect ? feature.properties.id : null);
                     if (willSelect) {
-                      const parentProv = geoData?.features.find(
-                        (p) => p.properties.provinceCode === feature.properties.provinceCode
-                      );
-                      if (parentProv && selectedProvince?.properties.provinceCode !== parentProv.properties.provinceCode) {
-                        onSelectProvince(parentProv);
-                      }
                       handleZoomToCommune(feature);
                     }
                     if (onSelectWard && willSelect) {

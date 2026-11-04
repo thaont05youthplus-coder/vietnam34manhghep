@@ -37,6 +37,10 @@ export interface RegionDefinition {
   provinceCodes: string[];
   subtitle?: string;
   imageUrl?: string;
+  description?: string;
+  resolutionGuideline?: string;
+  growthCorridors?: string[];
+  dynamicZone?: string;
 }
 
 export interface WardProperties {
