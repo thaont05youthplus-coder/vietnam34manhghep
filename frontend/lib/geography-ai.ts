@@ -113,12 +113,12 @@ export function generateGeographyAnswer(query: string, contextProvince?: string 
 • Hành lang kinh tế kết nối Tây Nguyên với Duyên hải miền Trung (Quốc lộ 19, 26, 27).
 
 4. Định hướng phát triển 6 Vùng Kinh tế - Xã hội:
-• Trung du và Miền núi Bắc Bộ: Kinh tế xanh, lâm nghiệp bền vững, chế biến khoáng sản - nông sản và kinh tế cửa khẩu.
-• Đồng bằng sông Hồng: Đầu tàu khoa học công nghệ, công nghiệp phụ trợ, giáo dục đào tạo và y tế chuyên sâu.
-• Bắc Trung Bộ & Duyên hải miền Trung: Kinh tế biển, chuỗi cảng nước sâu, năng lượng sạch, du lịch biển đảo chất lượng cao.
-• Tây Nguyên: Trung tâm cây công nghiệp chủ lực (cà phê, hồ tiêu, sầu riêng), nông nghiệp công nghệ cao, an ninh nguồn nước.
-• Đông Nam Bộ: Động lực tăng trưởng kinh tế lớn nhất cả nước, dẫn đầu công nghiệp công nghệ cao, vi mạch bán dẫn.
-• Đồng bằng sông Cửu Long: An ninh lương thực quốc gia, trung tâm nông - thủy sản xuất khẩu toàn cầu, kinh tế tuần hoàn thích ứng biến đổi khí hậu.`,
+• Vùng Trung du và miền núi phía Bắc: Kinh tế xanh, liên kết giao thương quốc tế với Trung Quốc và ASEAN, phát triển mạnh kinh tế cửa khẩu, chế biến nông - lâm sản và du lịch sinh thái.
+• Vùng Đồng bằng sông Hồng: Đầu tàu chuyển đổi số, đổi mới sáng tạo, công nghiệp công nghệ cao, dịch vụ chất lượng cao; hạt nhân là vùng động lực phía Bắc với tam giác tăng trưởng Hà Nội - Hải Phòng - Quảng Ninh.
+• Vùng Bắc Trung Bộ: Kinh tế biển kết hợp bảo đảm an ninh quốc phòng, chuỗi cảng nước sâu (Nghi Sơn, Cửa Lò, Vũng Áng, Chân Mây), công nghiệp lọc hóa dầu, thép, năng lượng sạch và du lịch di sản.
+• Vùng Duyên hải Nam Trung Bộ và Tây Nguyên: Vùng động lực kinh tế biển mở gắn với cao nguyên sinh thái; chuỗi cảng nước sâu và logistics, cực tăng trưởng Đà Nẵng - Quảng Ngãi và vùng động lực mới Khánh Hòa - Lâm Đồng; trung tâm nông nghiệp sinh thái công nghệ cao, cây công nghiệp chủ lực, kinh tế rừng và năng lượng tái tạo.
+• Vùng Đông Nam Bộ: Vùng động lực kinh tế lớn nhất cả nước; cực tăng trưởng TP. Hồ Chí Minh; dẫn đầu về công nghiệp công nghệ cao, vi mạch bán dẫn, trung tâm tài chính quốc tế và cụm cảng Cái Mép - Thị Vải.
+• Vùng Đồng bằng sông Cửu Long: Bảo đảm an ninh lương thực quốc gia, trung tâm sản xuất và xuất khẩu nông - thủy sản toàn cầu, kinh tế biển, chủ động thích ứng biến đổi khí hậu.`,
       citations: [
         {
           id: "cit_nq306_cp",

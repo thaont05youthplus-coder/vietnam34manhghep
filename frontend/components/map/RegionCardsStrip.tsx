@@ -47,11 +47,11 @@ export const RegionCardsStrip: React.FC<RegionCardsStripProps> = ({
       className="w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 select-none shadow-lg z-20 h-full overflow-hidden transition-all duration-300 animate-in slide-in-from-right-4"
       aria-label="Khám phá theo vùng"
     >
-      {/* Tiêu đề thanh vùng: Khám phá theo vùng + Badge số lượng + Tách rõ [Bỏ chọn] và [×] */}
+      {/* Tiêu đề thanh vùng: Khám phá theo vùng Kinh tế - Xã hội + Badge số lượng + Tách rõ [Bỏ chọn] và [×] */}
       <div className="p-3 border-b border-slate-200 flex items-center justify-between shrink-0 bg-slate-50/80">
         <div className="flex items-center gap-2">
           <h3 className="font-extrabold text-sm text-slate-800 tracking-tight">
-            Khám phá theo vùng
+            {mode === "tu_nhien" ? "Khám phá theo khu vực Tự nhiên" : "Khám phá theo vùng Kinh tế - Xã hội"}
           </h3>
           <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-600 border border-slate-200 shadow-2xs">
             {countBadge}

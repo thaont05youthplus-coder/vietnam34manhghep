@@ -249,7 +249,7 @@ export const SubHeader: React.FC<SubHeaderProps> = ({
           )}
         </div>
 
-        {/* Nút "Khám phá vùng" đặt cạnh "Lớp hiển thị" (Biểu tượng bản đồ gấp kèm chữ) */}
+        {/* Nút "Khám phá theo vùng Kinh tế - Xã hội" đặt cạnh "Lớp hiển thị" */}
         <button
           onClick={onToggleRegionPanel}
           className={`flex items-center gap-1.5 px-3 py-1 rounded-lg border transition-all shadow-xs font-semibold ${
@@ -257,10 +257,10 @@ export const SubHeader: React.FC<SubHeaderProps> = ({
               ? "bg-teal-700 border-teal-800 text-white shadow-sm"
               : "bg-white hover:bg-teal-50/80 border-slate-300 text-slate-700 hover:text-teal-800 hover:border-teal-400"
           }`}
-          title={isRegionPanelOpen ? "Đóng bảng khám phá vùng" : "Mở bảng khám phá vùng bên phải"}
+          title={isRegionPanelOpen ? "Đóng bảng khám phá theo vùng Kinh tế - Xã hội" : "Mở bảng khám phá theo vùng Kinh tế - Xã hội bên phải"}
         >
           <Map className={`w-3.5 h-3.5 ${isRegionPanelOpen ? "text-teal-200" : "text-teal-600"}`} />
-          <span>Khám phá vùng</span>
+          <span>Khám phá theo vùng Kinh tế - Xã hội</span>
           {selectedRegionName && (
             <span className={`ml-0.5 px-1.5 py-0.2 text-[10px] rounded-full font-bold ${
               isRegionPanelOpen ? "bg-white text-teal-800" : "bg-teal-100 text-teal-800"
