@@ -387,6 +387,7 @@ export default function HomePage() {
         provinces={provinces}
         onSelectProvince={(p) => {
           setSelectedProvince(p);
+          if (p) setIsRegionPanelOpen(false);
         }}
         onResetLayout={handleResetLayout}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
@@ -420,6 +421,7 @@ export default function HomePage() {
           setIsRegionPanelOpen((prev) => {
             const next = !prev;
             setFilterScope(next ? "region" : "province");
+            if (next) setSelectedProvince(null); // Đóng bảng tỉnh khi mở thanh khám phá vùng
             return next;
           });
         }}
@@ -448,12 +450,22 @@ export default function HomePage() {
                 setSelectedRegionId(null);
               }}
               selectedProvince={selectedProvince}
-              onSelectProvince={setSelectedProvince}
+              onSelectProvince={(p) => {
+                setSelectedProvince(p);
+                if (p) setIsRegionPanelOpen(false); // Luôn đóng thanh vùng khi chọn tỉnh để không bao giờ có 2 bảng đè lên nhau
+              }}
               selectedRegionId={selectedRegionId}
               hoveredRegionId={hoveredRegionId}
               onSelectRegion={setSelectedRegionId}
               selectedCommune={selectedCommune}
-              onSelectCommune={setSelectedCommune}
+              onSelectCommune={(c) => {
+                setSelectedCommune(c);
+                if (c) {
+                  setIsRegionPanelOpen(false); // Đóng thanh vùng khi chọn xã
+                  const p = provinces.find((prov) => prov.properties.provinceCode === c.properties.provinceCode);
+                  if (p) setSelectedProvince(p); // Tự động mở bảng chi tiết của tỉnh chứa xã đó
+                }
+              }}
               layers={layers}
             />
 
