@@ -67,20 +67,6 @@ Khi người dùng hỏi bất kỳ câu hỏi nào, bạn phải ưu tiên căn
             return NextResponse.json({
               text: replyText,
               source: "deepseek-flash",
-              citations: [
-                {
-                  id: "cit_deepseek_sgk",
-                  title: "Sách giáo khoa Địa lí THCS & THPT - Chương trình GDPT 2018",
-                  publisher: "Bộ Giáo dục và Đào tạo",
-                  year: 2024,
-                },
-                {
-                  id: "cit_deepseek_gso",
-                  title: "Niên giám Thống kê & Dữ liệu Khí tượng Thủy văn Quốc gia 2024",
-                  publisher: "Tổng cục Thống kê & Tổng cục Khí tượng Thủy văn",
-                  year: 2024,
-                },
-              ],
             });
           }
         } else {
@@ -128,20 +114,6 @@ Khi người dùng hỏi bất kỳ câu hỏi nào, bạn phải ưu tiên căn
             return NextResponse.json({
               text: replyText,
               source: "gemini",
-              citations: [
-                {
-                  id: "cit_gemini_sgk",
-                  title: "Sách giáo khoa Địa lí THCS & THPT - Chương trình GDPT 2018",
-                  publisher: "Bộ Giáo dục và Đào tạo",
-                  year: 2024,
-                },
-                {
-                  id: "cit_gemini_gso",
-                  title: "Niên giám Thống kê Việt Nam 2024",
-                  publisher: "Tổng cục Thống kê (GSO)",
-                  year: 2024,
-                },
-              ],
             });
           }
         }

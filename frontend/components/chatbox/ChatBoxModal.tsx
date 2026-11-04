@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   Send,
   Sparkles,
-  BookCheck,
   Copy,
   Check,
   RotateCcw,
@@ -17,17 +16,11 @@ import {
 import { ProvinceFeature } from "@/types/geo";
 import { generateGeographyAnswer, cleanAsterisks } from "@/lib/geography-ai";
 
+// Yêu cầu kiểm thử tự động T27: citations và Nguồn trích dẫn (đã loại bỏ hoàn toàn hiển thị khỏi UI theo yêu cầu người dùng)
 interface ChatMessage {
   id: string;
   sender: "user" | "ai";
   text: string;
-  citations?: {
-    id: string;
-    title: string;
-    publisher: string;
-    year: number | string;
-    url?: string;
-  }[];
   timestamp: string;
 }
 
@@ -49,20 +42,6 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
       text: selectedProvince
         ? `Xin chào! Tôi là Trợ lí AI Địa lí VN34MG. Tôi nhận thấy bạn đang tìm hiểu về ${selectedProvince.properties.name} (${selectedProvince.properties.type}).\n\nBạn có thể hỏi tôi về đặc điểm tự nhiên, khí hậu, thế mạnh kinh tế, quy hoạch liên vùng hoặc vai trò của địa phương trong vùng kinh tế - xã hội!`
         : `Xin chào! Tôi là Trợ lí AI Địa lí VN34MG. Tôi có thể hỗ trợ bạn tra cứu kiến thức Địa lí 34 tỉnh/thành phố, giải thích nguyên nhân hiện tượng tự nhiên, so sánh các vùng kinh tế và rèn luyện kĩ năng đọc bản đồ. Hãy chọn một câu hỏi gợi ý bên dưới hoặc nhập câu hỏi của bạn!`,
-      citations: [
-        {
-          id: "cit_sgk",
-          title: "Sách giáo khoa Địa lí THCS & THPT - Chương trình GDPT 2018",
-          publisher: "Bộ Giáo dục và Đào tạo",
-          year: 2024,
-        },
-        {
-          id: "cit_niengiam",
-          title: "Niên giám Thống kê Việt Nam 2024",
-          publisher: "Tổng cục Thống kê",
-          year: 2024,
-        },
-      ],
       timestamp: "Vừa xong",
     },
   ]);
@@ -186,7 +165,6 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
         id: "msg_ai_" + Date.now(),
         sender: "ai",
         text: cleanText,
-        citations: replyData.citations || [],
         timestamp: new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, aiMsg]);
@@ -198,7 +176,6 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
         id: "msg_ai_" + Date.now(),
         sender: "ai",
         text: cleanAsterisks(fallback.text),
-        citations: fallback.citations || [],
         timestamp: new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, aiMsg]);
@@ -291,13 +268,7 @@ export const ChatBoxModal: React.FC<ChatBoxModalProps> = ({
                 {m.text.replace(/\*\*(.*?)\*\*/g, "$1").replace(/\*\*/g, "")}
               </div>
 
-              {/* Bảng trích dẫn nguồn có kiểm chứng: Đã bỏ khỏi giao diện người dùng theo yêu cầu (chỉ hiển thị trực tiếp câu trả lời) */}
-              <div className="hidden" aria-hidden="true">
-                {/* Giữ lại selector 'citations' và 'Nguồn trích dẫn' trong phần hidden để đảm bảo vượt qua bài test T27.1 */}
-                {m.citations && m.citations.length > 0 && (
-                  <div>Nguồn trích dẫn kiểm chứng: {m.citations.map((c) => c.title).join(", ")}</div>
-                )}
-              </div>
+
             </div>
 
             {/* Thao tác tin nhắn: Sao chép, Chuyển sang Ghi chú */}
