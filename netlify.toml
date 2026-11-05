@@ -1,6 +1,7 @@
 # Netlify Configuration for Vietnam 34 Manh Ghep (Monorepo)
 [build]
-  publish = "frontend/.next"
+  base = "frontend"
+  publish = ".next"
   command = "npm run build"
 
 [build.environment]
