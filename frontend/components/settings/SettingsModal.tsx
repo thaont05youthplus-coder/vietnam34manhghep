@@ -9,7 +9,6 @@ import {
   Sliders,
   CheckCircle2,
   RefreshCw,
-  Award,
 } from "lucide-react";
 import { LayerSettings } from "@/components/layout/SubHeader";
 
@@ -19,7 +18,6 @@ interface SettingsModalProps {
   layers?: LayerSettings;
   onToggleLayer?: (layerKey: keyof LayerSettings) => void;
   onResetLayout?: () => void;
-  onOpenCredits?: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -28,7 +26,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   layers,
   onToggleLayer,
   onResetLayout,
-  onOpenCredits,
 }) => {
   const [autoZoom, setAutoZoom] = useState(true);
   const [showCoordinates, setShowCoordinates] = useState(true);
@@ -160,23 +157,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               >
                 <RefreshCw className="w-3.5 h-3.5 text-teal-700" />
                 <span>Đặt lại bố cục giao diện mặc định</span>
-              </button>
-            </div>
-          )}
-
-          {/* Xem thông tin Credits & Ethics */}
-          {onOpenCredits && (
-            <div className="pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  onOpenCredits();
-                }}
-                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-teal-50 hover:bg-teal-100 border border-teal-200/80 text-teal-800 font-bold rounded-xl transition-colors cursor-pointer"
-              >
-                <Award className="w-3.5 h-3.5 text-teal-700" />
-                <span>Xem Thông tin Dự án, Tác giả &amp; Credits</span>
               </button>
             </div>
           )}

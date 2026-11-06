@@ -11,7 +11,6 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Award,
 } from "lucide-react";
 import { ToolId } from "@/types/workspace";
 
@@ -23,7 +22,6 @@ interface SidebarProps {
   onResetLayout: () => void;
   onOpenFeedback?: () => void;
   onOpenSettings?: () => void;
-  onOpenCredits?: () => void;
 }
 
 interface ToolItem {
@@ -78,7 +76,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onResetLayout,
   onOpenFeedback,
   onOpenSettings,
-  onOpenCredits,
 }) => {
   const isAnyToolActive = Object.values(activeTools).some(Boolean);
 
@@ -187,20 +184,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           <Settings className="w-4 h-4 text-slate-600" />
           {isOpen && <span className="text-xs font-medium">Cài đặt</span>}
-        </button>
-
-        {/* Nút Thông tin & Nguồn trích dẫn (Credits & Ethics) */}
-        <button
-          onClick={() => {
-            if (onOpenCredits) onOpenCredits();
-          }}
-          className={`flex items-center rounded-xl p-2 text-slate-500 hover:text-teal-800 hover:bg-teal-50 transition-colors cursor-pointer ${
-            isOpen ? "gap-2.5 px-3" : "justify-center"
-          }`}
-          title="Thông tin dự án, Tác giả &amp; Nguồn trích dẫn (Credits &amp; Ethics)"
-        >
-          <Award className="w-4 h-4 text-amber-600" />
-          {isOpen && <span className="text-xs font-medium text-slate-700">Credits</span>}
         </button>
 
         {/* Nút Thu gọn / Mở rộng Sidebar */}
