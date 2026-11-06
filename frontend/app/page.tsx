@@ -11,6 +11,7 @@ import { ProvinceDetailPanel } from "@/components/panels/ProvinceDetailPanel";
 import { KeyboardShortcutsModal } from "@/components/workspace/KeyboardShortcutsModal";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { SettingsModal } from "@/components/settings/SettingsModal";
+import { CreditsModal } from "@/components/credits/CreditsModal";
 import { ProvinceFeature, ProvinceFeatureCollection, MapMode, RegionDefinition, CommunePolygonFeature } from "@/types/geo";
 import { ECONOMIC_REGIONS, NATURAL_REGIONS } from "@/lib/regions";
 import { ToolId, WindowState, SnapPosition } from "@/types/workspace";
@@ -46,6 +47,7 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isCreditsOpen, setIsCreditsOpen] = useState(false);
 
   // Z-index cao nhất hiện tại cho các cửa sổ
   const [maxZIndex, setMaxZIndex] = useState(40);
@@ -443,6 +445,7 @@ export default function HomePage() {
           onResetLayout={handleResetLayout}
           onOpenFeedback={() => setIsFeedbackOpen(true)}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenCredits={() => setIsCreditsOpen(true)}
         />
 
         {/* Vùng bản đồ cốt lõi & Panel vùng */}
@@ -540,6 +543,13 @@ export default function HomePage() {
         layers={layers}
         onToggleLayer={handleToggleLayer}
         onResetLayout={handleResetLayout}
+        onOpenCredits={() => setIsCreditsOpen(true)}
+      />
+
+      {/* Modal Thông tin Dự án, Tác giả & Credits (Ethics) */}
+      <CreditsModal
+        isOpen={isCreditsOpen}
+        onClose={() => setIsCreditsOpen(false)}
       />
     </main>
   );
